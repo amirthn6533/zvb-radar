@@ -1,0 +1,7 @@
+﻿services:
+  - type: worker
+    name: zvb-telegram-radar
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python telegram_bot_service.py
+    autoDeploy: true
