@@ -422,39 +422,78 @@ def get_designer_pitch():
         "<i>(روی کادر بالا ضربه بزنید تا متن کپی شود)</i>"
     )
 
-def ask_zagros_ai(user_query):
+AI_CONVERSATION_HISTORY = {}
+
+ZAGROS_SYSTEM_PROMPT = (
+    "تو «زاگرس» (Zagros) هستی؛ مهندس ارشد برق، اتوماسیون خانه هوشمند، سیستم‌های نظارتی و مدیر فنی شرکت ZVB در صوفیه، بلغارستان (https://zvb.bg | +359 87 7944353).\n"
+    "شرکت ZVB با بیش از ۱۵ سال سابقه، مجری تخصصی پروژه‌های الکتریکی، تابلو برق، دوربین مداربسته (CCTV)، سیستم‌های هوشمند (Shelly/KNX) و نورپردازی مدرن در صوفیه با ۵ سال گارانتی کتبی و بازدید رایگان است.\n\n"
+    "🎯 هویت، لحن و شیوه ارتباط تو:\n"
+    "۱. رابطه تو با کاربر:\n"
+    "- تو دقیقاً مانند یک دستیار هوش مصنوعی برنامه‌نویسی و مهندسی پیشرفته، باهوش، بسیار مسلط، دلسوز و پرانرژی هستی (دقیقاً مثل یک رفیق، همکار و مهندس ارشد کارکشته).\n"
+    "- وقتی کاربر به زبان فارسی با تو صحبت می‌کند: مثل دو تا همکار و رفیق صمیمی در یک کارگاه یا دفتر فنی، با احترام، انرژی مثبت، تسلط کامل و صمیمیت صحبت کن. از جملات خشک اداری، کلیشه‌های ماشینی و تعارفات طولانی خودداری کن و مستقیماً وارد تحلیل مهندسی، گزینه‌های اجرایی، مزایا/معایب و فرمول‌های کاربردی شو.\n"
+    "- پاسخ‌هایت باید با ساختار تمیز، تیترها و بولت‌پوینت‌های خوانا و ایموجی‌های مناسب مهندسی باشد تا خواندنش لذت‌بخش و سریع باشد.\n\n"
+    "۲. وقتی کاربر از تو متن بلغاری می‌خواهد (برای کارفرما، بسازبفروش، طراح، یا پیش‌فاکتور):\n"
+    "- متنی فوق‌العاده روان، اصیل، محترمانه و به زبان بلغاری استاندارد مهندسی (Български) با تمام فوت‌وفن‌های جلب اعتماد بنویس.\n"
+    "- اطلاعات شرکت ZVB را همیشه در قالب رسمی زیر درج کن:\n"
+    "  ZVB София | Тел: +359 87 7944353 | https://zvb.bg | 15+ г. опит | 5 г. гаранция | Безплатен оглед\n\n"
+    "۳. استانداردهای فنی برق که همیشه به آن مسلطی (طبق استاندارد بلغارستان БДС EN 60364):\n"
+    "• کابل روشنایی: 3x1.5 mm² با فیوز اتوماتیک 10A تیپ B/C\n"
+    "• کابل پریزها: 3x2.5 mm² با فیوز اتوماتیک 16A تیپ B/C\n"
+    "• کابل کولرهای گازی / بویلر: 3x4 mm² با فیوز 20A یا 25A\n"
+    "• کابل اجاق برقی و فر اصلی: 3x6 mm² تک‌فاز با فیوز 32A یا 5x2.5 mm² سه‌فاز\n"
+    "• محافظ جان (ДТЗ / RCD): جریان نشتی 30mA تیپ A برای حمام، بویلر و پریزها\n"
+    "• برندهای استاندارد بازار بلغارستان: فیوزهای اشنایدر (Schneider Resi9/Acti9)، نوآرک (Noark)، کابل‌های ПВВ-МБ1 و СВТ مس خالص\n"
+    "• خانه هوشمند: ماژول‌های Shelly (Shelly Plus 1PM, Pro 4PM) و الزام آوردن سیم نول به قوطی کلیدها\n"
+    "• دوربین مداربسته: Dahua و Hikvision با کابل شبکه Cat6 FTP مس و سوئیچ PoE\n\n"
+    "۴. پیوستگی مکالمه:\n"
+    "تو سابقه پیام‌های قبلی همین کاربر را می‌دانی، بنابراین اگر سوال تکمیلی پرسید (مثلاً 'خب فیوزش چند باشه؟' یا 'هزینه‌ش چقدر می‌شه؟')، به پروژه و موضوعات قبلی که با هم صحبت کردید ارجاع بده."
+)
+
+def ask_zagros_ai(user_query, chat_id="default"):
     """
-    Zagros AI Expert Assistant:
-    Acts as Senior Electrical Engineer & Commercial Director for ZVB in Sofia.
-    Handles technical calculations, drafting Bulgarian client pitches, and consultations.
+    Zagros AI Senior Engineer & Commercial Director:
+    Conversational AI assistant powered by Gemini with full multi-turn memory.
     """
     cfg = load_config()
     gemini_key = cfg.get("gemini_api_key", "").strip() or os.environ.get("GEMINI_API_KEY", "").strip()
     
-    system_prompt = (
-        "Ти си Загрос (Zagros) - виртуален старши електроинженер и търговски директор на ZVB "
-        "(Електрически системи, видеонаблюдение, LED осветление и Smart Home в гр. София, България | https://zvb.bg | Тел: +359 87 7944353). "
-        "Фирмата има над 15 години доказан опит, предлага 5 години гаранция и безплатен оглед в София. "
-        "Отговаряй учтиво, професионално, конкретно и ясно на езика, на който ти пишат (български или персийски). "
-        "Ако те питаت за технически въпроси по ел. инсталации, кабели, предпазители или камери - дай точен инженерен съвет. "
-        "Ако искат оферта или съобщение за клиент/строител - напиши перфектен текст за изпращане с данните на ZVB."
-    )
-
     if gemini_key:
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-            payload = {
-                "contents": [
-                    {"role": "user", "parts": [{"text": f"System Context:\n{system_prompt}\n\nUser Question:\n{user_query}"}]}
-                ]
-            }
-            r = requests.post(url, json=payload, timeout=12)
-            if r.status_code == 200:
-                res = r.json()
-                answer = res["candidates"][0]["content"]["parts"][0]["text"]
-                return f"🧠 <b>Загрос AI (Инженерен асистент ZVB):</b>\n\n{answer}"
-        except Exception as e:
-            print(f"AI API error: {e}")
+        str_chat_id = str(chat_id)
+        history = AI_CONVERSATION_HISTORY.get(str_chat_id, [])
+        history.append({"role": "user", "parts": [{"text": user_query}]})
+        
+        # Keep last 16 turns in active memory
+        if len(history) > 16:
+            history = history[-16:]
+            
+        candidate_models = ["gemini-3.5-flash", "gemini-flash-latest", "gemini-2.5-flash"]
+        for model_name in candidate_models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                payload = {
+                    "contents": history,
+                    "systemInstruction": {
+                        "parts": [{"text": ZAGROS_SYSTEM_PROMPT}]
+                    },
+                    "generationConfig": {
+                        "temperature": 0.7,
+                        "maxOutputTokens": 1500
+                    }
+                }
+                r = requests.post(url, json=payload, timeout=12)
+                if r.status_code == 200:
+                    res = r.json()
+                    candidates = res.get("candidates", [])
+                    if candidates and "content" in candidates[0]:
+                        parts = candidates[0]["content"].get("parts", [])
+                        if parts and "text" in parts[0]:
+                            answer = parts[0]["text"].strip()
+                            # Save model response in conversation history
+                            history.append({"role": "model", "parts": [{"text": answer}]})
+                            AI_CONVERSATION_HISTORY[str_chat_id] = history
+                            return f"🧠 <b>Загрос AI (مهندس ارشد ZVB):</b>\n\n{answer}"
+            except Exception as e:
+                print(f"Gemini {model_name} error: {e}")
 
     uq = user_query.lower()
     
@@ -496,14 +535,14 @@ def ask_zagros_ai(user_query):
 
     # General technical advice fallback
     return (
-        f"🧠 <b>Загрос AI (ZVB Електро Експерт):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"درود! پیام شما دریافت شد: <i>'{user_query}'</i>\n\n"
-        "من به عنوان دستیار هوشمند مهندسی <b>ZVB در صوفیه</b> می‌توانم در این موارد به شما کمک کنم:\n"
-        "1. ⚡ <b>مشاوره مهندسی:</b> کابل‌ها، فیوزها، تابلو برق، خانه هوشمند و دوربین مداربسته\n"
-        "2. 💰 <b>پیش‌فاکتور رسمی:</b> بنویسید <i>'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو، ۳۰ پریز'</i>\n"
-        "3. 📝 <b>متن‌های رسمی بلغاری:</b> برای بسازبفروش‌ها، دیزاینرها، یا پیگیری مشتری بعد از بازدید\n"
-        "4. 🔍 <b>جستجوی پروژه‌ها:</b> بنویسید <i>'زاگرس младост'</i> یا <i>'زاگرس فوری'</i>\n\n"
-        "🌐 <i>ZVB Sofia - Професионални електрически и умни решения | zvb.bg</i>"
+        f"🧠 <b>Загрос AI (همکار مهندسی ZVB):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"سلام مهندس جان! در خدمتتم. پیامت رو دیدم:\n<i>'{user_query}'</i>\n\n"
+        "در هر زمینه‌ای از پروژه‌های صوفیه سوالی داری با هم بررسیش کنیم:\n"
+        "• ⚡ <b>محاسبات فنی:</b> سایز کابل، فیوزها، تابلو برق، خانه هوشمند و دوربین\n"
+        "• 💰 <b>پیش‌فاکتور رسمی:</b> بنویس <i>'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو، ۳۰ پریز'</i>\n"
+        "• 📝 <b>متن‌های رسمی بلغاری:</b> برای ارسال به کارفرما، شرکت ساختمانی یا دیزاینر\n"
+        "• 🔍 <b>استعلام پروژه‌ها:</b> بنویس <i>'زاگرس فوری'</i> یا <i>'زاگرس младост'</i>\n\n"
+        "هر سوال یا ایده‌ای داری راحت بگو تا گام‌به‌گام با هم بچینیمش! 🚀"
     )
 
 def handle_search_text(query):
@@ -817,7 +856,7 @@ def run_telegram_bot():
                     elif any(k in clean_query.lower() for k in ["پیشنهاد", "متن پیام", "پیچ", "pitches", "آفر"]):
                         send_msg(token, sender_chat_id, handle_pitches_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["هوش", "ai", "مشاوره", "بپرس", "سوال"]):
-                        send_msg(token, sender_chat_id, ask_zagros_ai(clean_query), get_main_keyboard())
+                        send_msg(token, sender_chat_id, ask_zagros_ai(clean_query, chat_id=sender_chat_id), get_main_keyboard())
                     elif clean_query.startswith("/start") or clean_query.startswith("/help"):
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
                     elif clean_query.startswith("/calc"):
@@ -843,7 +882,7 @@ def run_telegram_bot():
                             send_msg(token, sender_chat_id, res, get_main_keyboard())
                         else:
                             # If no specific database lead matches, route directly to Zagros AI Expert Brain!
-                            ai_res = ask_zagros_ai(clean_query)
+                            ai_res = ask_zagros_ai(clean_query, chat_id=sender_chat_id)
                             send_msg(token, sender_chat_id, ai_res, get_main_keyboard())
 
         except Exception as e:
