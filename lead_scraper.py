@@ -264,6 +264,74 @@ def scrape_alo(keyword):
         print(f"  [Alo.bg] Error searching '{keyword}': {e}")
     return results
 
+def scrape_maistorplus(username, password):
+    results = []
+    try:
+        s = requests.Session()
+        r1 = s.get('https://maistorplus.com/login', headers=HEADERS, timeout=12)
+        soup = BeautifulSoup(r1.text, 'html.parser')
+        token_input = soup.find('input', {'name': '_csrf_token'})
+        if not token_input:
+            return results
+        csrf = token_input.get('value')
+        
+        login_resp = s.post('https://maistorplus.com/login_check', data={
+            '_csrf_token': csrf,
+            '_username': username,
+            '_password': password,
+            '_remember_me': 'on'
+        }, headers=HEADERS, timeout=12)
+        
+        if login_resp.status_code != 200 and '/craftsman' not in login_resp.url:
+            return results
+            
+        r_jobs = s.get('https://maistorplus.com/craftsman/jobs/all', headers=HEADERS, timeout=12)
+        soup_jobs = BeautifulSoup(r_jobs.text, 'html.parser')
+        
+        rows = soup_jobs.select('table tr')
+        for tr in rows:
+            tds = tr.find_all('td')
+            if len(tds) >= 3:
+                title_td = tds[0]
+                city_td = tds[1] if len(tds) > 1 else None
+                budget_td = tds[2] if len(tds) > 2 else None
+                
+                link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
+                if not link_tag:
+                    continue
+                
+                href = link_tag['href']
+                full_url = urllib.parse.urljoin('https://maistorplus.com', href)
+                title = title_td.get_text(' ', strip=True)
+                city = city_td.get_text(' ', strip=True) if city_td else 'София'
+                budget = budget_td.get_text(' ', strip=True) if budget_td else ''
+                
+                m = re.search(r'/job/(\d+)', href)
+                job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(href)}"
+                
+                has_direct_phone = "директен телефон" in title.lower()
+                
+                cat, cat_label = classify_lead(title, "maistorplus")
+                if "спешно" in title.lower() or has_direct_phone:
+                    cat = "urgent_client"
+                    cat_label = "🎯 Директно клиентско търсене (Спешно)"
+                    
+                results.append({
+                    "id": job_id,
+                    "title": f"[MaistorPlus] {title} ({budget})",
+                    "url": full_url,
+                    "source": "MaistorPlus",
+                    "keyword": "Заявка за проект",
+                    "category": cat,
+                    "category_label": cat_label,
+                    "location": city,
+                    "phone": "Директен телефон в MaistorPlus" if has_direct_phone else "",
+                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+    except Exception as e:
+        print(f"  [MaistorPlus] Error scraping: {e}")
+    return results
+
 def enrich_phones_for_leads(leads_list, max_to_fetch=25):
     """Fetches full page descriptions for top new leads to uncover phone numbers"""
     count = 0
@@ -777,6 +845,17 @@ def run_scan():
                 new_leads.append(item)
                 
         time.sleep(0.5)
+        
+    # 3. Scrape MaistorPlus if configured
+    mp_cfg = config.get("maistorplus", {})
+    if mp_cfg.get("enabled") and mp_cfg.get("username") and mp_cfg.get("password"):
+        print("\n🔍 Scanning MaistorPlus (Заявки от клиенти)...")
+        mp_items = scrape_maistorplus(mp_cfg["username"], mp_cfg["password"])
+        print(f"   ↳ MaistorPlus: {len(mp_items)} active projects found")
+        for item in mp_items:
+            if item['id'] not in existing_leads:
+                existing_leads[item['id']] = item
+                new_leads.append(item)
 
     # Enrich phone numbers for new urgent leads
     enrich_phones_for_leads(new_leads, max_to_fetch=20)
