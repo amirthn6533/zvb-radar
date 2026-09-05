@@ -120,32 +120,32 @@ def handle_urgent_cmd():
     with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
         leads = json.load(f)
     
-    valid = [l for l in leads.values() if daily_digest.is_strictly_electrical_sofia(l)]
-    urgent = [l for l in valid if any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор', 'монтаж', 'смяна', 'подмяна', 'контакт'])]
+    valid = [l for l in leads.values() if daily_digest.is_strictly_electrical_sofia(l) and daily_digest.is_fresh_lead(l, max_days=4)]
     
     # Sort leads: phone numbers first, then newest
-    urgent.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
+    valid.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
     
-    if not urgent:
-        return "В момента няма спешни запитвания в София. Всичко е прегледано!"
+    if not valid:
+        return "✅ <b>Няма нови необработени клиентски запитвания в София за последните 48 часа.</b>\nВсички обяви са прегледани. Натиснете <i>'🔍 Сканирай сега'</i> за сканиране на живо!"
     
     msg = "🎯 <b>ТОП ЕЛЕКТРО ПРОЕКТИ И ЗАПИТВАНИЯ (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
-    for idx, l in enumerate(urgent[:5], 1):
+    for idx, l in enumerate(valid[:5], 1):
         phone = l.get('phone')
         phone_block = ""
         action_links = []
-        if phone:
+        if phone and phone.startswith("08") and len(phone) == 10:
             phone_block = f"\n📞 Телефон: <b>{phone}</b>"
-            if phone.startswith("08") and len(phone) == 10:
-                intl = "359" + phone[1:]
-                wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
-                action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
-                action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
-        action_links.append(f"<a href='{l.get('url')}'>🔗 Виж обявата</a>")
+            intl = "359" + phone[1:]
+            wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
+            action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
+            action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+            
+        link_label = "📋 Кандидатствай в MaistorPlus" if l.get('source') == 'MaistorPlus' else "🔗 Виж обявата"
+        action_links.append(f"<a href='{l.get('url')}'>{link_label}</a>")
         actions_str = " | ".join(action_links)
         
         msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_block}\n🌐 {l.get('source')} ➔ {actions_str}\n\n"
-    msg += "💡 <i>Кликнете върху WhatsApp или Обади се за директна връзка!</i>"
+    msg += "💡 <i>Прецизно филтрирани клиентски проекти за ZVB Sofia (zvb.bg)</i>"
     return msg
 
 def handle_builders_cmd():

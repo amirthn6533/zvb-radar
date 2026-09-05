@@ -228,7 +228,7 @@ def scrape_alo(keyword):
     results = []
     try:
         url = "https://www.alo.bg/searchq/"
-        resp = requests.get(url, params={"q": keyword}, headers=HEADERS, timeout=12)
+        resp = requests.get(url, params={"q": keyword}, headers=HEADERS, timeout=4)
         if resp.status_code != 200:
             return results
         
@@ -292,6 +292,7 @@ def scrape_alo(keyword):
 
 def scrape_maistorplus(username, password):
     results = []
+    seen_ids = set()
     try:
         s = requests.Session()
         r1 = s.get('https://maistorplus.com/login', headers=HEADERS, timeout=12)
@@ -311,58 +312,79 @@ def scrape_maistorplus(username, password):
         if login_resp.status_code != 200 and '/craftsman' not in login_resp.url:
             return results
             
-        r_jobs = s.get('https://maistorplus.com/craftsman/jobs/all', headers=HEADERS, timeout=12)
-        soup_jobs = BeautifulSoup(r_jobs.text, 'html.parser')
+        # 1. Fetch fresh jobs with NO exchanged phones first (hot opportunities)
+        # 2. Then fetch latest general jobs
+        endpoints = [
+            'https://maistorplus.com/craftsman/jobs/no-exchanged-phones',
+            'https://maistorplus.com/craftsman/jobs/all?page=1',
+            'https://maistorplus.com/craftsman/jobs/all?page=2'
+        ]
         
-        rows = soup_jobs.select('table tr')
-        for tr in rows:
-            tds = tr.find_all('td')
-            if len(tds) >= 3:
-                title_td = tds[0]
-                city_td = tds[1] if len(tds) > 1 else None
-                budget_td = tds[2] if len(tds) > 2 else None
+        mp_electrical_keywords = ['контакт', 'вентилатор', 'ел', 'електро', 'осветлен', 'табло', 'бойлер', 'кабел', 'ключ', 'лед', 'камер', 'умен дом']
+        
+        for ep in endpoints:
+            try:
+                r_jobs = s.get(ep, headers=HEADERS, timeout=12)
+                soup_jobs = BeautifulSoup(r_jobs.text, 'html.parser')
+                rows = soup_jobs.select('table tr')
+                for tr in rows:
+                    tds = tr.find_all('td')
+                    if len(tds) >= 3:
+                        title_td = tds[0]
+                        city_td = tds[1] if len(tds) > 1 else None
+                        budget_td = tds[2] if len(tds) > 2 else None
+                        
+                        link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
+                        if not link_tag:
+                            continue
+                        
+                        href = link_tag['href']
+                        clean_href = href.split('?')[0]
+                        full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
+                        title = title_td.get_text(' ', strip=True)
+                        city = city_td.get_text(' ', strip=True) if city_td else 'София'
+                        budget = budget_td.get_text(' ', strip=True) if budget_td else ''
+                        
+                        m = re.search(r'/job/(\d+)', clean_href)
+                        job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(clean_href)}"
+                        
+                        if job_id in seen_ids:
+                            continue
+                        seen_ids.add(job_id)
+                        
+                        # Filter strictly for Sofia & electrical
+                        if 'софия' not in city.lower():
+                            continue
+                        if not any(w in title.lower() for w in mp_electrical_keywords):
+                            continue
+                        
+                        results.append({
+                            "id": job_id,
+                            "title": f"[MaistorPlus] {title} ({budget})",
+                            "url": full_url,
+                            "source": "MaistorPlus",
+                            "keyword": "Заявка за електро проект",
+                            "category": "urgent_client",
+                            "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
+                            "location": "София",
+                            "phone": "",
+                            "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                        })
+            except Exception as e:
+                print(f"  [MaistorPlus] Error on {ep}: {e}")
                 
-                link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
-                if not link_tag:
-                    continue
-                
-                href = link_tag['href']
-                full_url = urllib.parse.urljoin('https://maistorplus.com', href)
-                title = title_td.get_text(' ', strip=True)
-                city = city_td.get_text(' ', strip=True) if city_td else 'София'
-                budget = budget_td.get_text(' ', strip=True) if budget_td else ''
-                
-                m = re.search(r'/job/(\d+)', href)
-                job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(href)}"
-                
-                has_direct_phone = "директен телефон" in title.lower()
-                
-                cat, cat_label = classify_lead(title, "maistorplus")
-                if "спешно" in title.lower() or has_direct_phone:
-                    cat = "urgent_client"
-                    cat_label = "🎯 Директно клиентско търсене (Спешно)"
-                    
-                results.append({
-                    "id": job_id,
-                    "title": f"[MaistorPlus] {title} ({budget})",
-                    "url": full_url,
-                    "source": "MaistorPlus",
-                    "keyword": "Заявка за проект",
-                    "category": cat,
-                    "category_label": cat_label,
-                    "location": city,
-                    "phone": "Директен телефон в MaistorPlus" if has_direct_phone else "",
-                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                })
     except Exception as e:
         print(f"  [MaistorPlus] Error scraping: {e}")
     return results
 
 def enrich_phones_for_leads(leads_list, max_to_fetch=25):
-    """Fetches full page descriptions for top new leads to uncover phone numbers"""
+    """Fetches full page descriptions for classified ads to uncover direct phone numbers"""
     count = 0
     print(f"\n🔍 Извличане на директни телефонни номера за най-новите обяви (до {max_to_fetch} обяви)...")
     for item in leads_list:
+        # Never scrape phones for MaistorPlus from public pages (avoids support number 0879590810)
+        if item.get("source") == "MaistorPlus":
+            continue
         if item.get("phone"):
             continue
         if count >= max_to_fetch:
@@ -373,8 +395,10 @@ def enrich_phones_for_leads(leads_list, max_to_fetch=25):
                 soup = BeautifulSoup(r.text, 'html.parser')
                 text = soup.get_text(" ", strip=True)
                 phones = extract_phone_numbers(text)
-                if phones:
-                    item["phone"] = phones[0]
+                # Exclude blacklisted platform support lines
+                clean_phones = [p for p in phones if p not in ['0879590810', '359879590810', '+359879590810']]
+                if clean_phones:
+                    item["phone"] = clean_phones[0]
                     print(f"   ↳ 📞 Намерен номер за '{item['title'][:30]}...': {item['phone']}")
             count += 1
             time.sleep(0.4)
@@ -852,10 +876,13 @@ def run_scan():
     
     for kw in keywords:
         print(f"\n🔍 Scanning: '{kw}'...")
+        import daily_digest
+        
         # 1. Scrape Bazar.bg
         bazar_items = scrape_bazar(kw)
-        print(f"   ↳ Bazar.bg: {len(bazar_items)} items")
-        for item in bazar_items:
+        valid_bazar = [it for it in bazar_items if daily_digest.is_strictly_electrical_sofia(it)]
+        print(f"   ↳ Bazar.bg: {len(bazar_items)} raw -> {len(valid_bazar)} strictly verified Sofia client leads")
+        for item in valid_bazar:
             if item['id'] not in existing_leads:
                 existing_leads[item['id']] = item
                 new_leads.append(item)
@@ -864,8 +891,9 @@ def run_scan():
         
         # 2. Scrape Alo.bg
         alo_items = scrape_alo(kw)
-        print(f"   ↳ Alo.bg: {len(alo_items)} items")
-        for item in alo_items:
+        valid_alo = [it for it in alo_items if daily_digest.is_strictly_electrical_sofia(it)]
+        print(f"   ↳ Alo.bg: {len(alo_items)} raw -> {len(valid_alo)} strictly verified Sofia client leads")
+        for item in valid_alo:
             if item['id'] not in existing_leads:
                 existing_leads[item['id']] = item
                 new_leads.append(item)
@@ -875,15 +903,15 @@ def run_scan():
     # 3. Scrape MaistorPlus if configured
     mp_cfg = config.get("maistorplus", {})
     if mp_cfg.get("enabled") and mp_cfg.get("username") and mp_cfg.get("password"):
-        print("\n🔍 Scanning MaistorPlus (Заявки от клиенти)...")
+        print("\n🔍 Scanning MaistorPlus (Заявки от клиенти в София)...")
         mp_items = scrape_maistorplus(mp_cfg["username"], mp_cfg["password"])
-        print(f"   ↳ MaistorPlus: {len(mp_items)} active projects found")
+        print(f"   ↳ MaistorPlus: {len(mp_items)} active electrical projects found")
         for item in mp_items:
             if item['id'] not in existing_leads:
                 existing_leads[item['id']] = item
                 new_leads.append(item)
 
-    # Enrich phone numbers for new urgent leads
+    # Enrich phone numbers for new urgent leads (excluding MaistorPlus)
     enrich_phones_for_leads(new_leads, max_to_fetch=20)
 
     save_leads(existing_leads)
