@@ -449,7 +449,7 @@ ZAGROS_SYSTEM_PROMPT = (
     "تو سابقه پیام‌های قبلی همین کاربر را می‌دانی، بنابراین اگر سوال تکمیلی پرسید (مثلاً 'خب فیوزش چند باشه؟' یا 'هزینه‌ش چقدر می‌شه؟')، به پروژه و موضوعات قبلی که با هم صحبت کردید ارجاع بده."
 )
 
-def ask_zagros_ai(user_query, chat_id="default"):
+def ask_zagros_ai(user_query, chat_id="default", context_ref=None):
     """
     Zagros AI Senior Engineer & Commercial Director:
     Conversational AI assistant powered by Gemini with full multi-turn memory.
@@ -460,13 +460,18 @@ def ask_zagros_ai(user_query, chat_id="default"):
     if gemini_key:
         str_chat_id = str(chat_id)
         history = AI_CONVERSATION_HISTORY.get(str_chat_id, [])
-        history.append({"role": "user", "parts": [{"text": user_query}]})
+        
+        turn_text = user_query
+        if context_ref:
+            turn_text = f"پروژه یا پیامی که کاربر به آن ریپلای زده است:\n«««\n{context_ref[:800]}\n»»»\n\nپیام/سوال کاربر:\n{user_query}"
+            
+        history.append({"role": "user", "parts": [{"text": turn_text}]})
         
         # Keep last 16 turns in active memory
         if len(history) > 16:
             history = history[-16:]
             
-        candidate_models = ["gemini-3.5-flash", "gemini-flash-latest", "gemini-2.5-flash"]
+        candidate_models = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
         for model_name in candidate_models:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
@@ -480,7 +485,7 @@ def ask_zagros_ai(user_query, chat_id="default"):
                         "maxOutputTokens": 1500
                     }
                 }
-                r = requests.post(url, json=payload, timeout=12)
+                r = requests.post(url, json=payload, timeout=10)
                 if r.status_code == 200:
                     res = r.json()
                     candidates = res.get("candidates", [])
@@ -816,28 +821,33 @@ def run_telegram_bot():
                     
                     lower_text = raw_text.lower()
                     
-                    # Check if addressed as "زاگرس" (Zagros) or starts with / command
+                    # Check if addressed as "زاگرس" (Zagros), mention @zvbradar_bot, or starts with / command
                     is_command = raw_text.startswith("/")
-                    is_zagros = any(lower_text.startswith(w) or lower_text.startswith(f"{w} ") or lower_text.startswith(f"{w}،") or lower_text.startswith(f"{w}:") for w in ["زاگرس", "zagros"])
+                    mention_triggers = ["@zvbradar_bot", "@zvbradar", "زاگرس", "zagros"]
+                    is_zagros = any(lower_text.startswith(w) or lower_text.startswith(f"{w} ") or lower_text.startswith(f"{w}،") or lower_text.startswith(f"{w}:") for w in mention_triggers)
+                    
+                    # Detect if user replied to any message from this bot
+                    reply_msg = msg.get("reply_to_message", {})
+                    is_reply_to_bot = bool(reply_msg.get("from", {}).get("is_bot"))
+                    reply_context = reply_msg.get("text", "") if is_reply_to_bot else None
                     
                     # If it's a private chat (DM with bot), respond directly.
-                    # In groups, ONLY respond if called "زاگرس" or if it's a slash command!
+                    # In groups, respond if called "زاگرس", mentioned, replied to bot, or command
                     is_private = msg.get("chat", {}).get("type") == "private"
                     
-                    if not (is_command or is_zagros or is_private):
-                        # Ignore normal chat messages in group
+                    if not (is_command or is_zagros or is_reply_to_bot or is_private):
+                        # Ignore normal chatter between group members
                         continue
                     
-                    # Clean the query if it started with "زاگرس"
+                    # Clean the query if it started with trigger words
                     clean_query = raw_text
-                    if is_zagros:
-                        for w in ["زاگرس", "zagros"]:
-                            if lower_text.startswith(w):
-                                clean_query = raw_text[len(w):].strip().lstrip("،,:! ")
-                                break
+                    for w in mention_triggers:
+                        if lower_text.startswith(w):
+                            clean_query = raw_text[len(w):].strip().lstrip("،,:! ")
+                            break
                     
-                    if not clean_query or clean_query in ["سلام", "درود", "منو", "menu", "help", "کمک"]:
-                        send_msg(token, sender_chat_id, "درود! در خدمتم. می‌توانید بفرمایید چه کاری انجام دهم:\n\n" + get_welcome_text(), get_main_keyboard())
+                    if not clean_query or clean_query in ["منو", "menu", "help", "کمک"]:
+                        send_msg(token, sender_chat_id, "درود مهندس جان! در خدمتم. می‌توانید بفرمایید چه کاری انجام دهم:\n\n" + get_welcome_text(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["قیمت", "پیش فاکتور", "پیش‌فاکتور", "فاکتور", "محاسبه", "کالکولاتور", "ценоразпис", "оферта", "цена"]):
                         send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["اسکن", "scan", "بروزرسانی", "جستجو کن", "بگرد", "اسکن کن"]):
@@ -856,7 +866,7 @@ def run_telegram_bot():
                     elif any(k in clean_query.lower() for k in ["پیشنهاد", "متن پیام", "پیچ", "pitches", "آفر"]):
                         send_msg(token, sender_chat_id, handle_pitches_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["هوش", "ai", "مشاوره", "بپرس", "سوال"]):
-                        send_msg(token, sender_chat_id, ask_zagros_ai(clean_query, chat_id=sender_chat_id), get_main_keyboard())
+                        send_msg(token, sender_chat_id, ask_zagros_ai(clean_query, chat_id=sender_chat_id, context_ref=reply_context), get_main_keyboard())
                     elif clean_query.startswith("/start") or clean_query.startswith("/help"):
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
                     elif clean_query.startswith("/calc"):
@@ -882,7 +892,7 @@ def run_telegram_bot():
                             send_msg(token, sender_chat_id, res, get_main_keyboard())
                         else:
                             # If no specific database lead matches, route directly to Zagros AI Expert Brain!
-                            ai_res = ask_zagros_ai(clean_query, chat_id=sender_chat_id)
+                            ai_res = ask_zagros_ai(clean_query, chat_id=sender_chat_id, context_ref=reply_context)
                             send_msg(token, sender_chat_id, ai_res, get_main_keyboard())
 
         except Exception as e:
