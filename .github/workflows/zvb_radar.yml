@@ -1,0 +1,29 @@
+name: ZVB Radar 24/7 Daily Publisher
+
+on:
+  schedule:
+    # 06:00 UTC = 09:00 AM Sofia time
+    - cron: '0 6 * * *'
+    # 15:00 UTC = 18:00 PM Sofia time
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-radar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run ZVB Radar & Send Telegram Digest
+        run: |
+          python daily_digest.py --now
