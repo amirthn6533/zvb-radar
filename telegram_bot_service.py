@@ -100,9 +100,21 @@ def handle_urgent_cmd():
     
     msg = "🎯 <b>ТОП ЕЛЕКТРО ПРОЕКТИ И ЗАПИТВАНИЯ (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
     for idx, l in enumerate(urgent[:5], 1):
-        phone = f"\n📞 Телефон: <b>{l.get('phone')}</b>" if l.get('phone') else ""
-        msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone}\n🌐 Източник: {l.get('source')}\n🔗 <a href='{l.get('url')}'>Отвори обявата</a>\n\n"
-    msg += "💡 <i>Позвънете бързо преди конкуренцията!</i>"
+        phone = l.get('phone')
+        phone_block = ""
+        action_links = []
+        if phone:
+            phone_block = f"\n📞 Телефон: <b>{phone}</b>"
+            if phone.startswith("08") and len(phone) == 10:
+                intl = "359" + phone[1:]
+                wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
+                action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
+                action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+        action_links.append(f"<a href='{l.get('url')}'>🔗 Виж обявата</a>")
+        actions_str = " | ".join(action_links)
+        
+        msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_block}\n🌐 {l.get('source')} ➔ {actions_str}\n\n"
+    msg += "💡 <i>Кликнете върху WhatsApp или Обади се за директна връзка!</i>"
     return msg
 
 def handle_builders_cmd():

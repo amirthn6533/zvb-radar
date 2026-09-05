@@ -8,6 +8,7 @@ import sys
 import json
 import time
 import datetime
+import urllib.parse
 import requests
 import lead_scraper
 
@@ -145,22 +146,55 @@ def build_daily_digest(period_name="Дневен бюлетин"):
     if urgent_leads:
         msg += "⚡ <b>ДИРЕКТНИ ЗАПИТВАНИЯ ЗА ЕЛЕКТРОТЕХНИК:</b>\n"
         for idx, l in enumerate(urgent_leads[:4], 1):
-            phone_part = f"\n   📞 Телефон: <b>{l.get('phone')}</b>" if l.get('phone') else ""
-            msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_part}\n   🔗 <a href='{l.get('url')}'>Отвори обявата</a>\n\n"
+            phone = l.get('phone')
+            phone_part = ""
+            action_links = []
+            if phone:
+                phone_part = f"\n   📞 Телефон: <b>{phone}</b>"
+                if phone.startswith("08") and len(phone) == 10:
+                    intl = "359" + phone[1:]
+                    wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги, София) относно Вашия проект. https://zvb.bg")
+                    action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
+                    action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+            action_links.append(f"<a href='{l.get('url')}'>🔗 Виж обявата</a>")
+            actions_str = " | ".join(action_links)
+            msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_part}\n   👉 {actions_str}\n\n"
 
     # 2. CCTV & Smart home
     if cctv_smart_leads:
         msg += "📹 <b>ВИДЕОНАБЛЮДЕНИЕ И УМЕН ДОМ:</b>\n"
         for idx, l in enumerate(cctv_smart_leads[:2], 1):
-            phone_part = f"\n   📞 Телефон: <b>{l.get('phone')}</b>" if l.get('phone') else ""
-            msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  🔗 <a href='{l.get('url')}'>Виж проекта</a>\n\n"
+            phone = l.get('phone')
+            phone_part = ""
+            action_links = []
+            if phone:
+                phone_part = f"\n   📞 Телефон: <b>{phone}</b>"
+                if phone.startswith("08") and len(phone) == 10:
+                    intl = "359" + phone[1:]
+                    wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Видеонаблюдение & Умен дом, София). https://zvb.bg")
+                    action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
+                    action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+            action_links.append(f"<a href='{l.get('url')}'>🔗 Виж проекта</a>")
+            actions_str = " | ".join(action_links)
+            msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
 
     # 3. Electrical installations & Building Subcontracting
     if contractor_leads:
         msg += "🏗️ <b>ЕЛ. ИНСТАЛАЦИИ И ОБЕКТИ В СОФИЯ:</b>\n"
         for idx, l in enumerate(contractor_leads[:3], 1):
-            phone_part = f"\n   📞 Телефон: <b>{l.get('phone')}</b>" if l.get('phone') else ""
-            msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  🔗 <a href='{l.get('url')}'>Виж офертата</a>\n\n"
+            phone = l.get('phone')
+            phone_part = ""
+            action_links = []
+            if phone:
+                phone_part = f"\n   📞 Телефон: <b>{phone}</b>"
+                if phone.startswith("08") and len(phone) == 10:
+                    intl = "359" + phone[1:]
+                    wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Ел. инсталации подизпълнител, София). https://zvb.bg")
+                    action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
+                    action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+            action_links.append(f"<a href='{l.get('url')}'>🔗 Виж офертата</a>")
+            actions_str = " | ".join(action_links)
+            msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
 
     msg += "━━━━━━━━━━━━━━━━━━━━\n"
     msg += "💡 <i>Прецизно филтрирано за ZVB: Само електроуслуги, камери и умен дом в София.</i>\n"

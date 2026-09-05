@@ -99,25 +99,42 @@ def send_telegram_alert(lead, bot_token, chat_id):
     elif lead.get("category") == "renovation":
         category_icon = "🔨"
 
-    phone_str = f"📞 <b>Телефон:</b> {lead.get('phone')}\n" if lead.get('phone') else ""
+    phone = lead.get('phone')
+    phone_str = f"📞 <b>Телефон:</b> <code>{phone}</code>\n" if phone else ""
 
     text = (
-        f"{category_icon} <b>ZVB Радар: Ново запитване!</b>\n\n"
+        f"{category_icon} <b>ZVB Радар: Нов електро проект!</b>\n\n"
         f"📌 <b>Заглавие:</b> {lead.get('title')}\n"
         f"🏷️ <b>Категория:</b> {lead.get('category_label')}\n"
         f"📍 <b>Локация:</b> {lead.get('location')}\n"
         f"{phone_str}"
         f"🌐 <b>Източник:</b> {lead.get('source')} ({lead.get('keyword')})\n\n"
-        f"🔗 <a href='{lead.get('url')}'>Отвори обявата веднага</a>\n"
         f"🏢 <i>ZVB Sofia - Електрически и умни системи</i>"
     )
+    
+    # Inline buttons: WhatsApp, Direct Call, View Ad
+    buttons = []
+    first_row = []
+    
+    if phone and phone.startswith("08") and len(phone) == 10:
+        intl_phone = "359" + phone[1:]
+        wa_text = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
+        wa_url = f"https://wa.me/{intl_phone}?text={wa_text}"
+        first_row.append({"text": "💬 WhatsApp (1-клик)", "url": wa_url})
+        first_row.append({"text": f"📞 Обади се ({phone})", "url": f"tel:+{intl_phone}"})
+        buttons.append(first_row)
+        
+    buttons.append([{"text": "🔗 Отвори обявата в сайта", "url": lead.get("url", "#")}])
+
+    reply_markup = {"inline_keyboard": buttons}
     
     api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     payload = {
         "chat_id": chat_id,
         "text": text,
         "parse_mode": "HTML",
-        "disable_web_page_preview": False
+        "disable_web_page_preview": True,
+        "reply_markup": reply_markup
     }
     try:
         r = requests.post(api_url, json=payload, timeout=10)
