@@ -102,14 +102,22 @@ def send_telegram_alert(lead, bot_token, chat_id):
     phone = lead.get('phone')
     phone_str = f"📞 <b>Телефон:</b> <code>{phone}</code>\n" if phone else ""
 
+    if lead.get("source") == "MaistorPlus":
+        header = "⚡🚨 <b>СВЕТКАВИЧНО ИЗВЕСТИЕ ЗА НОВ ЕЛЕКТРО ПРОЕКТ!</b>\n<i>(Нова заявка в реално време — София)</i>"
+        status_line = "⏳ <b>Статус:</b> 🟢 <i>Отворен за първи кандидат!</i>\n"
+    else:
+        header = f"{category_icon} <b>ZVB Радар: Нов електро проект!</b>"
+        status_line = ""
+
     text = (
-        f"{category_icon} <b>ZVB Радар: Нов електро проект!</b>\n\n"
+        f"{header}\n\n"
         f"📌 <b>Заглавие:</b> {lead.get('title')}\n"
         f"🏷️ <b>Категория:</b> {lead.get('category_label')}\n"
         f"📍 <b>Локация:</b> {lead.get('location')}\n"
+        f"{status_line}"
         f"{phone_str}"
         f"🌐 <b>Източник:</b> {lead.get('source')} ({lead.get('keyword')})\n\n"
-        f"🏢 <i>ZVB Sofia - Електрически и умни системи</i>"
+        f"🏢 <i>ZVB Sofia — Електрически и умни инсталации (zvb.bg)</i>"
     )
     
     # Inline buttons: WhatsApp, Direct Call, View Ad
@@ -124,7 +132,8 @@ def send_telegram_alert(lead, bot_token, chat_id):
         first_row.append({"text": f"📞 Обади се ({phone})", "url": f"tel:+{intl_phone}"})
         buttons.append(first_row)
         
-    buttons.append([{"text": "🔗 Отвори обявата в сайта", "url": lead.get("url", "#")}])
+    action_btn_text = "🚀 Кандидатствай ПЪРВИ в MaistorPlus" if lead.get("source") == "MaistorPlus" else "🔗 Отвори обявата в сайта"
+    buttons.append([{"text": action_btn_text, "url": lead.get("url", "#")}])
 
     reply_markup = {"inline_keyboard": buttons}
     

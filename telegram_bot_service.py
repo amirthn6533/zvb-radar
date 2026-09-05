@@ -567,6 +567,113 @@ def background_scheduler(token, chat_id):
             
         time.sleep(30)
 
+def realtime_fast_radar(token, group_chat_id):
+    """
+    ⚡ Ultra-fast 60-second real-time monitor for new electrical client projects in Sofia.
+    Ensures ZVB receives instant Telegram ping within <60 seconds of client posting.
+    """
+    print("⚡ [REAL-TIME RADAR] Active! Scanning for new client projects every 60s...")
+    s = requests.Session()
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    }
+    
+    mp_cfg = load_config().get("maistorplus", {})
+    username = mp_cfg.get("username")
+    password = mp_cfg.get("password")
+    
+    if not (username and password):
+        return
+
+    def do_login():
+        try:
+            r1 = s.get('https://maistorplus.com/login', headers=headers, timeout=10)
+            soup = BeautifulSoup(r1.text, 'html.parser')
+            tok = soup.find('input', {'name': '_csrf_token'})
+            if not tok:
+                return False
+            csrf = tok.get('value')
+            r2 = s.post('https://maistorplus.com/login_check', data={
+                '_csrf_token': csrf,
+                '_username': username,
+                '_password': password,
+                '_remember_me': 'on'
+            }, headers=headers, timeout=10)
+            return r2.status_code == 200 or '/craftsman' in r2.url
+        except Exception:
+            return False
+
+    do_login()
+    mp_keywords = ['контакт', 'вентилатор', 'ел', 'електро', 'осветлен', 'табло', 'бойлер', 'кабел', 'ключ', 'лед', 'камер', 'умен дом']
+
+    while True:
+        try:
+            time.sleep(60)
+            
+            # Check hot open jobs where no phones have been exchanged yet
+            r_jobs = s.get('https://maistorplus.com/craftsman/jobs/no-exchanged-phones', headers=headers, timeout=10)
+            if r_jobs.status_code != 200 or 'login' in r_jobs.url:
+                do_login()
+                continue
+                
+            soup = BeautifulSoup(r_jobs.text, 'html.parser')
+            rows = soup.select('table tr')
+            
+            existing_leads = lead_scraper.load_existing_leads()
+            new_discovered = []
+            
+            for tr in rows:
+                tds = tr.find_all('td')
+                if len(tds) >= 3:
+                    title_td = tds[0]
+                    city_td = tds[1] if len(tds) > 1 else None
+                    budget_td = tds[2] if len(tds) > 2 else None
+                    
+                    link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
+                    if not link_tag:
+                        continue
+                        
+                    href = link_tag['href'].split('?')[0]
+                    full_url = urllib.parse.urljoin('https://maistorplus.com', href)
+                    title = title_td.get_text(' ', strip=True)
+                    city = city_td.get_text(' ', strip=True) if city_td else 'София'
+                    budget = budget_td.get_text(' ', strip=True) if budget_td else ''
+                    
+                    m = re.search(r'/job/(\d+)', href)
+                    job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(href)}"
+                    
+                    # Verify Sofia and electrical
+                    if 'софия' not in city.lower():
+                        continue
+                    if not any(k in title.lower() for k in mp_keywords):
+                        continue
+                        
+                    if job_id not in existing_leads:
+                        new_item = {
+                            "id": job_id,
+                            "title": f"[MaistorPlus] {title} ({budget})",
+                            "url": full_url,
+                            "source": "MaistorPlus",
+                            "keyword": "Спешна клиентска заявка",
+                            "category": "urgent_client",
+                            "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
+                            "location": "София",
+                            "phone": "",
+                            "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                        }
+                        existing_leads[job_id] = new_item
+                        new_discovered.append(new_item)
+                        
+            if new_discovered:
+                lead_scraper.save_leads(existing_leads)
+                for item in new_discovered:
+                    print(f"🚨 [REAL-TIME ALERT] New electrical lead discovered: {item['title']}")
+                    lead_scraper.send_telegram_alert(item, token, group_chat_id)
+                    time.sleep(0.5)
+
+        except Exception as e:
+            print(f"Real-time fast radar error: {e}")
+
 def run_telegram_bot():
     cfg = load_config()
     token = cfg.get("telegram", {}).get("bot_token")
@@ -582,10 +689,12 @@ def run_telegram_bot():
     print("Listening for messages & commands 24/7...")
     print("=" * 60)
 
-    # Start background scheduler thread
+    # Start background scheduler threads (Digest + Ultra-Fast 60s Radar)
     if group_chat_id:
-        t = threading.Thread(target=background_scheduler, args=(token, group_chat_id), daemon=True)
-        t.start()
+        t_sched = threading.Thread(target=background_scheduler, args=(token, group_chat_id), daemon=True)
+        t_sched.start()
+        t_fast = threading.Thread(target=realtime_fast_radar, args=(token, group_chat_id), daemon=True)
+        t_fast.start()
 
     offset = 0
     while True:
