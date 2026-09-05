@@ -1,0 +1,58 @@
+name: "\U0001F916 Zagros Bot 24/7"
+
+# ═══════════════════════════════════════════════════════════════
+# ZVB Zagros Telegram Bot — 24/7 Free Cloud Deployment
+# 
+# HOW IT WORKS:
+# 1. Cron triggers this workflow every 5 hours (00:00, 05:00, 10:00, 15:00, 20:00 UTC)
+# 2. Each run keeps the bot alive for ~5 hours (18000 seconds)
+# 3. When a new cron fires, the old run is cancelled (cancel-in-progress)
+# 4. Result: near-continuous 24/7 uptime with only ~2 min gap every 5 hours
+#
+# TO START MANUALLY: Go to Actions tab → "Zagros Bot 24/7" → "Run workflow"
+# ═══════════════════════════════════════════════════════════════
+
+on:
+  workflow_dispatch: {}    # ← Manual "Run workflow" button in GitHub Actions tab
+  schedule:
+    - cron: '0 */5 * * *'  # Every 5 hours: 00:00, 05:00, 10:00, 15:00, 20:00 UTC
+
+concurrency:
+  group: zagros-bot-24-7
+  cancel-in-progress: true  # Kill previous run when new one starts (prevents duplicates)
+
+jobs:
+  zagros-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 310    # Hard safety limit: 5h10m (GitHub max = 6h)
+
+    steps:
+      # ── 1. Get the code ──
+      - name: "\U0001F4E5 Checkout repository"
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Python ──
+      - name: "\U0001F40D Setup Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'          # Cache pip packages for faster restarts
+
+      # ── 3. Install dependencies ──
+      - name: "\U0001F4E6 Install dependencies"
+        run: pip install -r requirements.txt
+
+      # ── 4. Run the bot for ~5 hours ──
+      - name: "\U0001F680 Run Zagros Bot (5h session)"
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🤖 Zagros Bot starting at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "⏰ This session will run for ~5 hours"
+          echo "════════════════════════════════════════"
+          timeout 18000 python telegram_bot_service.py || true
+          echo "════════════════════════════════════════"
+          echo "⏰ Session ended at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔄 Next cron will restart the bot automatically"
+          echo "════════════════════════════════════════"
+        # timeout 18000 = 5 hours exactly
+        # || true = don't mark job as "failed" when timeout kills the process
