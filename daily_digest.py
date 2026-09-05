@@ -146,8 +146,9 @@ def run_schedule():
             send_digest_now("Вечерен бюлетин за проекти")
             sent_today.add(evening_key)
 
-        # Also every 30 minutes, run background scan for urgent leads
-        if now.minute % 30 == 0 and now.second < 30:
+        # Every 15 minutes, run background scan for new opportunities
+        if now.minute % 15 == 0 and now.second < 30:
+            print(f"[{current_time_str}] Автоматичен радар (на всеки 15 минути)...")
             lead_scraper.run_scan()
 
         time.sleep(30)
