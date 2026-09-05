@@ -15,6 +15,7 @@ import threading
 import datetime
 import requests
 import urllib.parse
+import re
 
 import lead_scraper
 import daily_digest
@@ -62,25 +63,32 @@ def get_main_keyboard():
     return {
         "inline_keyboard": [
             [
-                {"text": "⚡ Спешни електро запитвания", "callback_data": "cmd_urgent"},
+                {"text": "⚡ Спешни електро проекти", "callback_data": "cmd_urgent"},
                 {"text": "🔍 Сканирай сега (Live)", "callback_data": "cmd_scan"}
+            ],
+            [
+                {"text": "💰 Калкулатор за цени & оферти", "callback_data": "cmd_calc"},
+                {"text": "📋 Готови оферти (B2B)", "callback_data": "cmd_pitches"}
             ],
             [
                 {"text": "🏗️ Строителни компании (КСБ)", "callback_data": "cmd_builders"},
                 {"text": "💎 Интериорни дизайнери", "callback_data": "cmd_designers"}
             ],
             [
-                {"text": "📊 Статистика на базата", "callback_data": "cmd_stats"},
-                {"text": "📋 Готови оферти", "callback_data": "cmd_pitches"}
+                {"text": "📊 Статистика на базата", "callback_data": "cmd_stats"}
             ]
         ]
     }
 
 def get_welcome_text():
     return (
-        "⚡ <b>ZVB Интерактивен Радар (София)</b> ⚡\n\n"
-        "Здравейте! Аз съм Вашият денонощен асистент за намиране на проекти за електроуслуги, камери и умен дом.\n\n"
-        "👇 <b>Изберете действие от бутоните по-долу или напишете ключова дума</b> (напр. <i>'младост', 'табло', 'камери', 'лозенец'</i>):"
+        "⚡ <b>ZVB Интерактивен Асистент (София)</b> ⚡\n\n"
+        "درود! من زاگرس، دستیار هوشمند تیم مهندسی <b>ZVB</b> هستم.\n"
+        "برای صحبت با من کافیست کلمه <b>«زاگرس»</b> را در پیام خود بیاورید، یا از دکمه‌های زیر استفاده کنید.\n\n"
+        "👇 <b>امکانات ویژه:</b>\n"
+        "• ⚡ مشاهده پروژه‌های فوری کارفرمایان برق\n"
+        "• 💰 <b>محاسبه پیش‌فاکتور رسمی:</b> بنویسید <i>'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو برق، ۳۰ پریز، ۴ دوربین'</i>\n"
+        "• 🔍 جستجوی محله یا زمینه (مثلاً <i>'زاگرس младост'</i> или <i>'زاگرس табло'</i>)"
     )
 
 def handle_urgent_cmd():
@@ -166,6 +174,111 @@ def handle_stats_cmd():
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"🌐 <i>ZVB | Електрически и умни системи</i>"
     )
+
+def handle_calc_cmd(query=""):
+    """
+    Smart Electrical Quotation & Price Calculator for Sofia market.
+    Calculates labor and estimated materials based on input parameters.
+    """
+    q = query.lower()
+    # Normalize Persian / Arabic digits to English digits
+    persian_digits = {'۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4', '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9'}
+    for p_d, e_d in persian_digits.items():
+        q = q.replace(p_d, e_d)
+    
+    # If user just asks for calculator guide/price list
+    trigger_words = ['метър', 'кв.м', 'кв', 'm2', 'табло', 'контакт', 'камер', 'точка', 'апартамент', 'бойлер', 'متر', 'تابلو', 'پریز', 'کلید', 'دوربین', 'آپارتمان']
+    if not any(k in q for k in trigger_words):
+        return (
+            "💰 <b>ZVB СМАРТ КАЛКУЛАТОР ЗА ОФЕРТИ (Ценоразпис София):</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "📌 <b>Ориентировъчни цени за труд (ZVB Sofia):</b>\n"
+            "• Изграждане на ел. инсталация: <b>25 - 35 лв./кв.м</b> (€13 - €18)\n"
+            "• Смяна/монтаж на апартаментно ел. табло (до 12 предпазителя): <b>140 - 180 лв.</b> (€70 - €90)\n"
+            "• Изтегляне на нов токов кръг (кабел): <b>4 - 6 лв./л.м.</b> (€2 - €3)\n"
+            "• Монтаж на контакт / ключ / розетка: <b>8 - 12 лв./бр.</b> (€4 - €6)\n"
+            "• Монтаж на осветително тяло / плафон / полилей: <b>20 - 35 лв./бр.</b> (€10 - €18)\n"
+            "• Монтаж на скрито LED осветление с профил: <b>18 - 25 лв./л.м.</b> (€9 - €13)\n"
+            "• Монтаж и настройка на охранителна IP камера: <b>60 - 90 лв./бр.</b> (€30 - €45)\n"
+            "• Свързване на бойлер / електроуред: <b>50 - 70 лв./бр.</b> (€25 - €35)\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "💡 <b>نحوه استعلام قیمت هوشمند:</b>\n"
+            "کافیست در گروه بنویسید:\n"
+            "<code>زاگرس قیمت: آپارتمان ۸۰ متری، تابلو برق، ۳۰ پریز، ۴ دوربین</code>\n"
+            "تا پیش‌فاکتور رسمی تفکیک‌شده به زبان بلغاری برای مشتری تولید شود!"
+        )
+
+    # Parse parameters
+    area = 0
+    m_area = re.search(r'(\d+)\s*(?:кв|кв\.м|мет|m2|متر)', q)
+    if m_area:
+        area = int(m_area.group(1))
+
+    sockets = 0
+    m_sock = re.search(r'(\d+)\s*(?:контакт|прериз|پریز|کلید|ключ)', q)
+    if m_sock:
+        sockets = int(m_sock.group(1))
+
+    cameras = 0
+    m_cam = re.search(r'(\d+)\s*(?:камер|دوربین)', q)
+    if m_cam:
+        cameras = int(m_cam.group(1))
+
+    has_board = any(w in q for w in ['табло', 'تابلو'])
+    has_led = any(w in q for w in ['led', 'лед', 'осветлен', 'نور'])
+
+    # Calculation
+    labor_bgn = 0
+    breakdown = []
+
+    if area > 0:
+        area_labor = area * 30
+        labor_bgn += area_labor
+        breakdown.append(f"• Цялостна ел. инсталация ({area} кв.м): <b>{area_labor} лв.</b> (€{round(area_labor/1.95583)})")
+    
+    if has_board:
+        labor_bgn += 160
+        breakdown.append("• Асемблиране и монтаж на ново ел. табло: <b>160 лв.</b> (€82)")
+        
+    if sockets > 0:
+        sock_labor = sockets * 10
+        labor_bgn += sock_labor
+        breakdown.append(f"• Монтаж на ключове и контакти ({sockets} бр.): <b>{sock_labor} лв.</b> (€{round(sock_labor/1.95583)})")
+        
+    if cameras > 0:
+        cam_labor = cameras * 70
+        labor_bgn += cam_labor
+        breakdown.append(f"• Монтаж и конфигурация на камери ({cameras} бр.): <b>{cam_labor} лв.</b> (€{round(cam_labor/1.95583)})")
+
+    if has_led:
+        labor_bgn += 180
+        breakdown.append("• Монтаж на дизайнерско LED осветление: <b>180 лв.</b> (€92)")
+
+    if labor_bgn == 0:
+        labor_bgn = 150
+        breakdown.append("• Стандартен електро монтаж и диагностика: <b>150 лв.</b> (€77)")
+
+    materials_bgn = round(labor_bgn * 0.45)
+    total_bgn = labor_bgn + materials_bgn
+    total_eur = round(total_bgn / 1.95583)
+
+    quote_msg = (
+        "📑 <b>ОФИЦИАЛНА ОФЕРТА / ZVB ELECTRICAL SYSTEMS (София)</b>\n"
+        f"📅 <i>Дата: {datetime.datetime.now().strftime('%d.%m.%Y')} г. | Валидност: 14 дни</i>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "📋 <b>ОПИСАНИЕ НА ДЕЙНОСТИТЕ:</b>\n"
+        + "\n".join(breakdown) + "\n\n"
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        f"🛠️ Труд: <b>{labor_bgn} лв.</b>\n"
+        f"📦 Ориентировъчни материали: <b>~{materials_bgn} лв.</b>\n"
+        f"💎 <b>ОБЩА СТОЙНОСТ: ~{total_bgn} лв. (~€{total_eur})</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        "✅ <i>Включва: БЕЗПЛАТЕН оглед на място в София, издаване на протокол и гаранция 5 години.</i>\n\n"
+        "📞 <b>Контакт за потвърждение:</b>\n"
+        "Инж. екип ZVB: <b>+359 87 7944353</b> | 🌐 <a href='https://zvb.bg'>zvb.bg</a>\n"
+        "<i>(Можете директно да копирате и препратите този текст на клиента!)</i>"
+    )
+    return quote_msg
 
 def handle_pitches_cmd():
     return (
@@ -295,6 +408,9 @@ def run_telegram_bot():
                     elif cb_data == "cmd_stats":
                         text = handle_stats_cmd()
                         send_msg(token, sender_chat_id, text, get_main_keyboard())
+                    elif cb_data == "cmd_calc":
+                        text = handle_calc_cmd()
+                        send_msg(token, sender_chat_id, text, get_main_keyboard())
                     elif cb_data == "cmd_pitches":
                         text = handle_pitches_cmd()
                         send_msg(token, sender_chat_id, text, get_main_keyboard())
@@ -332,6 +448,8 @@ def run_telegram_bot():
                     
                     if not clean_query or clean_query in ["سلام", "درود", "منو", "menu", "help", "کمک"]:
                         send_msg(token, sender_chat_id, "درود! در خدمتم. می‌توانید بفرمایید چه کاری انجام دهم:\n\n" + get_welcome_text(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["قیمت", "پیش فاکتور", "پیش‌فاکتور", "فاکتور", "محاسبه", "کالکولاتور", "ценоразпис", "оферта", "цена"]):
+                        send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["اسکن", "scan", "بروزرسانی", "جستجو کن", "بگرد", "اسکن کن"]):
                         send_msg(token, sender_chat_id, "⏳ <i>در حال اسکن زنده سایت‌ها برای پروژه‌های جدید برقی...</i>")
                         lead_scraper.run_scan()
@@ -349,6 +467,8 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, handle_pitches_cmd(), get_main_keyboard())
                     elif clean_query.startswith("/start") or clean_query.startswith("/help"):
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
+                    elif clean_query.startswith("/calc"):
+                        send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
                     elif clean_query.startswith("/scan"):
                         send_msg(token, sender_chat_id, "⏳ <i>Стартирано е сканиране на живо...</i>")
                         lead_scraper.run_scan()
