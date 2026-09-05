@@ -1,0 +1,37 @@
+name: ZVB Radar 24/7 Daily Publisher
+
+on:
+  schedule:
+    # 06:00 UTC = 09:00 AM Sofia time (EEST)
+    - cron: '0 6 * * *'
+    # 15:00 UTC = 18:00 PM Sofia time (EEST)
+    - cron: '0 15 * * *'
+  workflow_dispatch: # Allows running manually with 1 click from GitHub anytime
+
+jobs:
+  run-radar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run ZVB Radar & Send Telegram Digest
+        run: |
+          python daily_digest.py --now
+
+      - name: Commit and save updated leads database
+        run: |
+          git config --global user.name "ZVB-Radar-Bot"
+          git config --global user.email "bot@zvb.bg"
+          git add leads.json leads.csv leads_dashboard.html
+          git commit -m "Auto-update leads database [skip ci]" || echo "No changes to commit"
+          git push || echo "Push skipped"

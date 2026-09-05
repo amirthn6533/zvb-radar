@@ -1,0 +1,16 @@
+[Unit]
+Description=ZVB Lead Radar & Telegram Digest 24/7
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/zvb-radar
+ExecStart=/usr/bin/python3 /root/zvb-radar/daily_digest.py
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+Environment=TZ=Europe/Sofia
+
+[Install]
+WantedBy=multi-user.target
