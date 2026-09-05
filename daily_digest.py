@@ -23,48 +23,66 @@ EXCLUDE_WORDS = [
     'плочки', 'лепене на плочки', 'отпушване', 'дограма', 'кърти чисти',
     'фризер', 'хладилник', 'готварска печка', 'пералня',
     'курс', 'курсове', 'обучение', 'учебен център', 'училище', 'дистанционно',
+    'диплом', 'сертификат', 'книга', 'литература', 'учебник', 'задачи', 'сборник', 'речник', 'записки', 'теоретична', 'ръководство',
     'германия', 'чужбина', 'холандия', 'англия', 'франция', 'австрия', 'белгия',
-    'търся работа', 'търси работа', 'търсим работа', 'диплом', 'сертификат'
+    'търся работа', 'търси работа', 'търсим работа', 'работа като', 'желана длъжност', 'секретарка', 'шофьор', 'кофражист',
+    'генератор за ток', 'агрегат за ток', 'бушонно табло опел', 'части', 'ремарке', 'трабант', 'кемпер', 'мултиметър', 'микрометър',
+    'honda', 'opel', 'bmw', 'mercedes', 'toyota', 'audi', 'лампа', 'протектор', 'фолио', 'ит експерт', 'хладилни камери',
+    'задно виждане', 'авто камери', 'екшън камери', 'gopro', 'до ключ', 'от основи до ключ',
+    'имот', 'имоти', 'двор', 'кв.м', 'рзп', 'табела'
 ]
 
 SOFIA_AREAS = [
     'софия', 'sofia', 'младост', 'люлин', 'лозенец', 'витоша', 'бояна', 'драгалевци',
     'надежда', 'център', 'манастирски ливади', 'овча купел', 'гео милев', 'изток',
     'дианабад', 'белите брези', 'стрелбище', 'красно село', 'хиподрума', 'симеоново',
-    'банишора', 'хаджи димитър', 'дружба', 'редута', 'илинден', 'красна поляна', 'павлово', 'банкя'
+    'банишора', 'хаджи димитър', 'дружба', 'редута', 'илинден', 'красна поляна', 'павлово',
+    'банкя', 'обеля', 'света троица', 'разсадника', 'борово', 'гоце делчев', 'слатина', 'славия', 'връбница'
 ]
 
 OTHER_CITIES = [
     'бургас', 'варна', 'пловдив', 'русе', 'стара загора', 'плевен', 'търговище', 
     'видин', 'разград', 'свищов', 'пазарджик', 'кърджали', 'велико търново',
-    'перник', 'благоевград', 'шумен', 'сливен', 'хасково', 'враца', 'габрово'
+    'перник', 'благоевград', 'шумен', 'сливен', 'хасково', 'враца', 'габрово',
+    'пещера', 'дупница', 'сандански', 'асеновград', 'казанлък', 'червен бряг',
+    'несебър', 'слънчев бряг', 'кюстендил', 'елин пелин', 'сливница', 'ботевград', 'мездра', 'разлог', 'банско'
 ]
 
 ELECTRICAL_MUST_HAVE = [
-    'ел', 'електро', 'инсталация', 'табло', 'окабеляване', 'кабели',
-    'контакт', 'контакти', 'ключ', 'ключове', 'осветление', 'led', 'лунички',
-    'видеонаблюдение', 'камери', 'cctv', 'умен дом', 'smart home',
-    'домофон', 'соларни', 'фотоволтаиц', 'слаботоков', 'вентилатор'
+    'ел.', 'ел ', 'електро', 'инсталация', 'инсталации', 'ел табло', 'ел. табло', 'табла', 'окабеляване', 'кабели',
+    'контакт', 'контакти', 'ел ключ', 'ел. ключ', 'ключове и контакти', 'осветление', 'led', 'лунички',
+    'видеонаблюдение', 'охранителни камери', 'камери за видеонаблюдение', 'cctv', 'умен дом', 'smart home',
+    'домофон', 'соларни панели', 'фотоволтаиц', 'слаботоков', 'вентилатор'
 ]
 
 def is_strictly_electrical_sofia(l):
     title = l.get('title', '').lower()
-    text = (title + ' ' + l.get('keyword', '') + ' ' + l.get('location', '')).lower()
+    loc = l.get('location', '').lower()
+    source = l.get('source', '')
+    full = (title + ' ' + loc).lower()
     
     # 1. Blacklist
-    if any(ex in title for ex in EXCLUDE_WORDS):
+    if any(ex in title or ex in full for ex in EXCLUDE_WORDS):
         return False
         
     # 2. Exclude other cities
-    is_other_city = any(city in text for city in OTHER_CITIES)
-    is_sofia = any(area in text for area in SOFIA_AREAS)
-    if is_other_city and 'софия' not in title:
+    if any(city in full for city in OTHER_CITIES) and 'софия' not in title:
         return False
-    if not is_sofia:
+
+    # Check Sofia strictly
+    if source == 'Alo.bg' and loc == 'българия / софия':
+        if not any(area in title for area in SOFIA_AREAS):
+            return False
+    elif not any(area in full for area in SOFIA_AREAS):
         return False
         
-    # 3. Must be electrical / CCTV / smart home
-    has_electrical = any(el in title for el in ELECTRICAL_MUST_HAVE) or any(el in l.get('keyword', '').lower() for el in ['електротехник', 'ел инсталация', 'ел табло', 'камери', 'умен дом'])
+    # 3. Must have electrical core
+    has_electrical = any(el in title for el in ELECTRICAL_MUST_HAVE)
+    if not has_electrical:
+        # MaistorPlus check
+        if source == 'MaistorPlus' and any(w in title for w in ['контакт', 'вентилатор', 'ел', 'електро', 'осветление']):
+            has_electrical = True
+            
     if not has_electrical:
         return False
 
@@ -106,10 +124,15 @@ def build_daily_digest(period_name="Дневен бюлетин"):
     # Apply strict electrical Sofia filtering
     valid_leads = [l for l in leads_list if is_strictly_electrical_sofia(l)]
     
-    # Group into Categories
-    urgent_leads = [l for l in valid_leads if any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор'])]
+    # Group into Categories and sort (with phone first)
+    urgent_leads = [l for l in valid_leads if any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор', 'монтаж', 'смяна', 'подмяна', 'контакт'])]
+    urgent_leads.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
+
     cctv_smart_leads = [l for l in valid_leads if any(w in l.get('title', '').lower() for w in ['камери', 'видеонаблюдение', 'умен дом', 'смарт', 'домофон'])]
+    cctv_smart_leads.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
+
     contractor_leads = [l for l in valid_leads if l not in urgent_leads and l not in cctv_smart_leads]
+    contractor_leads.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
 
     now_str = datetime.datetime.now().strftime("%d.%m.%Y | %H:%M") + " ч."
     header_icon = "🌅" if "сутрин" in period_name.lower() or "утрин" in period_name.lower() else "🌆"

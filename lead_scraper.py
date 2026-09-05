@@ -241,7 +241,16 @@ def scrape_alo(keyword):
             id_match = re.search(r'(\d{6,10})', clean_href)
             ad_id = f"alo_{id_match.group(1)}" if id_match else f"alo_{hash(full_url)}"
             
-            location = "София" if "софия" in (title + " " + item.text + " " + keyword).lower() else "България / София"
+            addr_elem = item.select_one('.listvip-item-address, .list-item-address')
+            addr_text = addr_elem.get_text(" ", strip=True) if addr_elem else ""
+            
+            if "софия" in addr_text.lower() or "софия" in title.lower():
+                location = "София"
+            elif addr_text:
+                location = addr_text.split("»")[-1].strip()
+            else:
+                location = "България"
+                
             cat, cat_label = classify_lead(title, keyword)
 
             # Check phones in card snippet
@@ -862,11 +871,13 @@ def run_scan():
 
     save_leads(existing_leads)
 
-    # Dispatch telegram alerts for newly discovered leads
+    # Dispatch telegram alerts for newly discovered leads (strictly electrical Sofia projects only)
     if telegram_enabled and bot_token and chat_id and new_leads:
-        print(f"\n📲 Sending Telegram alerts for {len(new_leads)} new opportunities...")
+        import daily_digest
+        strict_new_leads = [nl for nl in new_leads if daily_digest.is_strictly_electrical_sofia(nl)]
+        print(f"\n📲 Sending Telegram alerts for {len(strict_new_leads)} verified electrical Sofia opportunities...")
         sent_count = 0
-        for nl in new_leads[:15]:
+        for nl in strict_new_leads[:15]:
             if send_telegram_alert(nl, bot_token, chat_id):
                 sent_count += 1
             time.sleep(0.4)

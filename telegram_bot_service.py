@@ -90,12 +90,15 @@ def handle_urgent_cmd():
         leads = json.load(f)
     
     valid = [l for l in leads.values() if daily_digest.is_strictly_electrical_sofia(l)]
-    urgent = [l for l in valid if any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор'])]
+    urgent = [l for l in valid if any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор', 'монтаж', 'смяна', 'подмяна', 'контакт'])]
+    
+    # Sort leads: phone numbers first, then newest
+    urgent.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
     
     if not urgent:
         return "В момента няма спешни запитвания в София. Всичко е прегледано!"
     
-    msg = "🎯 <b>ТОП СПЕШНИ ЗАПИТВАНИЯ ЗА ЕЛЕКТРОТЕХНИК (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
+    msg = "🎯 <b>ТОП ЕЛЕКТРО ПРОЕКТИ И ЗАПИТВАНИЯ (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
     for idx, l in enumerate(urgent[:5], 1):
         phone = f"\n📞 Телефон: <b>{l.get('phone')}</b>" if l.get('phone') else ""
         msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone}\n🌐 Източник: {l.get('source')}\n🔗 <a href='{l.get('url')}'>Отвори обявата</a>\n\n"
