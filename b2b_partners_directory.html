@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZVB | B2B Каталог на строители и интериорни дизайнери в София</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A237E;
+            --secondary: #FFC107;
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --text: #0F172A;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --accent-builder: #2563EB;
+            --accent-designer: #8B5CF6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 24px; }
+        .container { max-width: 1350px; margin: 0 auto; }
+        
+        header {
+            background: linear-gradient(135deg, #0F172A 0%, #1A237E 100%);
+            color: white;
+            padding: 28px 36px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 12px 30px -10px rgba(26, 35, 126, 0.35);
+            border-bottom: 4px solid var(--secondary);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 26px; margin-bottom: 4px; }
+        header p { color: #C7D2FE; font-size: 14px; }
+        
+        .header-stats { display: flex; gap: 16px; }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 18px;
+            border-radius: 12px;
+            text-align: right;
+        }
+        .stat-box span { font-size: 24px; font-weight: 800; color: var(--secondary); display: block; }
+        .stat-box small { font-size: 11px; text-transform: uppercase; color: #E0E7FF; }
+
+        .action-banner {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-action {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-builder { background: var(--accent-builder); color: white; }
+        .btn-designer { background: var(--accent-designer); color: white; }
+        .btn-builder:hover { background: #1D4ED8; }
+        .btn-designer:hover { background: #7C3AED; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+        .tab-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        input.search-bar {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 14.5px;
+            outline: none;
+            background: white;
+            margin-bottom: 20px;
+        }
+        input.search-bar:focus { border-color: var(--primary); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+            gap: 18px;
+        }
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px -6px rgba(0,0,0,0.08);
+        }
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .badge-builder { background: #DBEAFE; color: #1E40AF; }
+        .badge-designer { background: #EDE9FE; color: #5B21B6; }
+
+        .card-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .card-detail { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+        .card-detail strong { color: var(--text); }
+        
+        .card-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-link {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .btn-pitch {
+            background: #F1F5F9;
+            border: 1px solid var(--border);
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10B981;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>ZVB | B2B Директория: Строители & Интериорни дизайнери</h1>
+                <p>Директни партньорства за ел. подизпълнение, дизайнерско осветление и умен дом в София</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <span>90</span>
+                    <small>Общо партньори</small>
+                </div>
+                <div class="stat-box">
+                    <span style="color: #60A5FA;">80</span>
+                    <small>Строители КСБ</small>
+                </div>
+                <div class="stat-box">
+                    <span style="color: #C084FC;">9</span>
+                    <small>Дизайнери & Архитекти</small>
+                </div>
+            </div>
+        </header>
+
+        <div class="action-banner">
+            <div>
+                <strong>🤝 Готови персонализирани предложения за сътрудничество:</strong>
+                <p style="font-size:13px; color:var(--muted);">Кликнете за копиране на готово съобщение за строител или за дизайнерско студио.</p>
+            </div>
+            <div class="action-btns">
+                <button class="btn-action btn-builder" onclick="copyText('builder')">📋 Оферта за Строителна фирма</button>
+                <button class="btn-action btn-designer" onclick="copyText('designer')">📋 Оферта за Интериорен дизайнер</button>
+            </div>
+        </div>
+
+        <div id="builderText" style="display:none;">Здравейте! Пишем Ви от ZVB (Електрически и умни системи, гр. София). Предлагаме професионално подизпълнение на ел. инсталации за Вашите строителни обекти в София. Работим с 15 години опит, изключителна чистота на окабеляване и спазване на срокове. Предлагаме преференциални цени за строителни компании. Телефон: +359 87 7944353 | https://zvb.bg</div>
+        <div id="designerText" style="display:none;">Здравейте! Пишем Ви от ZVB (гр. София). Следим Вашите страхотни интериорни проекти! Като специалисти в дизайнерското осветление (LED, скрито осветление), прецизно окабеляване и интеграция на Умен Дом (Smart Home), бихме се радвали да бъдем Ваш надежден технически партньор за реализацията им. Работим перфектно по проект и без компромиси в естетиката. Каталог и контакт: +359 87 7944353 | https://zvb.bg</div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="filterType('all', this)">Всички (90)</button>
+            <button class="tab-btn" onclick="filterType('designer', this)">💎 Интериорни дизайнери & Архитекти (9)</button>
+            <button class="tab-btn" onclick="filterType('builder', this)">🏗️ Строителни компании КСБ (80)</button>
+        </div>
+
+        <input type="text" id="searchBar" class="search-bar" placeholder="Търсете по име на компания, квартал (Лозенец, Витоша, Център) или дейност..." oninput="searchCards()">
+
+        <div class="grid" id="partnerGrid">
+
+            <div class="card" data-type="designer" data-text="cache atelier софия, център офиси, луксозни жилища, комплексни инсталации">
+                <div>
+                    <span class="badge badge-designer">Интериорно & Архитектурно студио</span>
+                    <h3 class="card-title">Cache Atelier</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, Център</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Мила Иванова / Цветомир Павлов</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 884 1007</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> office@cacheatelier.net</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Офиси, луксозни жилища, комплексни инсталации</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://cacheatelier.net" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="all'studio (студио алл) софия, кв. лозенец луксозен интериор, скрито led осветление, умен дом">
+                <div>
+                    <span class="badge badge-designer">Интериорен дизайн и архитектура</span>
+                    <h3 class="card-title">ALL'Studio (Студио АЛЛ)</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Лозенец</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> арх. Илиян Костов</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 942 2252</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> contact@all.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Луксозен интериор, скрито LED осветление, умен дом</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://all.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="da architects софия, кв. изток модерни жилищни сгради и премиум апартаменти">
+                <div>
+                    <span class="badge badge-builder">Архитектурно студио</span>
+                    <h3 class="card-title">DA Architects</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Изток</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> арх. Мартин Ряшев</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 770 0984</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> office@daarchitects.eu</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Модерни жилищни сгради и премиум апартаменти</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://daarchitects.eu" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="studio novo софия, бул. българия дизайнерско осветление, автоматизация, висок клас">
+                <div>
+                    <span class="badge badge-designer">Интериорен дизайн</span>
+                    <h3 class="card-title">Studio Novo</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, бул. България</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> арх. Светослав Кънчев</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 450 1800</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> hello@novostudio.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Дизайнерско осветление, автоматизация, висок клас</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://novostudio.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="mode design studio софия, кв. витоша светлинен дизайн, умни ключове, премиум проекти">
+                <div>
+                    <span class="badge badge-designer">Интериорен дизайн</span>
+                    <h3 class="card-title">Mode Design Studio</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Витоша</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Светослав Тодоров</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 831 2280</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> studio@mode.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Светлинен дизайн, умни ключове, премиум проекти</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://mode.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="city design development софия, кв. драгалевци къщи и вили в полите на витоша, солари, сигурност">
+                <div>
+                    <span class="badge badge-designer">Архитектура & Интериор</span>
+                    <h3 class="card-title">City Design Development</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Драгалевци</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> арх. Димитър Димитров</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 820 4433</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> office@cdd.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Къщи и вили в полите на Витоша, солари, сигурност</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://cdd.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="kalli design софия, кв. манастирски ливади пълна реализация на апартаменти, електро по проект">
+                <div>
+                    <span class="badge badge-designer">Студио за интериорен дизайн</span>
+                    <h3 class="card-title">KALLI Design</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Манастирски ливади</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Калина Панайотова</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 560 3020</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> info@kallidesign.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Пълна реализация на апартаменти, електро по проект</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://kallidesign.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="bozhinov design софия, кв. стрелбище жилищни ремонти от висок клас, смарт осветление">
+                <div>
+                    <span class="badge badge-designer">Интериорна архитектура</span>
+                    <h3 class="card-title">Bozhinov Design</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Стрелбище</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Владимир Божинов</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 732 9940</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> contact@bozhinovdesign.com</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Жилищни ремонти от висок клас, смарт осветление</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://bozhinovdesign.com" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="studio 84 софия, кв. оборище апартаменти ново строителство, камери и слаботокови инсталации">
+                <div>
+                    <span class="badge badge-designer">Архитектура и дизайн</span>
+                    <h3 class="card-title">Studio 84</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Оборище</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> арх. Николай Петров</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 610 2030</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> office@studio84.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Апартаменти ново строителство, камери и слаботокови инсталации</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://studio84.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="designer" data-text="fama consulting & design софия, кв. белите брези цялостен инженеринг и интериор, видеонаблюдение">
+                <div>
+                    <span class="badge badge-designer">Проектиране & Интериор</span>
+                    <h3 class="card-title">Fama Consulting & Design</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София, кв. Белите брези</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Елена Стоянова</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> +359 88 920 1144</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> office@famadesign.bg</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 Цялостен инженеринг и интериор, видеонаблюдение</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('designer')">📋 Копирай оферта</button>
+                    <a href="https://famadesign.bg" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="про арм еоод софия еик: 131453327 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Про Арм ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131453327 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=8308" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="инфинити пропърти оод софия еик: 131213759 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Инфинити Пропърти ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131213759 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=2463" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="брайт инженеринг оод софия еик: 103327353 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Брайт Инженеринг ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 103327353 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=6469" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="красбивал оод софия еик: 131382104 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">КрасБиВал ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131382104 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=466" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="минстрой холдинг ад софия еик: 831493848 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Минстрой Холдинг АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831493848 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=4660" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="старт инженеринг ад софия еик: 030217255 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Старт инженеринг АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 030217255 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1879" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="бигла iii оод софия еик: 121094769 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Бигла III ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121094769 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=2052" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="пму ад софия еик: 102226538 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ПМУ АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 102226538 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=914" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="каро трейдинг оод софия еик: 131070485 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">КАРО ТРЕЙДИНГ ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131070485 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=6596" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="мирикал еоод софия еик: 130530653 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">МИРИКАЛ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130530653 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=5927" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="техно строй българия оод софия еик: 175410402 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Техно Строй България ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175410402 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=7885" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="мегаинвест-холд еоод софия еик: 109514979 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Мегаинвест-холд ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 109514979 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=3911" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="транс билд еоод софия еик: 131455374 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Транс Билд ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131455374 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=3743" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="вдх ад софия еик: 119081953 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ВДХ АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 119081953 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1063" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="гигастрой оод софия еик: 175096421 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Гигастрой ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175096421 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=3325" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="стройкомерс еоод софия еик: 109514464 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Стройкомерс ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 109514464 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1646" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="булгартрансгаз еад софия еик: 175203478 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">БУЛГАРТРАНСГАЗ ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175203478 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=5487" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="кастело прикаст оод софия еик: 175231972 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">КАСТЕЛО ПРИКАСТ ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175231972 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=7361" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="партрейд оод софия еик: 112062174 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ПАРТРЕЙД ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 112062174 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=4586" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="уфф еоод софия еик: 202656674 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">УФФ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 202656674 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=17744" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="мармет ад софия еик: 204566784 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Мармет АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 204566784 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1470" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="енергоремонт-козлодуй еоод софия еик: 106629378 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Енергоремонт-Козлодуй ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 106629378 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=10340" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="едем д2 еоод софия еик: 131176905 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ЕДЕМ Д2 ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131176905 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=7720" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="стреза еоод софия еик: 131223059 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Стреза ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131223059 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=3342" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="трейс груп холд ад софия еик: 123682269 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ТРЕЙС ГРУП ХОЛД АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 123682269 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=712" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="хидростроителство оод софия еик: 831641818 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Хидростроителство ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831641818 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=3144" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="капитол груп еоод софия еик: 131112176 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Капитол Груп ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131112176 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=6221" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="ирел строй енд проджект еоод софия еик: 131515088 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ИРЕЛ СТРОЙ ЕНД ПРОДЖЕКТ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131515088 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=7997" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="виа конструкт груп еоод софия еик: 175396059 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ВИА КОНСТРУКТ ГРУП ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175396059 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=7075" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="мират груп оод софия еик: 200463559 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">МИРАТ ГРУП ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 200463559 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=9380" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="кордеел-българия еад софия еик: 121895432 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Кордеел-България ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121895432 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1394" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="ел - тест еоод софия еик: 130355047 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ЕЛ - ТЕСТ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130355047 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=2214" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="хидроинжект оод софия еик: 130570053 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ХИДРОИНЖЕКТ ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130570053 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=4643" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="тобо еоод софия еик: 831301080 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ТОБО ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831301080 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=504" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="телекомплект ад софия еик: 831643753 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Телекомплект АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831643753 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=853" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="хидрострой ад софия еик: 103029862 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Хидрострой АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 103029862 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=291" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="валмекс еоод софия еик: 010700093 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Валмекс ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 010700093 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=108" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="енерго ремонт строй еоод софия еик: 121891697 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ЕНЕРГО РЕМОНТ СТРОЙ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121891697 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=146" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="маркан eоод софия еик: 122018233 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Маркан EООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 122018233 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=830" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="монтажи ко eоод софия еик: 175329555 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">МОНТАЖИ КО EООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175329555 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=10724" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="венков инженеринг оод софия еик: 131451059 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ВЕНКОВ ИНЖЕНЕРИНГ ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131451059 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=10929" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="нивел оод софия еик: 121063033 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Нивел ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121063033 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=219" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="фактор трейд еад софия еик: 202300799 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ФАКТОР ТРЕЙД ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 202300799 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=10648" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="евроканал еоод софия еик: 175299165 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ЕВРОКАНАЛ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175299165 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=16554" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="ат инженеринг 2000 оод софия еик: 121242342 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">АТ ИНЖЕНЕРИНГ 2000 ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121242342 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=470" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="х.с.с. еоод софия еик: 130987513 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Х.С.С. ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130987513 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=10445" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="химремонтстрой ад софия еик: 816089204 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Химремонтстрой АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 816089204 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=2510" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="телелинк инфра сървисис еад софия еик: 204856684 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Телелинк Инфра Сървисис ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 204856684 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=17879" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="ес-джи 81 еоод софия еик: 202296660 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ЕС-ДЖИ 81 ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 202296660 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=15730" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="нск софия еоод софия еик: 831838874 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">НСК СОФИЯ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831838874 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=11016" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="централна енергоремонтна база еад софия еик: 831914037 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Централна енергоремонтна база ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831914037 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=12056" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="перламет се оод софия еик: 040540837 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ПЕРЛАМЕТ СЕ ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 040540837 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=11510" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="софекострой еад софия еик: 205615476 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">СОФЕКОСТРОЙ ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 205615476 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=8989" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="вийом еоод софия еик: 121808630 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ВИЙОМ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121808630 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=4762" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="алди комерс груп еоод софия еик: 202221469 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Алди Комерс Груп ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 202221469 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=13928" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="българска строително - инвестиционна компания еоод софия еик: 203261947 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">БЪЛГАРСКА СТРОИТЕЛНО - ИНВЕСТИЦИОННА КОМПАНИЯ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 203261947 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=15856" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="геотехника абс оод софия еик: 130298379 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ГЕОТЕХНИКА АБС ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130298379 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=17498" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="дева транс оод софия еик: 131020201 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Дева Транс ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131020201 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=11189" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="балкантел оод софия еик: 831168299 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Балкантел ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831168299 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=12979" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="калистратов груп ад софия еик: 206422081 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">КАЛИСТРАТОВ ГРУП АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 206422081 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=12546" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="диана комерс 1 еоод софия еик: 128018756 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Диана комерс 1 ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 128018756 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=252" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="интерхолд еоод софия еик: 202357469 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ИНТЕРХОЛД ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 202357469 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=14064" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="цеки-захариев и с-ие сд софия еик: 122043820 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ЦЕКИ-ЗАХАРИЕВ И С-ИЕ СД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 122043820 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=8317" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="с.и.с. м - строй еоод софия еик: 202592517 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">С.И.С. М - СТРОЙ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 202592517 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=14135" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="енергомонтаж инженеринг ад софия еик: 115544069 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Енергомонтаж инженеринг АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 115544069 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=2989" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="микс- констръкшън оод софия еик: 175159754 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">МИКС- КОНСТРЪКШЪН ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 175159754 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=4581" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="рувекс ад софия еик: 131460040 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">РУВЕКС АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131460040 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=9628" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="ивелинстрой еоод софия еик: 200388512 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Ивелинстрой ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 200388512 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=10212" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="строително предприемачески холдинг еоод софия еик: 130917415 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">СТРОИТЕЛНО ПРЕДПРИЕМАЧЕСКИ ХОЛДИНГ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130917415 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1092" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="инфраструктурно строителство ад софия еик: 203676249 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ИНФРАСТРУКТУРНО СТРОИТЕЛСТВО АД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 203676249 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=8794" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="аква темпус оод софия еик: 201635015 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">АКВА ТЕМПУС ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 201635015 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=13153" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="пътприбор оод софия еик: 831854370 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ПЪТПРИБОР ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 831854370 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=2667" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="аргогруп екзакт оод софия еик: 130058042 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Аргогруп Екзакт ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130058042 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=815" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="пътстрой вдх еад софия еик: 206474936 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ПЪТСТРОЙ ВДХ ЕАД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 206474936 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=1505" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="булмикс - вип оод софия еик: 131147273 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">БУЛМИКС - ВИП ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 131147273 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=12673" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="инженерни системи оод софия еик: 200102975 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">Инженерни системи ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 200102975 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=8428" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="обитех еоод софия еик: 130989820 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ОБИТЕХ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 130989820 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=9431" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="инерком еоод софия еик: 201657531 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ИНЕРКОМ ЕООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 201657531 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=12832" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="дедал-1995 оод софия еик: 121386759 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ДЕДАЛ-1995 ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 121386759 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=12102" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+            <div class="card" data-type="builder" data-text="ги камп оод оод софия еик: 200678992 | строежи от високо строителство и инфраструктура">
+                <div>
+                    <span class="badge badge-builder">Строителна фирма (Регистриран строител - КСБ)</span>
+                    <h3 class="card-title">ГИ Камп ООД ООД</h3>
+                    <p class="card-detail">📍 <strong>Локация:</strong> София</p>
+                    <p class="card-detail">👤 <strong>Управител / Контакт:</strong> Управител (в регистъра)</p>
+                    <p class="card-detail">📞 <strong>Телефон:</strong> Виж профила в КСБ</p>
+                    <p class="card-detail">✉️ <strong>Имейл:</strong> Официален контакт в КСБ</p>
+                    <p class="card-detail" style="margin-top:6px; color:#475569;">💡 ЕИК: 200678992 | Строежи от високо строителство и инфраструктура</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-pitch" onclick="copyText('builder')">📋 Копирай оферта</button>
+                    <a href="https://register.ksb.bg/pub_view.php?id_members=13235" target="_blank" class="btn-link">Профил &rarr;</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="toast">✅ Офертата е копирана!</div>
+
+    <script>
+        let currentFilter = 'all';
+
+        function filterType(type, btn) {
+            currentFilter = type;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            searchCards();
+        }
+
+        function searchCards() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const text = card.getAttribute('data-text');
+                const type = card.getAttribute('data-type');
+                const matchesType = (currentFilter === 'all' || type === currentFilter);
+                const matchesSearch = text.includes(query);
+                card.style.display = (matchesType && matchesSearch) ? 'flex' : 'none';
+            });
+        }
+
+        function copyText(type) {
+            const elId = (type === 'builder') ? 'builderText' : 'designerText';
+            const text = document.getElementById(elId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.innerText = (type === 'builder') ? '✅ Копирано: Оферта за строителна фирма!' : '✅ Копирано: Оферта за интериорно студио!';
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
