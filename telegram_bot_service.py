@@ -291,28 +291,67 @@ def run_telegram_bot():
                 elif "message" in update:
                     msg = update["message"]
                     sender_chat_id = msg["chat"]["id"]
-                    text = msg.get("text", "").strip()
+                    raw_text = msg.get("text", "").strip()
                     
-                    if not text:
+                    if not raw_text:
                         continue
                     
-                    if text.startswith("/start") or text.startswith("/help") or text.lower() in ["menu", "меню", "سلام", "hi", "help"]:
+                    lower_text = raw_text.lower()
+                    
+                    # Check if addressed as "زاگرس" (Zagros) or starts with / command
+                    is_command = raw_text.startswith("/")
+                    is_zagros = any(lower_text.startswith(w) or lower_text.startswith(f"{w} ") or lower_text.startswith(f"{w}،") or lower_text.startswith(f"{w}:") for w in ["زاگرس", "zagros"])
+                    
+                    # If it's a private chat (DM with bot), respond directly.
+                    # In groups, ONLY respond if called "زاگرس" or if it's a slash command!
+                    is_private = msg.get("chat", {}).get("type") == "private"
+                    
+                    if not (is_command or is_zagros or is_private):
+                        # Ignore normal chat messages in group
+                        continue
+                    
+                    # Clean the query if it started with "زاگرس"
+                    clean_query = raw_text
+                    if is_zagros:
+                        for w in ["زاگرس", "zagros"]:
+                            if lower_text.startswith(w):
+                                clean_query = raw_text[len(w):].strip().lstrip("،,:! ")
+                                break
+                    
+                    if not clean_query or clean_query in ["سلام", "درود", "منو", "menu", "help", "کمک"]:
+                        send_msg(token, sender_chat_id, "درود! در خدمتم. می‌توانید بفرمایید چه کاری انجام دهم:\n\n" + get_welcome_text(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["اسکن", "scan", "بروزرسانی", "جستجو کن", "بگرد", "اسکن کن"]):
+                        send_msg(token, sender_chat_id, "⏳ <i>در حال اسکن زنده سایت‌ها برای پروژه‌های جدید برقی...</i>")
+                        lead_scraper.run_scan()
+                        text = handle_urgent_cmd()
+                        send_msg(token, sender_chat_id, f"✅ <b>اسکن انجام شد!</b>\n\n{text}", get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["فوری", "urgent", "پروژه", "پروژه‌ها", "مشتری", "کارفرما"]):
+                        send_msg(token, sender_chat_id, handle_urgent_cmd(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["سازنده", "سازندگان", "شرکت ساختمانی", "builders", "ксб"]):
+                        send_msg(token, sender_chat_id, handle_builders_cmd(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["طراح", "دیزاینر", "معمار", "طراحان", "designers"]):
+                        send_msg(token, sender_chat_id, handle_designers_cmd(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["آمار", "وضعیت", "stats"]):
+                        send_msg(token, sender_chat_id, handle_stats_cmd(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["پیشنهاد", "متن پیام", "پیچ", "pitches", "آفر"]):
+                        send_msg(token, sender_chat_id, handle_pitches_cmd(), get_main_keyboard())
+                    elif clean_query.startswith("/start") or clean_query.startswith("/help"):
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
-                    elif text.startswith("/scan"):
+                    elif clean_query.startswith("/scan"):
                         send_msg(token, sender_chat_id, "⏳ <i>Стартирано е сканиране на живо...</i>")
                         lead_scraper.run_scan()
                         send_msg(token, sender_chat_id, "✅ <b>Сканирането завърши!</b>", get_main_keyboard())
-                    elif text.startswith("/urgent") or text.startswith("/спешно"):
+                    elif clean_query.startswith("/urgent"):
                         send_msg(token, sender_chat_id, handle_urgent_cmd(), get_main_keyboard())
-                    elif text.startswith("/builders") or text.startswith("/строители"):
+                    elif clean_query.startswith("/builders"):
                         send_msg(token, sender_chat_id, handle_builders_cmd(), get_main_keyboard())
-                    elif text.startswith("/designers") or text.startswith("/дизайнери"):
+                    elif clean_query.startswith("/designers"):
                         send_msg(token, sender_chat_id, handle_designers_cmd(), get_main_keyboard())
-                    elif text.startswith("/stats") or text.startswith("/статистика"):
+                    elif clean_query.startswith("/stats"):
                         send_msg(token, sender_chat_id, handle_stats_cmd(), get_main_keyboard())
                     else:
-                        # Perform live keyword search in database
-                        res = handle_search_text(text)
+                        # Perform keyword search in Sofia electrical database
+                        res = handle_search_text(clean_query)
                         send_msg(token, sender_chat_id, res, get_main_keyboard())
 
         except Exception as e:
