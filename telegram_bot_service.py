@@ -67,15 +67,37 @@ def get_main_keyboard():
                 {"text": "🔍 Сканирай сега (Live)", "callback_data": "cmd_scan"}
             ],
             [
-                {"text": "💰 Калкулатор за цени & оферти", "callback_data": "cmd_calc"},
-                {"text": "📋 Готови оферти (B2B)", "callback_data": "cmd_pitches"}
+                {"text": "💰 Калкулатор за оферти", "callback_data": "cmd_calc"},
+                {"text": "🧠 Загрос AI Експерт", "callback_data": "cmd_ai"}
             ],
             [
-                {"text": "🏗️ Строителни компании (КСБ)", "callback_data": "cmd_builders"},
-                {"text": "💎 Интериорни дизайнери", "callback_data": "cmd_designers"}
-            ],
-            [
+                {"text": "📋 Готови оферти (B2B)", "callback_data": "cmd_pitches"},
                 {"text": "📊 Статистика на базата", "callback_data": "cmd_stats"}
+            ],
+            [
+                {"text": "🏗️ Строителни фирми (КСБ)", "callback_data": "cmd_builders"},
+                {"text": "💎 Интериорни дизайнери", "callback_data": "cmd_designers"}
+            ]
+        ]
+    }
+
+def get_ai_keyboard():
+    return {
+        "inline_keyboard": [
+            [
+                {"text": "⚡ سایز کابل و فیوزها", "callback_data": "ai_cables"},
+                {"text": "🏢 پیام به بسازبفروش", "callback_data": "ai_builder"}
+            ],
+            [
+                {"text": "📹 دوربین و شبکه", "callback_data": "ai_cctv"},
+                {"text": "🎨 پیام به دیزاینر", "callback_data": "ai_designer"}
+            ],
+            [
+                {"text": "🏠 خانه هوشمند (Shelly)", "callback_data": "ai_smarthome"},
+                {"text": "📩 پیام پیگیری کارفرما", "callback_data": "ai_followup"}
+            ],
+            [
+                {"text": "🔙 بازگشت به منوی اصلی", "callback_data": "cmd_main_menu"}
             ]
         ]
     }
@@ -83,12 +105,13 @@ def get_main_keyboard():
 def get_welcome_text():
     return (
         "⚡ <b>ZVB Интерактивен Асистент (София)</b> ⚡\n\n"
-        "درود! من زاگرس، دستیار هوشمند تیم مهندسی <b>ZVB</b> هستم.\n"
-        "برای صحبت با من کافیست کلمه <b>«زاگرس»</b> را در پیام خود بیاورید، یا از دکمه‌های زیر استفاده کنید.\n\n"
-        "👇 <b>امکانات ویژه:</b>\n"
-        "• ⚡ مشاهده پروژه‌های فوری کارفرمایان برق\n"
-        "• 💰 <b>محاسبه پیش‌فاکتور رسمی:</b> بنویسید <i>'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو برق، ۳۰ پریز، ۴ دوربین'</i>\n"
-        "• 🔍 جستجوی محله یا زمینه (مثلاً <i>'زاگرس младост'</i> или <i>'زاگرس табло'</i>)"
+        "درود! من زاگرس، دستیار هوشمند و مشاور مهندسی <b>ZVB</b> هستم.\n"
+        "برای گفتگو با من کافیست نام <b>«زاگرس»</b> را در ابتدای پیامتان بیاورید، یا از دکمه‌های زیر استفاده کنید.\n\n"
+        "👇 <b>امکانات کلیدی:</b>\n"
+        "• 🧠 <b>هوش مصنوعی مهندسی:</b> 'زاگرس کابل مناسب برای کولر چیه؟' یا 'زاگرس پیام پیگیری مشتری'\n"
+        "• 💰 <b>پیش‌فاکتور رسمی بلغاری:</b> 'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو برق، ۳۰ پریز، ۴ دوربین'\n"
+        "• ⚡ <b>پروژه‌های فوری:</b> مشاهده آخرین تماس‌ها و درخواست‌های کارفرمایان برق در صوفیه\n"
+        "• 🔍 <b>جستجوی محله/تجهیزات:</b> 'زاگرس младост' یا 'زاگرس камери'"
     )
 
 def handle_urgent_cmd():
@@ -282,21 +305,217 @@ def handle_calc_cmd(query=""):
 
 def handle_pitches_cmd():
     return (
-        "📋 <b>ГОТОВИ ТЕКСТОВЕ ЗА БЪРЗ КОНТАКТ:</b>\n\n"
-        "<b>1️⃣ За Строителни фирми:</b>\n"
+        "📋 <b>ГОТОВИ ТЕКСТОВЕ ЗА БЪРЗ КОНТАКТ (ZVB):</b>\n\n"
+        "<b>1️⃣ За Строителни фирми (КСБ):</b>\n"
         "<code>Здравейте! Пишем Ви от ZVB (Електрически и умни системи, София). Предлагаме професионално подизпълнение на ел. инсталации, табла и видеонаблюдение с 15г. опит. Работим стриктно по проект и в срок. Тел: +359 87 7944353 | https://zvb.bg</code>\n\n"
         "<b>2️⃣ За Интериорни дизайнери:</b>\n"
         "<code>Здравейте! От ZVB (София) предлагаме прецизна техническа реализация на дизайнерско осветление, скрито LED и Умен Дом (Smart Home). Перфектна естетика без компромиси. Контакт: +359 87 7944353 | https://zvb.bg</code>\n\n"
+        "<b>3️⃣ За Клиент след направен оглед:</b>\n"
+        "<code>Здравейте! Беше удоволствие да се запознаем при огледа на обекта. Вече подготвяме детайлната оферта за Вашата ел. инсталация. Оставам на Ваше разположение за въпроси. Поздрави, ZVB София | +359 87 7944353</code>\n\n"
         "<i>(Кликнете върху текста за автоматично копиране!)</i>"
+    )
+
+def handle_ai_menu():
+    return (
+        "🧠 <b>МЕНЮ ЗАГРОС AI (ИНЖЕНЕРЕН ЕКСПЕРТ ZVB):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "درود! من زاگرس، مغز متفکر و مشاور هوشمند مهندسی ZVB هستم.\n"
+        "می‌توانید هر سوال فنی، محاسباتی یا متن پیشنهادی را مستقیماً از من بپرسید:\n\n"
+        "💡 <b>چند نمونه سوالاتی که می‌توانید در گروه بنویسید:</b>\n"
+        "• <code>زاگرس کابل مناسب برای کولر گازی چیه؟</code>\n"
+        "• <code>زاگرس برای دوربین مداربسته چه تجهیزاتی پیشنهاد میدی؟</code>\n"
+        "• <code>زاگرس متن پیام بعد از بازدید برای کارفرما</code>\n"
+        "• <code>زاگرس تجهیزات خانه هوشمند بلغارستان چیه؟</code>\n"
+        "• <code>زاگرس استاندارد فیوز و محافظ جان در صوفیه</code>\n\n"
+        "👇 یا از موضوعات آماده زیر یکی را انتخاب کنید:"
+    )
+
+def get_cables_info():
+    return (
+        "🧠 <b>Загрос AI: راهنمای فنی کابل‌ها و فیوزها (استاندارد صوفیه / БДС EN 60364):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🔌 <b>۱. پریزهای عمومی (Контакти):</b>\n"
+        "• کابل: <b>ПВВ-МБ1 3x2.5 мм²</b> (یا СВТ / NYM داخل لوله گچی)\n"
+        "• کلید مینیاتوری: <b>16A (منحنی B یا C)</b>\n"
+        "• استاندارد: حداکثر تا ۸ پریز در یک خط مجزا\n\n"
+        "💡 <b>۲. روشنایی (Осветление):</b>\n"
+        "• کابل: <b>ПВВ-МБ1 2x1.5 мм²</b> (یا 3x1.5 мм² جهت ارت بدنه لوستر)\n"
+        "• کلید مینیاتوری: <b>10A (منحنی B)</b>\n\n"
+        "❄️ <b>۳. کولر گازی اسپلیت (Климатик):</b>\n"
+        "• کابل: خط کاملاً مستقل <b>3x2.5 мм²</b>\n"
+        "• کلید مینیاتوری: <b>16A منحنی C</b> (جهت تحمل جریان هجومی استارت کمپرسور)\n\n"
+        "🍳 <b>۴. اجاق و فر برقی (Плот / Фурна):</b>\n"
+        "• کابل: خط مستقل <b>3x4.0 мм²</b> (فیوز 25A) یا برای مدل‌های پرمصرف <b>3x6.0 мм²</b> (فیوز 32A)\n\n"
+        "🚿 <b>۵. آبگرمکن برقی (Бойлер):</b>\n"
+        "• کابل: <b>3x2.5 мм²</b> با فیوز 16A و کلید دوقطبی حفاظت (Двуполюсен ключ)\n\n"
+        "⚡ <b>۶. محافظ جان (Дефектнотокова защита - ДТЗ / RCD):</b>\n"
+        "• حساسیت <b>30mA تیپ A</b> برای مدار پریزها، حمام و آشپزخانه الزامی است.\n\n"
+        "📞 <i>مشاوره تکمیلی و بازدید مهندسی: ZVB София (+359 87 7944353)</i>"
+    )
+
+def get_cctv_info():
+    return (
+        "🧠 <b>Загрос AI: راهنمای سیستم‌های نظارت تصویری و شبکه (ZVB Sofia):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "📹 <b>۱. دوربین‌های پیشنهادی بازار بلغارستان:</b>\n"
+        "• برندهای اصلی: <b>Dahua</b> یا <b>Hikvision</b> (حداقل کیفیت 4MP / 5MP با دید در شب رنگی ColorVu/Full-color)\n\n"
+        "🌐 <b>۲. بستر شبکه و کابل‌کشی:</b>\n"
+        "• داخل ساختمان: کابل تمام مس <b>Cat6 UTP LSZH</b>\n"
+        "• محیط بیرونی: کابل ضدآب و شیلددار <b>Cat6 FTP Outdoor</b>\n\n"
+        "⚡ <b>۳. تغذیه برق (PoE):</b>\n"
+        "• سوئیچ شبکه <b>PoE (استاندارد IEEE 802.3af/at)</b>، امکان ارسال برق و تصویر روی یک کابل تا ۱۰۰ متر بدون افت ولتاژ\n\n"
+        "💾 <b>۴. دستگاه ضبط و هارد (NVR):</b>\n"
+        "• ضبط‌کننده NVR با پشتیبانی از کدک کم‌حجم <b>H.265+</b>\n"
+        "• هارد اختصاصی بنفش نظارتی (WD Purple یا Seagate SkyHawk) — هر ۲ دوربین 4MP حدود ۱ ترابایت برای ۲۰ روز ذخیره‌سازی نیاز دارد\n\n"
+        "📱 <b>۵. انتقال تصویر و امنیت:</b>\n"
+        "• تنظیم P2P ابری روی اپلیکیشن DMSS (داهوا) یا Hik-Connect با تایید دومرحله‌ای"
+    )
+
+def get_smarthome_info():
+    return (
+        "🧠 <b>Загрос AI: راهنمای سیستم‌های هوشمند (Smart Home Sofia):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "🇧🇬 <b>۱. برند محلی برتر بلغارستان: Shelly (Allterco):</b>\n"
+        "شرکت شلی یک برند بین‌المللی بلغاری با مرکزیت صوفیه است و در بلغارستان فوق‌العاده محبوب و قابل اعتماد است:\n"
+        "• <b>Shelly Plus 1 / 1PM:</b> ماژول مینیاتوری پشت کلید برای کنترل هوشمند روشنایی و پایش مصرف برق\n"
+        "• <b>Shelly Pro 4PM:</b> رله ریلی صنعتی مخصوص نصب داخل جعبه فیوز / تابلو برق با صفحه نمایشگر\n"
+        "• <b>Shelly EM:</b> اندازه‌گیری مصرف کل برق خانه با ترانس جریان کلمپی\n\n"
+        "⚠️ <b>۲. نکته طلایی در سیم‌کشی برق:</b>\n"
+        "حتماً هنگام بازسازی یا سیم‌کشی جدید، <b>سیم نول (Нулев проводник)</b> را به داخل تمام قوطی کلیدها ببرید تا همه مدل کلیدها و ماژول‌های هوشمند بدون مقاومت موازی کار کنند.\n\n"
+        "🏛️ <b>۳. پروژه‌های لوکس ویلایی:</b>\n"
+        "برای ویلاهای لوکس حومه صوفیه (Boyana, Dragalevtsi, Bistritsa) اجرای سیستم کابلی <b>KNX</b> با پنل‌های لمسی دیواری پیشنهاد می‌شود."
+    )
+
+def get_followup_info():
+    return (
+        "🧠 <b>Загрос AI: متن پیام پیگیری کارفرما پس از بازدید (София):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        "این متن آماده را پس از بازدید محل پروژه در واتساپ یا وایبر برای کارفرما بفرستید:\n\n"
+        "<code>Здравейте! Беше удоволствие да се запознаем при огледа на обекта. "
+        "Вече подготвяме детайлната оферта и количествено-стойностна сметка за Вашата електроинсталация. "
+        "Ако междувременно имате допълнителни въпроси или промени по разпределението на контактите и осветлението, оставам на разположение. "
+        "Поздрави, ZVB София | +359 87 7944353 | https://zvb.bg</code>\n\n"
+        "<i>(روی کادر بالا ضربه بزنید تا متن خودکار کپی شود)</i>"
+    )
+
+def get_builder_pitch():
+    return (
+        "🧠 <b>Загрос AI: پیشنهاد همکاری رسمی به شرکت ساختمانی (B2B):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "<code>Здравейте! Обръщаме се към Вас от ZVB (Електроинженеринг & Слаботокови инсталации, гр. София). "
+        "Предлагаме коректно и качествено подизпълнение за Вашите жилищни и обществени обекти: "
+        "цялостно изграждане на електроинсталации, асемблиране на ГРТ и етажни ел. табла, видеонаблюдение, пожароизвестяване и контрол на достъпа. "
+        "Разполагаме с квалифициран екип с над 15 години опит, спазваме стриктно строителните графици и предоставяме 5 години пълна гаранция с протокол. "
+        "Ще се радваме да изготвим конкурентна оферта по Ваша количествена сметка. "
+        "Контакт: +359 87 7944353 | https://zvb.bg</code>\n\n"
+        "<i>(روی کادر بالا ضربه بزنید تا متن کپی شود)</i>"
+    )
+
+def get_designer_pitch():
+    return (
+        "🧠 <b>Загрос AI: پیشنهاد همکاری به استودیوهای طراحی و معماران:</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "<code>Здравейте! От инженерен екип ZVB (София) предлагаме прецизна техническа реализация на дизайнерски интериорни проекти: "
+        "безшевно скрито LED осветление с алуминиеви профили, магнитни шини, димиране (DALI, 0-10V, Triac) и цялостна Smart Home автоматизация. "
+        "Гарантираме естетика, скрити захранвания без видими дефекти и изпълнение точно по чертеж. "
+        "Свържете се с нас за съвместни обекти: +359 87 7944353 | https://zvb.bg</code>\n\n"
+        "<i>(روی کادر بالا ضربه بزنید تا متن کپی شود)</i>"
+    )
+
+def ask_zagros_ai(user_query):
+    """
+    Zagros AI Expert Assistant:
+    Acts as Senior Electrical Engineer & Commercial Director for ZVB in Sofia.
+    Handles technical calculations, drafting Bulgarian client pitches, and consultations.
+    """
+    cfg = load_config()
+    gemini_key = cfg.get("gemini_api_key", "").strip() or os.environ.get("GEMINI_API_KEY", "").strip()
+    
+    system_prompt = (
+        "Ти си Загрос (Zagros) - виртуален старши електроинженер и търговски директор на ZVB "
+        "(Електрически системи, видеонаблюдение, LED осветление и Smart Home в гр. София, България | https://zvb.bg | Тел: +359 87 7944353). "
+        "Фирмата има над 15 години доказан опит, предлага 5 години гаранция и безплатен оглед в София. "
+        "Отговаряй учтиво, професионално, конкретно и ясно на езика, на който ти пишат (български или персийски). "
+        "Ако те питаت за технически въпроси по ел. инсталации, кабели, предпазители или камери - дай точен инженерен съвет. "
+        "Ако искат оферта или съобщение за клиент/строител - напиши перфектен текст за изпращане с данните на ZVB."
+    )
+
+    if gemini_key:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            payload = {
+                "contents": [
+                    {"role": "user", "parts": [{"text": f"System Context:\n{system_prompt}\n\nUser Question:\n{user_query}"}]}
+                ]
+            }
+            r = requests.post(url, json=payload, timeout=12)
+            if r.status_code == 200:
+                res = r.json()
+                answer = res["candidates"][0]["content"]["parts"][0]["text"]
+                return f"🧠 <b>Загрос AI (Инженерен асистент ZVB):</b>\n\n{answer}"
+        except Exception as e:
+            print(f"AI API error: {e}")
+
+    uq = user_query.lower()
+    
+    # Technical: Cables & Breakers
+    if any(w in uq for w in ['кабел', 'сечение', 'светло', 'светлина', 'святло', 'предпазител', 'автоматичен', 'سیم', 'کابل', 'کولر', 'климатик', 'مقطع', 'فیوز', 'آمپر', 'پریز']):
+        return get_cables_info()
+    
+    # Technical: CCTV & Security
+    if any(w in uq for w in ['камер', 'видеонаблюдение', 'nvr', 'dvr', 'دوربین', 'مداربسته', 'شبکه', 'هایک', 'داهوا', 'cctv']):
+        return get_cctv_info()
+
+    # Technical: Smart Home & Automation
+    if any(w in uq for w in ['умен', 'смарт', 'shelly', 'шли', 'зигби', 'هوشمند', 'شلی', 'خانه هوشمند', 'خانه_هوشمند', 'اتوماسیون']):
+        return get_smarthome_info()
+
+    # Technical: Electrical Panels & RCD
+    if any(w in uq for w in ['табло', 'дтз', 'дефектнотокова', 'заземяване', 'تابلو', 'جعبه فیوز', 'محافظ جان', 'ارت', 'ارتینگ']):
+        return (
+            "🧠 <b>Загрос AI: راهنمای فنی تابلو برق و محافظ جان (ZVB Sofia):</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "⚡ <b>۱. ساختار استاندارد تابلو برق خانگی (Ел. Табло):</b>\n"
+            "• کلید اتوماتیک اصلی ورودی (Главен прекъсвач): معمولاً 40A یا 50A یا 63A بسته به توان قراردادی با چه‌ز (ЧЕЗ / Electrohold).\n"
+            "• رله محافظ جان (ДТЗ / RCD): جریان خطای 30mA تیپ A برای حفاظت از جان و جلوگیری از برق‌گرفتگی در حمام و پریزها.\n"
+            "• شینه ارت و نول تفکیک‌شده (سیستم TN-S / TN-C-S) مطابق استاندارد БДС.\n\n"
+            "💡 <i>تعویض و سیم‌بندی اصولی تابلو برق با برچسب‌گذاری خطوط و گارانتی ۵ ساله: ZVB Sofia (+359 87 7944353)</i>"
+        )
+
+    # Commercial: Follow-up after visit
+    if any(w in uq for w in ['оглед', 'клиент', 'след оглед', 'بازدید', 'پیگیری', 'مشتری', 'کارفرما', 'بعد از بازدید']):
+        return get_followup_info()
+
+    # Commercial: B2B Pitch to Builder
+    if any(w in uq for w in ['строител', 'инвеститор', 'строеж', 'سازنده', 'شرکت ساختمانی', 'پیمانکار', 'بسازبفروش']):
+        return get_builder_pitch()
+
+    # Commercial: Pitch to Designer
+    if any(w in uq for w in ['дизайнер', 'архитект', 'осветление', 'طراح', 'دیزاینر', 'معمار', 'دکور']):
+        return get_designer_pitch()
+
+    # General technical advice fallback
+    return (
+        f"🧠 <b>Загрос AI (ZVB Електро Експерт):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"درود! پیام شما دریافت شد: <i>'{user_query}'</i>\n\n"
+        "من به عنوان دستیار هوشمند مهندسی <b>ZVB در صوفیه</b> می‌توانم در این موارد به شما کمک کنم:\n"
+        "1. ⚡ <b>مشاوره مهندسی:</b> کابل‌ها، فیوزها، تابلو برق، خانه هوشمند و دوربین مداربسته\n"
+        "2. 💰 <b>پیش‌فاکتور رسمی:</b> بنویسید <i>'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو، ۳۰ پریز'</i>\n"
+        "3. 📝 <b>متن‌های رسمی بلغاری:</b> برای بسازبفروش‌ها، دیزاینرها، یا پیگیری مشتری بعد از بازدید\n"
+        "4. 🔍 <b>جستجوی پروژه‌ها:</b> بنویسید <i>'زاگرس младост'</i> یا <i>'زاگرس فوری'</i>\n\n"
+        "🌐 <i>ZVB Sofia - Професионални електрически и умни решения | zvb.bg</i>"
     )
 
 def handle_search_text(query):
     if not os.path.exists(LEADS_JSON_PATH):
-        return "Няма данни за търсене."
+        return None
     with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
         leads = json.load(f)
     
-    q = query.lower()
+    q = query.lower().strip()
+    if len(q) < 2:
+        return None
+        
     matches = []
     for l in leads.values():
         if not daily_digest.is_strictly_electrical_sofia(l):
@@ -306,7 +525,7 @@ def handle_search_text(query):
             matches.append(l)
     
     if not matches:
-        return f"🔍 Не бяха намерени електро обекти за: '<b>{query}</b>' в София."
+        return None
     
     msg = f"🔍 <b>Резултати за '{query}' в София ({len(matches)} намерени):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
     for idx, l in enumerate(matches[:5], 1):
@@ -414,6 +633,29 @@ def run_telegram_bot():
                     elif cb_data == "cmd_pitches":
                         text = handle_pitches_cmd()
                         send_msg(token, sender_chat_id, text, get_main_keyboard())
+                    elif cb_data == "cmd_ai":
+                        text = handle_ai_menu()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "cmd_main_menu":
+                        send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
+                    elif cb_data == "ai_cables":
+                        text = get_cables_info()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "ai_cctv":
+                        text = get_cctv_info()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "ai_smarthome":
+                        text = get_smarthome_info()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "ai_followup":
+                        text = get_followup_info()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "ai_builder":
+                        text = get_builder_pitch()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "ai_designer":
+                        text = get_designer_pitch()
+                        send_msg(token, sender_chat_id, text, get_ai_keyboard())
 
                 # 2. Handle Text Messages & Commands
                 elif "message" in update:
@@ -465,10 +707,14 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, handle_stats_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["پیشنهاد", "متن پیام", "پیچ", "pitches", "آفر"]):
                         send_msg(token, sender_chat_id, handle_pitches_cmd(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["هوش", "ai", "مشاوره", "بپرس", "سوال"]):
+                        send_msg(token, sender_chat_id, ask_zagros_ai(clean_query), get_main_keyboard())
                     elif clean_query.startswith("/start") or clean_query.startswith("/help"):
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
                     elif clean_query.startswith("/calc"):
                         send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
+                    elif clean_query.startswith("/ai"):
+                        send_msg(token, sender_chat_id, handle_ai_menu(), get_ai_keyboard())
                     elif clean_query.startswith("/scan"):
                         send_msg(token, sender_chat_id, "⏳ <i>Стартирано е сканиране на живо...</i>")
                         lead_scraper.run_scan()
@@ -482,9 +728,14 @@ def run_telegram_bot():
                     elif clean_query.startswith("/stats"):
                         send_msg(token, sender_chat_id, handle_stats_cmd(), get_main_keyboard())
                     else:
-                        # Perform keyword search in Sofia electrical database
+                        # First try keyword search in Sofia electrical database
                         res = handle_search_text(clean_query)
-                        send_msg(token, sender_chat_id, res, get_main_keyboard())
+                        if res:
+                            send_msg(token, sender_chat_id, res, get_main_keyboard())
+                        else:
+                            # If no specific database lead matches, route directly to Zagros AI Expert Brain!
+                            ai_res = ask_zagros_ai(clean_query)
+                            send_msg(token, sender_chat_id, ai_res, get_main_keyboard())
 
         except Exception as e:
             print(f"Bot polling error: {e}")
