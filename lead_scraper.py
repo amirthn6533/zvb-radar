@@ -140,6 +140,11 @@ def send_telegram_alert(lead, bot_token, chat_id):
         action_btn_text = "🔗 Отвори обявата в сайта"
     buttons.append([{"text": action_btn_text, "url": lead.get("url", "#")}])
 
+    # 1-Click Zagros AI Instant Proposal Generator button
+    lead_id = lead.get("id", "")
+    cb_data = f"p_{lead_id}"[:60]
+    buttons.append([{"text": "✍️ Генерирай оферта от Загрос AI", "callback_data": cb_data}])
+
     reply_markup = {"inline_keyboard": buttons}
     
     api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"

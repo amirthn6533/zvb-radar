@@ -77,6 +77,9 @@ def get_main_keyboard():
             [
                 {"text": "🏗️ Строителни фирми (КСБ)", "callback_data": "cmd_builders"},
                 {"text": "💎 Интериорни дизайнери", "callback_data": "cmd_designers"}
+            ],
+            [
+                {"text": "📱 شکار پروژه‌های فیسبوک (Facebook)", "callback_data": "cmd_fb"}
             ]
         ]
     }
@@ -422,6 +425,24 @@ def get_designer_pitch():
         "<i>(روی کادر بالا ضربه بزنید تا متن کپی شود)</i>"
     )
 
+def get_fb_menu():
+    return (
+        "📱 <b>Загрос AI: رادار شکار پروژه‌های فیسبوک صوفیه</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "در بلغارستان، بیش از ۴۰٪ پروژه‌های برق و بازسازی مستقیماً در گروه‌های فیسبوک صوفیه ثبت می‌شوند!\n\n"
+        "🔗 <b>سه گروه طلایی صوفیه برای شکار کار:</b>\n"
+        "1. <a href='https://www.facebook.com/groups/remontisofia'>Ремонти София - майстори и клиенти</a>\n"
+        "2. <a href='https://www.facebook.com/groups/stroitelstvoiremontisofia'>Строителство и ремонти София</a>\n"
+        "3. <a href='https://www.facebook.com/groups/forumremontisofia'>ФОРУМ ЗА СТРОИТЕЛСТВО И РЕМОНТИ СОФИЯ</a>\n\n"
+        "🎯 <b>نحوه کار با زاگرس (سرعت ۱۰۰٪ برنده):</b>\n"
+        "• هر زمان کارفرمایی در فیسبوک درخواست برق‌کار داد (مثلاً: <i>'Търся електротехник за смяна на табло...'</i>)، متن یا لینک پستش رو کپی کن و اینجا برام بفرست (یا بنویس <code>/fb [متن]</code> یا <code>زاگرس فیسبوک: [متن]</code>).\n"
+        "• زاگرس زیر ۲ ثانیه:\n"
+        "  ۱. بهترین <b>کامنت رسمی و ترغیب‌کننده</b> با معرفی ZVB را آماده می‌کند.\n"
+        "  ۲. یک <b>پیام خصوصی مسنجر (DM)</b> شخصی‌سازی‌شده می‌نویسد.\n"
+        "  ۳. <b>تحلیل فنی و برآورد قیمت منصفانه</b> را به فارسی برایت آماده می‌کند!\n\n"
+        "💡 <i>در فیسبوک، اولین کامنت حرفه‌ای برنده پروژه است!</i>"
+    )
+
 AI_CONVERSATION_HISTORY = {}
 
 ZAGROS_SYSTEM_PROMPT = (
@@ -482,7 +503,10 @@ def ask_zagros_ai(user_query, chat_id="default", context_ref=None):
                     },
                     "generationConfig": {
                         "temperature": 0.7,
-                        "maxOutputTokens": 1500
+                        "maxOutputTokens": 1500,
+                        "thinkingConfig": {
+                            "thinkingBudget": 0
+                        }
                     }
                 }
                 r = requests.post(url, json=payload, timeout=10)
@@ -548,6 +572,108 @@ def ask_zagros_ai(user_query, chat_id="default", context_ref=None):
         "• 📝 <b>متن‌های رسمی بلغاری:</b> برای ارسال به کارفرما، شرکت ساختمانی یا دیزاینر\n"
         "• 🔍 <b>استعلام پروژه‌ها:</b> بنویس <i>'زاگرس فوری'</i> یا <i>'زاگرس младост'</i>\n\n"
         "هر سوال یا ایده‌ای داری راحت بگو تا گام‌به‌گام با هم بچینیمش! 🚀"
+    )
+
+def handle_facebook_pitch(post_text):
+    """
+    Zagros Facebook Fast-Pitch Engine:
+    Generates high-converting public comment + private DM in Bulgarian + Persian engineering estimate.
+    """
+    cfg = load_config()
+    gemini_key = cfg.get("gemini_api_key", "").strip() or os.environ.get("GEMINI_API_KEY", "").strip()
+    if gemini_key:
+        prompt = (
+            f"این یک پست/درخواست کارفرما در گروه فیسبوک صوفیه برای خدمات الکتریکی است:\n"
+            f"«««\n{post_text}\n»»»\n\n"
+            "به عنوان زاگرس (مدیر ارشد فنی ZVB София | +359 87 7944353 | https://zvb.bg | 15+ г. опит | 5 г. гаранция | Безплатен оглед):\n"
+            "۱. یک کامنت فوق‌العاده جذاب، اصیل، محترمانه و به زبان بلغاری استاندارد (Български) برای درج زیر پست فیسبوک بنویس (با ذکر بازدید رایگان، ۵ سال گارانتی، تجربه ۱۵ ساله و شماره تماس). داخل تگ <code> قرار بده تا با یک لمس کپی شود.\n"
+            "۲. یک پیام خصوصی (Лично съобщение в Messenger) به زبان بلغاری برای ارسال مستقیم به کارفرما بنویس داخل تگ <code>.\n"
+            "۳. یک تحلیل کوتاه مهندسی و برآورد قیمت تقریبی بازار صوفیه به فارسی برای مجری توضیح بده.\n"
+            "پاسخ را با ایموجی‌های مناسب مهندسی، ساختار زیبا و خوانا آماده کن."
+        )
+        for model_name in ["gemini-2.5-flash", "gemini-2.5-flash-lite"]:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                r = requests.post(url, json={
+                    "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                    "systemInstruction": {"parts": [{"text": ZAGROS_SYSTEM_PROMPT}]},
+                    "generationConfig": {
+                        "temperature": 0.7,
+                        "maxOutputTokens": 1200,
+                        "thinkingConfig": {"thinkingBudget": 0}
+                    }
+                }, timeout=15)
+                if r.status_code == 200:
+                    ans = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    return f"📱 <b>Загрос AI: بسته واکنش سریع فیسبوک (Facebook Fast-Pitch):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n{ans}"
+            except Exception as e:
+                print(f"FB pitch error: {e}")
+
+    # Fallback template
+    clean = (
+        "Здравейте! От инженерен екип ZVB (София) с удоволствие можем да съдействаме качествено за Вашия електро обект. "
+        "Разполагаме с над 15 години опит, работим по БДС стандарти, предлагаме 5 години пълна гаранция и безплатен оглед на място в София. "
+        "Моля свържете се с нас: +359 87 7944353 | https://zvb.bg"
+    )
+    return (
+        "📱 <b>Загрос AI: متن آماده پاسخ سریع فیسبوک (Facebook Fast-Pitch):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        "📌 <b>متن کامنت برای ارسال زیر پست:</b>\n"
+        f"<code>{clean}</code>\n\n"
+        "<i>(روی کادر بالا ضربه بزنید تا متن کپی شود)</i>"
+    )
+
+def generate_lead_pitch(lead):
+    """
+    Zagros 1-Click Lead Proposal Generator:
+    Creates an irresistible, tailored Bulgarian bid proposal and engineering cost analysis.
+    """
+    cfg = load_config()
+    gemini_key = cfg.get("gemini_api_key", "").strip() or os.environ.get("GEMINI_API_KEY", "").strip()
+    title = lead.get("title", "")
+    src = lead.get("source", "")
+    loc = lead.get("location", "София")
+    url = lead.get("url", "")
+    
+    if gemini_key:
+        prompt = (
+            f"یک پروژه برقی جدید کشف شده است:\n"
+            f"عنوان: {title}\n"
+            f"منبع: {src}\n"
+            f"مکان: {loc}\n"
+            f"لینک: {url}\n\n"
+            "به عنوان زاگرس، مدیر فنی و تجاری ZVB София (+359 87 7944353 | https://zvb.bg | 15+ г. опит | 5 г. гаранция | Безплатен оглед):\n"
+            "۱. یک پیشنهاد و پیام رسمی، اختصاصی و بسیار قانع‌کننده به زبان بلغاری (Български) بنویس که دقیقاً به نیازهای این پروژه پاسخ دهد و داخل تگ <code> باشد تا کاربر با یک لمس کپی کند.\n"
+            "۲. به فارسی برای مجری توضیح بده چه مواردی (سایز کابل، فیوز، نوع تابلو یا دوربین) نیاز است و محدوده قیمت منصفانه و پرسود در بازار صوفیه چقدر است."
+        )
+        for model_name in ["gemini-2.5-flash", "gemini-2.5-flash-lite"]:
+            try:
+                r = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}", json={
+                    "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                    "systemInstruction": {"parts": [{"text": ZAGROS_SYSTEM_PROMPT}]},
+                    "generationConfig": {
+                        "temperature": 0.7,
+                        "maxOutputTokens": 1200,
+                        "thinkingConfig": {"thinkingBudget": 0}
+                    }
+                }, timeout=15)
+                if r.status_code == 200:
+                    ans = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    return f"🧠 <b>Загрос AI: پیشنهاد اختصاصی برای این پروژه:</b>\n━━━━━━━━━━━━━━━━━━━━\n📌 <b>{title[:60]}</b>\n\n{ans}"
+            except Exception as e:
+                print(f"Lead pitch error: {e}")
+
+    # Fallback
+    clean_pitch = (
+        f"Здравейте! Пиша Ви от ZVB (Електроинсталации и слаботокови системи, гр. София) относно Вашия проект '{title[:40]}'. "
+        "Предлагаме професионално и чисто изпълнение с висококачествени материали, безплатен оглед и 5 години гаранция с протокол. "
+        "Оставам на разположение: +359 87 7944353 | https://zvb.bg"
+    )
+    return (
+        f"🧠 <b>Загрос AI: پیشنهاد اختصاصی برای پروژه:</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+        f"📌 <b>{title[:60]}</b>\n\n"
+        f"<code>{clean_pitch}</code>\n\n"
+        "<i>(روی کادر بالا ضربه بزنید تا متن خودکار کپی شود)</i>"
     )
 
 def handle_search_text(query):
@@ -851,6 +977,24 @@ def run_telegram_bot():
                     elif cb_data == "ai_designer":
                         text = get_designer_pitch()
                         send_msg(token, sender_chat_id, text, get_ai_keyboard())
+                    elif cb_data == "cmd_fb":
+                        send_msg(token, sender_chat_id, get_fb_menu(), get_main_keyboard())
+                    elif cb_data.startswith("p_"):
+                        target_id = cb_data[2:]
+                        answer_callback(token, cb_id)
+                        existing = lead_scraper.load_existing_leads()
+                        matched_lead = existing.get(target_id)
+                        if not matched_lead:
+                            for k, v in existing.items():
+                                if target_id in k or k in target_id:
+                                    matched_lead = v
+                                    break
+                        if matched_lead:
+                            send_msg(token, sender_chat_id, "⏳ <i>Загрос анализира проекта и съставя оферта...</i>")
+                            pitch_res = generate_lead_pitch(matched_lead)
+                            send_msg(token, sender_chat_id, pitch_res, get_main_keyboard())
+                        else:
+                            send_msg(token, sender_chat_id, "❌ Проектът не беше намерен в базата данни.", get_main_keyboard())
 
                 # 2. Handle Text Messages & Commands
                 elif "message" in update:
@@ -907,8 +1051,17 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, handle_stats_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["پیشنهاد", "متن پیام", "پیچ", "pitches", "آفر"]):
                         send_msg(token, sender_chat_id, handle_pitches_cmd(), get_main_keyboard())
-                    elif any(k in clean_query.lower() for k in ["هوش", "ai", "مشاوره", "بپرس", "سوال"]):
-                        send_msg(token, sender_chat_id, ask_zagros_ai(clean_query, chat_id=sender_chat_id, context_ref=reply_context), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["فیسبوک", "facebook", "fb"]):
+                        post_body = ""
+                        for w in ["/fb", "فیسبوک:", "فیسبوک", "facebook:", "facebook", "fb:", "fb"]:
+                            if clean_query.lower().startswith(w):
+                                post_body = clean_query[len(w):].strip().lstrip(":, ")
+                                break
+                        if post_body and len(post_body) > 15:
+                            send_msg(token, sender_chat_id, "⏳ <i>Загрос анализира поста от Facebook и подготвя оферта...</i>")
+                            send_msg(token, sender_chat_id, handle_facebook_pitch(post_body), get_main_keyboard())
+                        else:
+                            send_msg(token, sender_chat_id, get_fb_menu(), get_main_keyboard())
                     elif clean_query.startswith("/start") or clean_query.startswith("/help"):
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
                     elif clean_query.startswith("/calc"):
