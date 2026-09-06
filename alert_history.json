@@ -6,7 +6,7 @@
     "url_hash": "8f905e56aa1d04721e78ca2bc644e6d9",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:28"
+    "alerted_at": "2026-09-06 10:26:11"
   },
   "mp_96213": {
     "id": "mp_96213",
@@ -15,7 +15,7 @@
     "url_hash": "addf55eb507515c4a99eca419b280702",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:31"
+    "alerted_at": "2026-09-06 10:26:11"
   },
   "mp_96189": {
     "id": "mp_96189",
@@ -24,7 +24,7 @@
     "url_hash": "bc57a8f4cb009cc61862f65a09c865e7",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:34"
+    "alerted_at": "2026-09-06 10:26:11"
   },
   "mp_96270": {
     "id": "mp_96270",
@@ -33,7 +33,7 @@
     "url_hash": "84eb88a2579b45746aa16e99ac55de9b",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:36"
+    "alerted_at": "2026-09-06 10:26:11"
   },
   "mp_96269": {
     "id": "mp_96269",
@@ -42,7 +42,16 @@
     "url_hash": "27c9f735ad10a499af227f7ffabee193",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:39"
+    "alerted_at": "2026-09-06 10:26:11"
+  },
+  "mp_96264": {
+    "id": "mp_96264",
+    "title": "[MaistorPlus] Монтаж на бойлер (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96264",
+    "url_hash": "8ad9240b1f51890655ae2ea13e588bbf",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11"
   },
   "mp_96187": {
     "id": "mp_96187",
@@ -51,7 +60,7 @@
     "url_hash": "6905206bac324c4542b7024c7800ac2a",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:42"
+    "alerted_at": "2026-09-06 10:26:11"
   },
   "mp_96036": {
     "id": "mp_96036",
@@ -60,6 +69,51 @@
     "url_hash": "8f028dfb58f0f229aa4e9ba96dfe589a",
     "source": "MaistorPlus",
     "location": "София",
-    "alerted_at": "2026-09-06 10:24:44"
+    "alerted_at": "2026-09-06 10:26:11"
+  },
+  "daibau_62077": {
+    "id": "daibau_62077",
+    "title": "[Daibau] ел . инсталация",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/el_instalatsiya/62077",
+    "url_hash": "9efbfa0f87256dd87ff9dd8183e88dc2",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-06 10:26:11"
+  },
+  "daibau_61119": {
+    "id": "daibau_61119",
+    "title": "[Daibau] смяна на двоен контакт... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/smyana_na_dvoen_kontakt/61119",
+    "url_hash": "6dd0ea71d3ada9b872a1daa043c05146",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-06 10:26:11"
+  },
+  "daibau_59952": {
+    "id": "daibau_59952",
+    "title": "[Daibau] Прекъсна тока в сутирена... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/prekasna_toka_v_sutirena/59952",
+    "url_hash": "355e25c197cc894481f129058be613c1",
+    "source": "Daibau",
+    "location": "Огняново, София",
+    "alerted_at": "2026-09-06 10:26:11"
+  },
+  "daibau_59602": {
+    "id": "daibau_59602",
+    "title": "[Daibau] Промяна на табла (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/promyana_na_tabla/59602",
+    "url_hash": "2985299755e7054d6099d10c2f137f2b",
+    "source": "Daibau",
+    "location": "Самоков, София",
+    "alerted_at": "2026-09-06 10:26:11"
+  },
+  "daibau_54651": {
+    "id": "daibau_54651",
+    "title": "[Daibau] развален/прекъснат кабелен ключ към осве... (от 1 до 3 месецa)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/razvalen_prekasnat_kabelen_klyuch_kam_osvetlenieto_v_banyata/54651",
+    "url_hash": "6eb65390eeba725afe9eaf8282da3f53",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-06 10:26:11"
   }
 }

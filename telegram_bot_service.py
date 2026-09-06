@@ -131,15 +131,34 @@ def handle_urgent_cmd():
     with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
         leads = json.load(f)
     
-    valid = [l for l in leads.values() if daily_digest.is_strictly_electrical_sofia(l) and daily_digest.is_fresh_lead(l, max_days=4)]
+    import lead_filter_engine
+    valid = []
+    seen_titles = []
+    for l in leads.values():
+        # Check closed / expiration / freshness
+        closed, _ = lead_filter_engine.is_project_closed_or_expired(l)
+        fresh, _ = lead_filter_engine.is_within_time_window(l, max_days=14)
+        in_sofia, _ = lead_filter_engine.is_valid_sofia_region(l)
+        if not closed and fresh and in_sofia and daily_digest.is_strictly_electrical_sofia(l):
+            # Check similarity against already included in list
+            is_sim = False
+            for st in seen_titles:
+                if lead_filter_engine.calculate_similarity(l.get('title', ''), st) >= 0.80:
+                    is_sim = True
+                    break
+            if not is_sim:
+                tier, _ = lead_filter_engine.calculate_project_value_tier(l)
+                l['value_tier'] = tier
+                valid.append(l)
+                seen_titles.append(l.get('title', ''))
     
-    # Sort leads: phone numbers first, then newest
-    valid.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
+    # Sort leads: High value & phone numbers first, then newest
+    valid.sort(key=lambda x: (1 if x.get('value_tier') == 'HIGH_VALUE' else 0, 1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
     
     if not valid:
-        return "✅ <b>Няма нови необработени клиентски запитвания в София за последните 48 часа.</b>\nВсички обяви са прегледани. Натиснете <i>'🔍 Сканирай сега'</i> за сканиране на живо!"
+        return "✅ <b>Няма нови необработени клиентски запитвания в София за последните 14 дни.</b>\nВсички обяви са прегледани. Натиснете <i>'🔍 Сканирай сега'</i> за сканиране на живо!"
     
-    msg = "🎯 <b>ТОП ЕЛЕКТРО ПРОЕКТИ И ЗАПИТВАНИЯ (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
+    msg = "🎯 <b>ТОП ПРОВЕРЕНИ КЛИЕНТСКИ ПРОЕКТИ (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
     for idx, l in enumerate(valid[:5], 1):
         phone = l.get('phone')
         phone_block = ""
@@ -155,8 +174,9 @@ def handle_urgent_cmd():
         action_links.append(f"<a href='{l.get('url')}'>{link_label}</a>")
         actions_str = " | ".join(action_links)
         
-        msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_block}\n🌐 {l.get('source')} ➔ {actions_str}\n\n"
-    msg += "💡 <i>Прецизно филтрирани клиентски проекти за ZVB Sofia (zvb.bg)</i>"
+        tier_badge = "💎 <i>[Голям обект]</i> " if l.get('value_tier') == 'HIGH_VALUE' else ""
+        msg += f"{idx}. {tier_badge}<b>{l.get('title')[:65]}</b>{phone_block}\n🌐 {l.get('source')} ➔ {actions_str}\n\n"
+    msg += "🛡️ <i>7-степенна филтрация: без дубликати, без изтекли, само реални клиенти в София</i>"
     return msg
 
 def handle_builders_cmd():

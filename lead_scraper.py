@@ -109,8 +109,11 @@ def send_telegram_alert(lead, bot_token, chat_id):
         header = f"{category_icon} <b>ZVB Радар: Нов електро проект!</b>"
         status_line = ""
 
+    value_badge = "💎 <b>ГОЛЯМ / ВИСОКОБЮДЖЕТЕН ОБЕКТ</b>\n" if lead.get("value_tier") == "HIGH_VALUE" else ""
+
     text = (
         f"{header}\n\n"
+        f"{value_badge}"
         f"📌 <b>Заглавие:</b> {lead.get('title')}\n"
         f"🏷️ <b>Категория:</b> {lead.get('category_label')}\n"
         f"📍 <b>Локация:</b> {lead.get('location')}\n"
@@ -1005,17 +1008,32 @@ def run_scan():
 
     save_leads(existing_leads)
 
-    # Dispatch telegram alerts for newly discovered leads (strictly electrical Sofia projects only)
+    # Dispatch telegram alerts for newly discovered leads through 7-Layer Enterprise Filter
     if telegram_enabled and bot_token and chat_id and new_leads:
         import daily_digest
-        strict_new_leads = [nl for nl in new_leads if daily_digest.is_strictly_electrical_sofia(nl)]
-        print(f"\n📲 Sending Telegram alerts for {len(strict_new_leads)} verified electrical Sofia opportunities...")
+        import lead_filter_engine
+
+        alert_history = lead_filter_engine.load_alert_history()
+        strict_new_leads = []
+
+        for nl in new_leads:
+            ok, reason, tier = lead_filter_engine.evaluate_lead(nl, alert_history)
+            if ok and daily_digest.is_strictly_electrical_sofia(nl):
+                nl["value_tier"] = tier
+                strict_new_leads.append(nl)
+                lead_filter_engine.record_alert_sent(nl, alert_history)
+            else:
+                print(f"   ↳ [7-Layer Filter] Dropped '{nl.get('title')[:35]}...' -> {reason}")
+
+        print(f"\n📲 Sending Telegram alerts for {len(strict_new_leads)} strictly verified opportunities...")
         sent_count = 0
         for nl in strict_new_leads[:15]:
             if send_telegram_alert(nl, bot_token, chat_id):
                 sent_count += 1
             time.sleep(0.4)
         print(f"   ↳ Sent {sent_count} alerts to Telegram.")
+
+        lead_filter_engine.sync_git_history()
 
     print("\n" + "=" * 65)
     print(f"Scan complete! New leads added: {len(new_leads)} | Total database: {len(existing_leads)}")
