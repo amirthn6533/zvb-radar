@@ -20,6 +20,7 @@ import re
 import lead_scraper
 import daily_digest
 import sofia_b2b_extractor
+import pdf_offer_generator
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -79,7 +80,8 @@ def get_main_keyboard():
                 {"text": "💎 Интериорни дизайнери", "callback_data": "cmd_designers"}
             ],
             [
-                {"text": "📱 شکار پروژه‌های فیسبوک (Facebook)", "callback_data": "cmd_fb"}
+                {"text": "📱 شکار پروژه‌های فیسبوک", "callback_data": "cmd_fb"},
+                {"text": "📑 صدور پیش‌فاکتور رسمی (PDF)", "callback_data": "cmd_pdf"}
             ]
         ]
     }
@@ -112,8 +114,9 @@ def get_welcome_text():
         "برای گفتگو با من کافیست نام <b>«زاگرس»</b> را در ابتدای پیامتان بیاورید، یا از دکمه‌های زیر استفاده کنید.\n\n"
         "👇 <b>امکانات کلیدی:</b>\n"
         "• 🧠 <b>هوش مصنوعی مهندسی:</b> 'زاگرس کابل مناسب برای کولر چیه؟' یا 'زاگرس پیام پیگیری مشتری'\n"
-        "• 💰 <b>پیش‌فاکتور رسمی بلغاری:</b> 'زاگرس قیمت: آپارتمان ۸۰ متری، تابلو برق، ۳۰ پریز، ۴ دوربین'\n"
-        "• ⚡ <b>پروژه‌های فوری:</b> مشاهده آخرین تماس‌ها و درخواست‌های کارفرمایان برق در صوفیه\n"
+        "• 📑 <b>صدور پیش‌فاکتور رسمی PDF:</b> 'زاگرس فاکتور: آپارتمان ۸۰ متری، تعویض تابلو، ۳۰ پریز'\n"
+        "• 📱 <b>شکار پروژه‌های فیسبوک:</b> ارسال متن پست با دکمه یا /fb برای آفر انفجاری بلغاری\n"
+        "• ⚡ <b>پروژه‌های فوری (MaistorPlus & Daibau):</b> آخرین مناقصه‌ها و پروژه‌های برق در صوفیه\n"
         "• 🔍 <b>جستجوی محله/تجهیزات:</b> 'زاگرس младост' یا 'زاگرس камери'"
     )
 
@@ -979,6 +982,37 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, text, get_ai_keyboard())
                     elif cb_data == "cmd_fb":
                         send_msg(token, sender_chat_id, get_fb_menu(), get_main_keyboard())
+                    elif cb_data == "cmd_pdf":
+                        send_msg(token, sender_chat_id, (
+                            "📑 <b>Загрос AI: صدور پیش‌فاکتور رسمی PDF (ZVB София)</b>\n"
+                            "━━━━━━━━━━━━━━━━━━━━\n\n"
+                            "برای صدور فوری پیش‌فاکتور رسمی PDF با سربرگ ZVB، لوگو، جدول هزینه‌ها به لِوا (BGN) و ۵ سال گارانتی کتبی، کافی است بنویسید:\n\n"
+                            "<code>/pdf آپارتمان ۸۰ متری در ملادوست: تعویض تابلو، ۳۰ پریز، متریال اشنایدر</code>\n"
+                            "یا\n"
+                            "<code>زاگرس فاکتور: سیم‌کشی کامل ۲ خوابه و نصب آیفون تصویری</code>\n\n"
+                            "<i>(روی نمونه‌های بالا ضربه بزنید تا کپی شوند)</i>"
+                        ), get_main_keyboard())
+                    elif cb_data.startswith("pdf_"):
+                        target_id = cb_data[4:]
+                        answer_callback(token, cb_id)
+                        existing = lead_scraper.load_existing_leads()
+                        matched_lead = existing.get(target_id)
+                        if not matched_lead:
+                            for k, v in existing.items():
+                                if target_id in k or k in target_id:
+                                    matched_lead = v
+                                    break
+                        if matched_lead:
+                            send_msg(token, sender_chat_id, "⏳ <i>Загрос генерира официална брандирана PDF оферта...</i>")
+                            pdf_offer_generator.create_and_send_pdf_offer(
+                                token=token,
+                                chat_id=sender_chat_id,
+                                description=matched_lead.get("title", ""),
+                                client_name="Клиент",
+                                location=matched_lead.get("location", "гр. София")
+                            )
+                        else:
+                            send_msg(token, sender_chat_id, "❌ Проектът не беше намерен в базата данни.", get_main_keyboard())
                     elif cb_data.startswith("p_"):
                         target_id = cb_data[2:]
                         answer_callback(token, cb_id)
@@ -1034,6 +1068,31 @@ def run_telegram_bot():
                     
                     if not clean_query or clean_query in ["منو", "menu", "help", "کمک"]:
                         send_msg(token, sender_chat_id, "درود مهندس جان! در خدمتم. می‌توانید بفرمایید چه کاری انجام دهم:\n\n" + get_welcome_text(), get_main_keyboard())
+                    elif any(clean_query.lower().startswith(p) for p in ["/pdf", "pdf", "پی دی اف", "فاکتور:", "پیش فاکتور:", "پیش‌فاکتور:", "صدور فاکتور"]) or any(k in clean_query.lower() for k in ["فاکتور رسمی", "pdf رسمی", "پیش فاکتور رسمی", "پیش‌فاکتور رسمی"]):
+                        spec = clean_query
+                        for w in ["/pdf", "pdf:", "pdf", "پی دی اف:", "پی دی اف", "فاکتور رسمی:", "فاکتور رسمی", "صدور فاکتور:", "صدور فاکتور", "پیش فاکتور رسمی:", "پیش فاکتور رسمی", "پیش‌فاکتور رسمی:", "پیش‌فاکتور رسمی", "فاکتور:", "فاکتور", "پیش فاکتور:", "پیش فاکتور", "پیش‌فاکتور:", "پیش‌فاکتور"]:
+                            if clean_query.lower().startswith(w):
+                                spec = clean_query[len(w):].strip().lstrip(":, ")
+                                break
+                        if spec and len(spec) > 5:
+                            send_msg(token, sender_chat_id, "⏳ <i>Загрос генерира официална брандирана PDF оферта на ZVB...</i>")
+                            pdf_offer_generator.create_and_send_pdf_offer(
+                                token=token,
+                                chat_id=sender_chat_id,
+                                description=spec,
+                                client_name="Клиент",
+                                location="гр. София"
+                            )
+                        else:
+                            send_msg(token, sender_chat_id, (
+                                "📑 <b>Загрос AI: صدور پیش‌فاکتور رسمی PDF (ZVB София)</b>\n"
+                                "━━━━━━━━━━━━━━━━━━━━\n\n"
+                                "برای صدور فوری پیش‌فاکتور رسمی PDF با سربرگ ZVB، لوگو، جدول هزینه‌ها به لِوا (BGN) و ۵ سال گارانتی کتبی، مشخصات پروژه را بنویسید:\n\n"
+                                "<code>/pdf آپارتمان ۸۰ متری در ملادوست: تعویض تابلو، ۳۰ پریز، متریال اشنایدر</code>\n"
+                                "یا\n"
+                                "<code>زاگرس فاکتور رسمی: سیم‌کشی کامل ۲ خوابه و نصب آیفون تصویری</code>\n\n"
+                                "<i>(روی نمونه‌های بالا ضربه بزنید تا کپی شوند)</i>"
+                            ), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["قیمت", "پیش فاکتور", "پیش‌فاکتور", "فاکتور", "محاسبه", "کالکولاتور", "ценоразпис", "оферта", "цена"]):
                         send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["اسکن", "scan", "بروزرسانی", "جستجو کن", "بگرد", "اسکن کن"]):
