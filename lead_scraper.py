@@ -975,31 +975,8 @@ def run_scan():
     existing_leads = load_existing_leads()
     new_leads = []
     
-    for kw in keywords:
-        print(f"\n🔍 Scanning: '{kw}'...")
-        import daily_digest
-        
-        # 1. Scrape Bazar.bg
-        bazar_items = scrape_bazar(kw)
-        valid_bazar = [it for it in bazar_items if daily_digest.is_strictly_electrical_sofia(it)]
-        print(f"   ↳ Bazar.bg: {len(bazar_items)} raw -> {len(valid_bazar)} strictly verified Sofia client leads")
-        for item in valid_bazar:
-            if item['id'] not in existing_leads:
-                existing_leads[item['id']] = item
-                new_leads.append(item)
-                
-        time.sleep(0.5)
-        
-        # 2. Scrape Alo.bg
-        alo_items = scrape_alo(kw)
-        valid_alo = [it for it in alo_items if daily_digest.is_strictly_electrical_sofia(it)]
-        print(f"   ↳ Alo.bg: {len(alo_items)} raw -> {len(valid_alo)} strictly verified Sofia client leads")
-        for item in valid_alo:
-            if item['id'] not in existing_leads:
-                existing_leads[item['id']] = item
-                new_leads.append(item)
-                
-        time.sleep(0.5)
+    # 1. Classifieds (Alo.bg & Bazar.bg) disabled to eliminate stale/repetitive technician ads.
+    # 2. We focus 100% on genuine fresh customer project tenders from MaistorPlus & Daibau.bg!
         
     # 3. Scrape MaistorPlus if configured
     mp_cfg = config.get("maistorplus", {})

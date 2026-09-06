@@ -105,27 +105,20 @@ def is_strictly_electrical_sofia(l):
     if not any(area in full for area in SOFIA_AREAS):
         return False
         
+    # 0. Reject Classifieds entirely (Alo.bg & Bazar.bg) to eliminate stale/repetitive technician ads
+    if source in ['Alo.bg', 'Bazar.bg']:
+        return False
+
     # 4. Source specific intent verification:
     if source in ['MaistorPlus', 'Daibau']:
         # In MaistorPlus and Daibau, all jobs are real clients! Must have electrical relevance
-        mp_electrical = ['контакт', 'вентилатор', 'ел', 'електро', 'осветление', 'табло', 'табла', 'бойлер', 'кабел', 'ключ', 'камер', 'умен дом', 'ток', 'захранване']
+        mp_electrical = ['контакт', 'вентилатор', 'ел', 'електро', 'осветление', 'табло', 'табла', 'бойлер', 'кабеل', 'ключ', 'камер', 'умен дом', 'ток', 'захранване']
         return any(w in title for w in mp_electrical)
 
-    # For Classifieds (Bazar / Alo): Must have explicit client demand intent!
-    # Real clients ask "Търся майстор за...", "Търси се ел...", "Търсим подизпълнител..."
-    client_intent_words = [
-        'търся', 'търси се', 'търсим', 'нуждая се', 'нужен е', 'трябва ми',
-        'смяна на', 'монтаж на', 'подмяна на', 'ремонт на ел', 'изграждане на'
-    ]
-    if not any(w in title for w in client_intent_words):
-        return False
-        
-    # 5. Must have electrical core
-    has_electrical = any(el in title for el in ELECTRICAL_MUST_HAVE)
-    return has_electrical
+    return False
 
-def is_fresh_lead(l, max_days=3):
-    """Checks if lead was found within the last N days (defaults to 3 days = 72 hours)"""
+def is_fresh_lead(l, max_days=2):
+    """Checks if lead was found within the last N days (defaults to 2 days = 48 hours)"""
     found_at = l.get('found_at', '')
     if not found_at:
         return True
