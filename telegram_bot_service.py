@@ -21,6 +21,7 @@ import lead_scraper
 import daily_digest
 import sofia_b2b_extractor
 import pdf_offer_generator
+import candidate_manager
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -82,6 +83,9 @@ def get_main_keyboard():
             [
                 {"text": "📱 شکار پروژه‌های فیسبوک", "callback_data": "cmd_fb"},
                 {"text": "📑 صدور پیش‌فاکتور رسمی (PDF)", "callback_data": "cmd_pdf"}
+            ],
+            [
+                {"text": "👥 مدیریت برق‌کارها (کاندیداها)", "callback_data": "cmd_candidates"}
             ]
         ]
     }
@@ -115,6 +119,7 @@ def get_welcome_text():
         "👇 <b>امکانات کلیدی:</b>\n"
         "• 🧠 <b>هوش مصنوعی مهندسی:</b> 'زاگرس کابل مناسب برای کولر چیه؟' یا 'زاگرس پیام پیگیری مشتری'\n"
         "• 📑 <b>صدور پیش‌فاکتور رسمی PDF:</b> 'زاگرس فاکتور: آپارتمان ۸۰ متری، تعویض تابلو، ۳۰ پریز'\n"
+        "• 👥 <b>بانک کاندیداهای برق‌کار:</b> 'زاگرس اضافه کن: ایوان، 0888123456، مهارت تابلو'\n"
         "• 📱 <b>شکار پروژه‌های فیسبوک:</b> ارسال متن پست با دکمه یا /fb برای آفر انفجاری بلغاری\n"
         "• ⚡ <b>پروژه‌های فوری (MaistorPlus & Daibau):</b> آخرین مناقصه‌ها و پروژه‌های برق در صوفیه\n"
         "• 🔍 <b>جستجوی محله/تجهیزات:</b> 'زاگرس младост' یا 'زاگرس камери'"
@@ -982,6 +987,27 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, text, get_ai_keyboard())
                     elif cb_data == "cmd_fb":
                         send_msg(token, sender_chat_id, get_fb_menu(), get_main_keyboard())
+                    elif cb_data == "cmd_candidates":
+                        text, kbd = candidate_manager.get_candidate_list_view()
+                        send_msg(token, sender_chat_id, text, kbd)
+                    elif cb_data == "cmd_add_cand_help":
+                        send_msg(token, sender_chat_id, (
+                            "➕ <b>راهنمای افزودن کاندیدای برق‌کار:</b>\n"
+                            "━━━━━━━━━━━━━━━━━━━━\n\n"
+                            "کافیست در گروه یا چت خصوصی نام، شماره و مهارت‌های فرد را بنویسید:\n\n"
+                            "<code>زاگرس اضافه کن: ایوان، 0888123456، مهارت تابلوسازی و لوله‌گذاری، روزمزد ۱۲۰ لوا</code>\n"
+                            "یا\n"
+                            "<code>/add_cand Георги 0877998811, инсталации, 130 лв/ден</code>\n\n"
+                            "زاگرس هوشمندانه اطلاعات را دسته‌بندی و در بانک اطلاعاتی ذخیره می‌کند."
+                        ), get_main_keyboard())
+                    elif cb_data.startswith("delcand_"):
+                        target_id = cb_data[8:]
+                        answer_callback(token, cb_id, "در حال حذف کاندید...")
+                        ok, name = candidate_manager.delete_candidate_by_query(target_id)
+                        if ok:
+                            send_msg(token, sender_chat_id, f"🗑 کاندید <b>{name}</b> با موفقیت حذف شد.")
+                        text, kbd = candidate_manager.get_candidate_list_view()
+                        send_msg(token, sender_chat_id, text, kbd)
                     elif cb_data == "cmd_pdf":
                         send_msg(token, sender_chat_id, (
                             "📑 <b>Загрос AI: صدور پیش‌فاکتور رسمی PDF (ZVB София)</b>\n"
@@ -1093,6 +1119,57 @@ def run_telegram_bot():
                                 "<code>زاگرس فاکتور رسمی: سیم‌کشی کامل ۲ خوابه و نصب آیفون تصویری</code>\n\n"
                                 "<i>(روی نمونه‌های بالا ضربه بزنید تا کپی شوند)</i>"
                             ), get_main_keyboard())
+                    elif any(clean_query.lower().startswith(p) for p in ["اضافه کن", "ثبت کاندید", "کاندید جدید", "افزودن کاندید", "/add_cand", "add_cand"]) or ("اضافه کن" in clean_query.lower() and any(x in clean_query.lower() for x in ["کاندید", "برقکار", "برق‌کار", "شماره"])):
+                        cand_text = clean_query
+                        for w in ["/add_cand", "add_cand", "اضافه کن به کاندیداها:", "اضافه کن به کاندیداها", "اضافه کن به لیست:", "اضافه کن به لیست", "اضافه کن:", "اضافه کن", "ثبت کاندید:", "ثبت کاندید", "کاندید جدید:", "کاندید جدید", "افزودن کاندید:", "افزودن کاندید"]:
+                            if clean_query.lower().startswith(w):
+                                cand_text = clean_query[len(w):].strip().lstrip(":, ")
+                                break
+                        if cand_text and len(cand_text) > 3:
+                            send_msg(token, sender_chat_id, "⏳ <i>در حال ثبت و دسته‌بندی مشخصات کاندید...</i>")
+                            cand = candidate_manager.add_candidate(cand_text)
+                            c_name = cand.get('name', 'کاندید')
+                            c_phone = cand.get('phone', '')
+                            c_skills = cand.get('skills', '')
+                            c_rate = cand.get('rate', '')
+                            c_notes = cand.get('notes', '')
+                            reply = (
+                                f"✅ <b>کاندید برق‌کار با موفقیت به سیستم اضافه شد!</b>\n"
+                                f"━━━━━━━━━━━━━━━━━━━━\n"
+                                f"👤 <b>نام:</b> {c_name}\n"
+                            )
+                            if c_phone:
+                                reply += f"📞 <b>شماره:</b> <code>{c_phone}</code>\n"
+                            if c_skills:
+                                reply += f"⚡ <b>مهارت‌ها:</b> {c_skills}\n"
+                            if c_rate:
+                                reply += f"💰 <b>دستمزد:</b> {c_rate}\n"
+                            if c_notes:
+                                reply += f"📝 <b>یادداشت:</b> {c_notes}\n"
+                            reply += "\n💡 برای مدیریت یا حذف، روی دکمه‌های زیر بزنید:"
+                            text_list, kbd_list = candidate_manager.get_candidate_list_view()
+                            send_msg(token, sender_chat_id, reply, kbd_list)
+                        else:
+                            send_msg(token, sender_chat_id, "➕ لطفاً مشخصات فرد را بنویسید:\n<code>زاگرس اضافه کن: ایوان، 0888123456، مهارت تابلو و لوله‌گذاری، ۱۲۰ لوا</code>", get_main_keyboard())
+                    elif any(clean_query.lower().startswith(p) for p in ["پاک کن", "حذف کن", "/del_cand", "del_cand", "حذف کاندید", "پاک کردن کاندید"]):
+                        target_q = clean_query
+                        for w in ["/del_cand", "del_cand", "حذف کاندید:", "حذف کاندید", "پاک کن کاندید:", "پاک کن کاندید", "حذف کن:", "حذف کن", "پاک کن:", "پاک کن"]:
+                            if clean_query.lower().startswith(w):
+                                target_q = clean_query[len(w):].strip().lstrip(":, ")
+                                break
+                        if target_q:
+                            ok, res_name = candidate_manager.delete_candidate_by_query(target_q)
+                            if ok:
+                                send_msg(token, sender_chat_id, f"🗑 <b>کاندید {res_name} با موفقیت از سیستم حذف شد.</b>")
+                                text_list, kbd_list = candidate_manager.get_candidate_list_view()
+                                send_msg(token, sender_chat_id, text_list, kbd_list)
+                            else:
+                                send_msg(token, sender_chat_id, f"❌ {res_name}\nبرای مشاهده لیست بنویسید: <code>زاگرس لیست کاندیداها</code>", get_main_keyboard())
+                        else:
+                            send_msg(token, sender_chat_id, "🗑 نام یا شماره فردی که می‌خواهید حذف شود را بنویسید:\n<code>زاگرس پاک کن: ایوان</code>", get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["کاندیداها", "کاندیدها", "لیست کاندید", "برقکارها", "برق‌کارها", "candidates", "/candidates"]):
+                        text_list, kbd_list = candidate_manager.get_candidate_list_view()
+                        send_msg(token, sender_chat_id, text_list, kbd_list)
                     elif any(k in clean_query.lower() for k in ["قیمت", "پیش فاکتور", "پیش‌فاکتور", "فاکتور", "محاسبه", "کالکولاتور", "ценоразпис", "оферта", "цена"]):
                         send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["اسکن", "scan", "بروزرسانی", "جستجو کن", "بگرد", "اسکن کن"]):
