@@ -52,5 +52,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-06 10:24:42"
+  },
+  "mp_96036": {
+    "id": "mp_96036",
+    "title": "[MaistorPlus] Монтаж на проточен бойлер (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96036",
+    "url_hash": "8f028dfb58f0f229aa4e9ba96dfe589a",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:24:44"
   }
 }
