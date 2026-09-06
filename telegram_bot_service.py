@@ -1081,7 +1081,13 @@ def run_telegram_bot():
                     # In groups, respond if called "زاگرس", mentioned, replied to bot, or command
                     is_private = msg.get("chat", {}).get("type") == "private"
                     
-                    if not (is_command or is_zagros or is_reply_to_bot or is_private):
+                    # Also trigger directly on candidate actions even without saying "زاگرس"
+                    candidate_triggers = [
+                        "حذف ", "حذف:", "پاک کن", "پاک:", "اضافه کن", "ثبت کاندید", "کاندیداها", "کاندیدها", "لیست کاندید", "/del_cand", "/add_cand"
+                    ]
+                    is_candidate_action = any(lower_text.startswith(t) or t in lower_text for t in candidate_triggers)
+                    
+                    if not (is_command or is_zagros or is_reply_to_bot or is_private or is_candidate_action):
                         # Ignore normal chatter between group members
                         continue
                     
@@ -1127,46 +1133,50 @@ def run_telegram_bot():
                                 break
                         if cand_text and len(cand_text) > 3:
                             send_msg(token, sender_chat_id, "⏳ <i>در حال ثبت و دسته‌بندی مشخصات کاندید...</i>")
-                            cand = candidate_manager.add_candidate(cand_text)
-                            c_name = cand.get('name', 'کاندید')
-                            c_phone = cand.get('phone', '')
-                            c_skills = cand.get('skills', '')
-                            c_rate = cand.get('rate', '')
-                            c_notes = cand.get('notes', '')
-                            reply = (
-                                f"✅ <b>کاندید برق‌کار با موفقیت به سیستم اضافه شد!</b>\n"
-                                f"━━━━━━━━━━━━━━━━━━━━\n"
-                                f"👤 <b>نام:</b> {c_name}\n"
-                            )
-                            if c_phone:
-                                reply += f"📞 <b>شماره:</b> <code>{c_phone}</code>\n"
-                            if c_skills:
-                                reply += f"⚡ <b>مهارت‌ها:</b> {c_skills}\n"
-                            if c_rate:
-                                reply += f"💰 <b>دستمزد:</b> {c_rate}\n"
-                            if c_notes:
-                                reply += f"📝 <b>یادداشت:</b> {c_notes}\n"
-                            reply += "\n💡 برای مدیریت یا حذف، روی دکمه‌های زیر بزنید:"
+                            cands = candidate_manager.add_candidates_from_text(cand_text)
+                            if len(cands) > 1:
+                                reply = f"✅ <b>تعداد {len(cands)} کاندید برق‌کار به سیستم اضافه شدند:</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+                                for c in cands:
+                                    reply += f"• <b>{c.get('name')}</b>: <code>{c.get('phone')}</code>\n"
+                                reply += "\n💡 برای مشاهده کامل یا حذف هر کدام، از دکمه‌های زیر استفاده کنید:"
+                            elif cands:
+                                c = cands[0]
+                                reply = (
+                                    f"✅ <b>کاندید برق‌کار با موفقیت به سیستم اضافه شد!</b>\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"👤 <b>نام:</b> {c.get('name')}\n"
+                                )
+                                if c.get('phone'):
+                                    reply += f"📞 <b>شماره:</b> <code>{c.get('phone')}</code>\n"
+                                if c.get('skills'):
+                                    reply += f"⚡ <b>مهارت‌ها:</b> {c.get('skills')}\n"
+                                if c.get('rate'):
+                                    reply += f"💰 <b>دستمزد:</b> {c.get('rate')}\n"
+                                if c.get('notes'):
+                                    reply += f"📝 <b>یادداشت:</b> {c.get('notes')}\n"
+                                reply += "\n💡 برای مدیریت یا حذف، روی دکمه‌های زیر بزنید:"
+                            else:
+                                reply = "❌ خطا در ثبت کاندید."
                             text_list, kbd_list = candidate_manager.get_candidate_list_view()
                             send_msg(token, sender_chat_id, reply, kbd_list)
                         else:
                             send_msg(token, sender_chat_id, "➕ لطفاً مشخصات فرد را بنویسید:\n<code>زاگرس اضافه کن: ایوان، 0888123456، مهارت تابلو و لوله‌گذاری، ۱۲۰ لوا</code>", get_main_keyboard())
-                    elif any(clean_query.lower().startswith(p) for p in ["پاک کن", "حذف کن", "/del_cand", "del_cand", "حذف کاندید", "پاک کردن کاندید"]):
+                    elif any(clean_query.lower().startswith(p) for p in ["پاک کن", "حذف کن", "حذف ", "حذف:", "پاک ", "پاک:", "/del_cand", "del_cand", "حذف کاندید", "پاک کردن کاندید"]):
                         target_q = clean_query
-                        for w in ["/del_cand", "del_cand", "حذف کاندید:", "حذف کاندید", "پاک کن کاندید:", "پاک کن کاندید", "حذف کن:", "حذف کن", "پاک کن:", "پاک کن"]:
+                        for w in ["/del_cand", "del_cand", "حذف کاندید:", "حذف کاندید", "پاک کن کاندید:", "پاک کن کاندید", "حذف کن:", "حذف کن", "پاک کن:", "پاک کن", "حذف:", "حذف ", "حذف", "پاک:", "پاک ", "پاک"]:
                             if clean_query.lower().startswith(w):
                                 target_q = clean_query[len(w):].strip().lstrip(":, ")
                                 break
                         if target_q:
                             ok, res_name = candidate_manager.delete_candidate_by_query(target_q)
                             if ok:
-                                send_msg(token, sender_chat_id, f"🗑 <b>کاندید {res_name} با موفقیت از سیستم حذف شد.</b>")
+                                send_msg(token, sender_chat_id, f"🗑 <b>کاندید «{res_name}» با موفقیت از سیستم حذف شد.</b>")
                                 text_list, kbd_list = candidate_manager.get_candidate_list_view()
                                 send_msg(token, sender_chat_id, text_list, kbd_list)
                             else:
                                 send_msg(token, sender_chat_id, f"❌ {res_name}\nبرای مشاهده لیست بنویسید: <code>زاگرس لیست کاندیداها</code>", get_main_keyboard())
                         else:
-                            send_msg(token, sender_chat_id, "🗑 نام یا شماره فردی که می‌خواهید حذف شود را بنویسید:\n<code>زاگرس پاک کن: ایوان</code>", get_main_keyboard())
+                            send_msg(token, sender_chat_id, "🗑 نام یا شماره فردی که می‌خواهید حذف شود را بنویسید:\n<code>حذف بهزاد</code>", get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["کاندیداها", "کاندیدها", "لیست کاندید", "برقکارها", "برق‌کارها", "candidates", "/candidates"]):
                         text_list, kbd_list = candidate_manager.get_candidate_list_view()
                         send_msg(token, sender_chat_id, text_list, kbd_list)

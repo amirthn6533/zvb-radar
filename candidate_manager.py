@@ -40,10 +40,11 @@ def sync_git():
     except Exception as e:
         print(f"Git sync error (non-fatal): {e}")
 
-def parse_candidate_with_ai_or_regex(raw_text):
+def parse_candidates_batch(raw_text):
     """
-    Parses unstructured text into candidate details: name, phone, skills, rate, notes.
-    Uses Gemini AI with fast response, with regex fallback.
+    Parses single or multiple candidate electricians from text.
+    Handles multi-line lists, comma-separated lists, or unstructured blocks.
+    Returns list of candidate dicts: [{name, phone, skills, rate, notes}, ...]
     """
     api_key = None
     cfg_path = os.path.join(os.path.dirname(__file__), "config.json")
@@ -57,24 +58,27 @@ def parse_candidate_with_ai_or_regex(raw_text):
     if api_key:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
         prompt = f"""
-You are a precise data extraction assistant for an electrical company in Sofia, Bulgaria.
-The user provided details for a candidate electrician:
-"{raw_text}"
+You are an intelligent HR and contacts extraction assistant for an electrical contracting firm in Sofia, Bulgaria.
+The user provided contact information for one or MORE electrician candidates (may be 1 person or a multi-line list of several people):
+\"\"\"{raw_text}\"\"\"
 
-Extract the information into valid JSON only (no markdown, no backticks, just pure JSON):
-{{
-  "name": "Full name or nickname",
-  "phone": "Bulgarian phone formatted like 088... or +359...",
-  "skills": "Key electrical skills (e.g., табла, окабеляване, монтаж, интелигентни системи)",
-  "rate": "Hourly/daily rate or expected salary if mentioned, else empty string",
-  "notes": "Vehicle, tools, city area, or personal impressions"
-}}
+Extract EVERY individual person into a JSON array of objects.
+Output ONLY valid JSON (no markdown formatting, no backticks, just pure JSON):
+[
+  {{
+    "name": "Full name or nickname",
+    "phone": "Bulgarian phone number (e.g., 0886460397 or +359...)",
+    "skills": "Key skills or status (e.g., табла, инсталации, تماس نگرفته)",
+    "rate": "Expected rate if mentioned, else empty string",
+    "notes": "Any other notes"
+  }}
+]
 """
         req_data = {
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
                 "temperature": 0.1,
-                "maxOutputTokens": 300,
+                "maxOutputTokens": 600,
                 "thinkingConfig": {"thinkingBudget": 0}
             }
         }
@@ -87,54 +91,90 @@ Extract the information into valid JSON only (no markdown, no backticks, just pu
                 text = re.sub(r"^```\s*", "", text)
                 text = re.sub(r"```$", "", text).strip()
                 data = json.loads(text)
-                if data.get("name") or data.get("phone"):
+                if isinstance(data, list) and len(data) > 0:
                     return data
+                elif isinstance(data, dict):
+                    return [data]
         except Exception as e:
-            print(f"Gemini candidate parse fallback: {e}")
+            print(f"Gemini batch candidate parse fallback: {e}")
 
-    # Fallback: Regex extraction
-    phone_match = re.search(r"(\+?359\s?[0-9\s]{7,12}|08[789][0-9\s]{7,10}|02\s?[0-9\s]{6,8})", raw_text)
-    phone = phone_match.group(1).strip() if phone_match else ""
-    clean_phone = re.sub(r"\s+", "", phone)
+    # Fallback: Line-by-line / Regex extraction
+    candidates_list = []
+    lines = [l.strip() for l in raw_text.split("\n") if l.strip()]
+    
+    # If single line but has multiple Bulgarian numbers
+    if len(lines) == 1:
+        phones = re.findall(r"(?:08[789]\d{7}|\+?359\d{8,9})", re.sub(r"[\s\-]", "", raw_text))
+        if len(phones) > 1:
+            # Split by commas or semicolons
+            chunks = [c.strip() for c in re.split(r"[,;]+", raw_text) if c.strip()]
+            if len(chunks) >= len(phones):
+                lines = chunks
 
-    # Clean text without phone
-    rem_text = raw_text
-    if phone:
-        rem_text = rem_text.replace(phone, " ")
+    for line in lines:
+        phone_match = re.search(r"(\+?359\s?[0-9\s]{7,12}|08[789][0-9\s]{7,10}|02\s?[0-9\s]{6,8})", line)
+        phone = phone_match.group(1).strip() if phone_match else ""
+        clean_phone = re.sub(r"\s+", "", phone)
 
-    parts = [p.strip() for p in re.split(r"[,،;\n|]+", rem_text) if p.strip()]
-    name = parts[0] if parts else "برق‌کار کاندید"
-    skills = parts[1] if len(parts) > 1 else "برق‌کاری و تأسیسات الکتریکی"
-    notes = ", ".join(parts[2:]) if len(parts) > 2 else ""
+        rem_text = line
+        if phone:
+            rem_text = rem_text.replace(phone, " ")
 
-    return {
-        "name": name,
-        "phone": clean_phone or phone,
-        "skills": skills,
+        parts = [p.strip() for p in re.split(r"[,،;\n|]+", rem_text) if p.strip()]
+        name = parts[0] if parts else "برق‌کار کاندید"
+        skills = parts[1] if len(parts) > 1 else ""
+        notes = ", ".join(parts[2:]) if len(parts) > 2 else ""
+
+        if name or clean_phone:
+            candidates_list.append({
+                "name": name,
+                "phone": clean_phone or phone,
+                "skills": skills,
+                "rate": "",
+                "notes": notes
+            })
+
+    return candidates_list if candidates_list else [{
+        "name": "کاندید جدید",
+        "phone": "",
+        "skills": raw_text,
         "rate": "",
-        "notes": notes
-    }
+        "notes": ""
+    }]
+
+def add_candidates_from_text(raw_text):
+    """
+    Parses and adds one or multiple candidates.
+    Returns list of created candidate objects.
+    """
+    parsed_list = parse_candidates_batch(raw_text)
+    candidates = load_candidates()
+    created = []
+
+    now_ts = int(datetime.datetime.now().timestamp())
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    for i, p in enumerate(parsed_list):
+        cand_id = f"c_{now_ts}_{i}"
+        cand_obj = {
+            "id": cand_id,
+            "name": p.get("name", "بی‌نام"),
+            "phone": p.get("phone", ""),
+            "skills": p.get("skills", ""),
+            "rate": p.get("rate", ""),
+            "notes": p.get("notes", ""),
+            "added_at": now_str
+        }
+        candidates[cand_id] = cand_obj
+        created.append(cand_obj)
+
+    save_candidates(candidates)
+    return created
 
 def add_candidate(raw_text):
-    """
-    Parses and adds a new candidate to the database.
-    """
-    parsed = parse_candidate_with_ai_or_regex(raw_text)
-    cand_id = f"c_{int(datetime.datetime.now().timestamp())}"
-    
-    candidates = load_candidates()
-    cand_obj = {
-        "id": cand_id,
-        "name": parsed.get("name", "بی‌نام"),
-        "phone": parsed.get("phone", ""),
-        "skills": parsed.get("skills", ""),
-        "rate": parsed.get("rate", ""),
-        "notes": parsed.get("notes", ""),
-        "added_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    }
-    candidates[cand_id] = cand_obj
-    save_candidates(candidates)
-    return cand_obj
+    """Backward-compatible helper returning the first or combined added candidate."""
+    added = add_candidates_from_text(raw_text)
+    return added[0] if added else {}
 
 def delete_candidate_by_query(query):
     """
@@ -143,6 +183,7 @@ def delete_candidate_by_query(query):
     """
     candidates = load_candidates()
     clean_q = query.strip().lower()
+    clean_q = clean_q.lstrip(":, ")
     
     # Check exact ID first
     if clean_q in candidates:
@@ -151,13 +192,23 @@ def delete_candidate_by_query(query):
         save_candidates(candidates)
         return True, name
 
-    # Search by name or phone
+    # Normalize search query (strip spaces for phone check)
+    q_digits = re.sub(r"[^\d]", "", clean_q)
+
     matched_id = None
     matched_name = None
     for cid, c in candidates.items():
         c_name = c.get("name", "").lower()
-        c_phone = re.sub(r"\s+", "", c.get("phone", ""))
-        if clean_q in c_name or (clean_q in c_phone and len(clean_q) >= 4):
+        c_phone = re.sub(r"[^\d]", "", c.get("phone", ""))
+        
+        # Check name match
+        if clean_q in c_name or c_name in clean_q:
+            matched_id = cid
+            matched_name = c.get("name")
+            break
+        
+        # Check phone match
+        if q_digits and len(q_digits) >= 6 and (q_digits in c_phone or c_phone in q_digits):
             matched_id = cid
             matched_name = c.get("name")
             break
@@ -196,10 +247,11 @@ def get_candidate_list_view():
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "📭 در حال حاضر هیچ کاندیدی در لیست ثبت نشده است.\n\n"
             "💡 <b>روش اضافه کردن برق‌کار جدید:</b>\n"
-            "کافیست در گروه یا چت خصوصی بنویسید:\n"
-            "<code>زاگرس اضافه کن: ایوان، 0888123456، مهارت تابلو و لوله‌گذاری، روزمزد ۱۲۰ لوا</code>\n"
-            "یا\n"
-            "<code>/add_cand Георги 0877998811, опит 5г, инсталации</code>"
+            "کافیست در گروه یا چت خصوصی نام، شماره و توضیحات فرد (حتی لیست چند نفره) را بفرستید:\n"
+            "<code>اضافه کن:\n"
+            "بهزاد اسیبانپور 0886460397\n"
+            "امیر فرمانی 0878608254\n"
+            "داوود اسماعیلی 0886293352</code>"
         )
         buttons = [
             [{"text": "➕ راهنمای افزودن", "callback_data": "cmd_add_cand_help"}],
@@ -216,7 +268,7 @@ def get_candidate_list_view():
     for idx, (cid, c) in enumerate(candidates.items(), 1):
         name = c.get("name", "بی‌نام")
         phone = c.get("phone", "بدون شماره")
-        skills = c.get("skills", "-")
+        skills = c.get("skills", "")
         rate = c.get("rate", "")
         notes = c.get("notes", "")
         added = c.get("added_at", "")
@@ -227,10 +279,10 @@ def get_candidate_list_view():
         if phone:
             text += f"📞 شماره تماس: <code>{phone}</code>\n"
             text += f"💬 چت مستقیم: <a href='{viber_link}'>Viber</a> | <a href='{wa_link}'>WhatsApp</a>\n"
-        if skills and skills != "-":
-            text += f"⚡ مهارت‌ها: <i>{skills}</i>\n"
+        if skills:
+            text += f"⚡ وضعیت/مهارت: <i>{skills}</i>\n"
         if rate:
-            text += f"💰 دستمزد پیشنهادی: <b>{rate}</b>\n"
+            text += f"💰 دستمزد: <b>{rate}</b>\n"
         if notes:
             text += f"📝 یادداشت: <i>{notes}</i>\n"
         text += f"📅 ثبت: {added}\n"
