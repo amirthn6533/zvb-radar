@@ -106,9 +106,9 @@ def is_strictly_electrical_sofia(l):
         return False
         
     # 4. Source specific intent verification:
-    if source == 'MaistorPlus':
-        # In MaistorPlus, all jobs are real clients! Must have electrical relevance
-        mp_electrical = ['контакт', 'вентилатор', 'ел', 'електро', 'осветление', 'табло', 'бойлер', 'кабел', 'ключ']
+    if source in ['MaistorPlus', 'Daibau']:
+        # In MaistorPlus and Daibau, all jobs are real clients! Must have electrical relevance
+        mp_electrical = ['контакт', 'вентилатор', 'ел', 'електро', 'осветление', 'табло', 'табла', 'бойлер', 'кабел', 'ключ', 'камер', 'умен дом', 'ток', 'захранване']
         return any(w in title for w in mp_electrical)
 
     # For Classifieds (Bazar / Alo): Must have explicit client demand intent!
@@ -191,7 +191,7 @@ def build_daily_digest(period_name="Дневен бюлетин"):
         return msg
 
     # Group into Categories
-    urgent_leads = [l for l in valid_leads if l.get('source') == 'MaistorPlus' or any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор', 'монтаж', 'смяна', 'контакт', 'бойлер'])]
+    urgent_leads = [l for l in valid_leads if l.get('source') in ['MaistorPlus', 'Daibau'] or any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор', 'монтаж', 'смяна', 'контакт', 'бойлер'])]
     cctv_smart_leads = [l for l in valid_leads if l not in urgent_leads and any(w in l.get('title', '').lower() for w in ['камери', 'видеонаблюдение', 'умен дом', 'смарт', 'домофон'])]
     contractor_leads = [l for l in valid_leads if l not in urgent_leads and l not in cctv_smart_leads]
 
@@ -209,7 +209,12 @@ def build_daily_digest(period_name="Дневен бюлетин"):
                 action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
                 action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
             
-            link_label = "📋 Кандидатствай в MaistorPlus" if l.get('source') == 'MaistorPlus' else "🔗 Виж обявата"
+            if l.get('source') == 'MaistorPlus':
+                link_label = "📋 Кандидатствай в MaistorPlus"
+            elif l.get('source') == 'Daibau':
+                link_label = "📋 Кандидатствай в Daibau.bg"
+            else:
+                link_label = "🔗 Виж обявата"
             action_links.append(f"<a href='{l.get('url')}'>{link_label}</a>")
             actions_str = " | ".join(action_links)
             msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_part}\n   👉 {actions_str}\n\n"

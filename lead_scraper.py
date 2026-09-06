@@ -132,7 +132,12 @@ def send_telegram_alert(lead, bot_token, chat_id):
         first_row.append({"text": f"📞 Обади се ({phone})", "url": f"tel:+{intl_phone}"})
         buttons.append(first_row)
         
-    action_btn_text = "🚀 Кандидатствай ПЪРВИ в MaistorPlus" if lead.get("source") == "MaistorPlus" else "🔗 Отвори обявата в сайта"
+    if lead.get("source") == "MaistorPlus":
+        action_btn_text = "🚀 Кандидатствай ПЪРВИ в MaistorPlus"
+    elif lead.get("source") == "Daibau":
+        action_btn_text = "🚀 Кандидатствай в Daibau.bg"
+    else:
+        action_btn_text = "🔗 Отвори обявата в сайта"
     buttons.append([{"text": action_btn_text, "url": lead.get("url", "#")}])
 
     reply_markup = {"inline_keyboard": buttons}
@@ -386,13 +391,93 @@ def scrape_maistorplus(username, password):
         print(f"  [MaistorPlus] Error scraping: {e}")
     return results
 
+def scrape_daibau(max_pages=3):
+    """
+    Scrapes live electrical and security/smart home projects from Daibau.bg in Sofia.
+    """
+    results = []
+    seen_ids = set()
+    categories = [
+        ("elektrotehnik_elektroinstalatsii", "Електроинсталации"),
+        ("alarmi_alarmeni_sistemi", "Видеонаблюдение и СОТ")
+    ]
+    
+    for cat_slug, cat_name in categories:
+        base_url = f"https://www.daibau.bg/proekti/{cat_slug}"
+        for page in range(1, max_pages + 1):
+            url = f"{base_url}?page={page}" if page > 1 else base_url
+            try:
+                r = requests.get(url, headers=HEADERS, timeout=12)
+                if r.status_code != 200:
+                    continue
+                soup = BeautifulSoup(r.text, 'html.parser')
+                items = soup.find_all('a', href=lambda h: h and f'/proekti/{cat_slug}/' in h and h.count('/') >= 5)
+                
+                for a in items:
+                    href = a['href']
+                    clean_href = href.split('?')[0]
+                    full_url = urllib.parse.urljoin('https://www.daibau.bg', clean_href)
+                    
+                    m = re.search(r'/(\d+)$', clean_href)
+                    job_id = f"daibau_{m.group(1)}" if m else f"daibau_{hash(clean_href)}"
+                    
+                    if job_id in seen_ids:
+                        continue
+                    seen_ids.add(job_id)
+                    
+                    title = a.get_text(' ', strip=True)
+                    
+                    # Ascend DOM to get full card text (contains city, date, timeframe)
+                    card = a
+                    for _ in range(4):
+                        if card.parent:
+                            card = card.parent
+                            
+                    card_text = card.get_text(separator=' | ', strip=True)
+                    parts = [p.strip() for p in card_text.split('|') if p.strip()]
+                    
+                    # Verify Sofia location
+                    is_sofia = False
+                    loc_name = "София"
+                    for p in parts:
+                        if 'софия' in p.lower():
+                            is_sofia = True
+                            loc_name = p
+                            break
+                            
+                    if not is_sofia:
+                        continue
+                        
+                    urgency = ""
+                    for p in parts:
+                        if any(u in p.lower() for u in ['веднага', 'спешно', 'месец', 'дни']):
+                            urgency = f" ({p})"
+                            break
+                            
+                    results.append({
+                        "id": job_id,
+                        "title": f"[Daibau] {title}{urgency}",
+                        "url": full_url,
+                        "source": "Daibau",
+                        "keyword": f"Заявка Daibau ({cat_name})",
+                        "category": "urgent_client",
+                        "category_label": "🎯 Директна клиентска заявка (Daibau.bg)",
+                        "location": loc_name,
+                        "phone": "",
+                        "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                    })
+            except Exception as e:
+                print(f"  [Daibau] Error on {cat_slug} page {page}: {e}")
+                
+    return results
+
 def enrich_phones_for_leads(leads_list, max_to_fetch=25):
     """Fetches full page descriptions for classified ads to uncover direct phone numbers"""
     count = 0
     print(f"\n🔍 Извличане на директни телефонни номера за най-новите обяви (до {max_to_fetch} обяви)...")
     for item in leads_list:
-        # Never scrape phones for MaistorPlus from public pages (avoids support number 0879590810)
-        if item.get("source") == "MaistorPlus":
+        # Never scrape phones for platform inquiries from public pages
+        if item.get("source") in ["MaistorPlus", "Daibau"]:
             continue
         if item.get("phone"):
             continue
@@ -920,7 +1005,18 @@ def run_scan():
                 existing_leads[item['id']] = item
                 new_leads.append(item)
 
-    # Enrich phone numbers for new urgent leads (excluding MaistorPlus)
+    # 4. Scrape Daibau.bg (Заявки за електро и камери в София)
+    print("\n🔍 Scanning Daibau.bg (Заявки за електро и камери в София)...")
+    daibau_items = scrape_daibau(max_pages=3)
+    import daily_digest
+    valid_daibau = [it for it in daibau_items if daily_digest.is_strictly_electrical_sofia(it)]
+    print(f"   ↳ Daibau.bg: {len(daibau_items)} raw -> {len(valid_daibau)} verified Sofia client projects")
+    for item in valid_daibau:
+        if item['id'] not in existing_leads:
+            existing_leads[item['id']] = item
+            new_leads.append(item)
+
+    # Enrich phone numbers for new urgent leads (excluding MaistorPlus / Daibau)
     enrich_phones_for_leads(new_leads, max_to_fetch=20)
 
     save_leads(existing_leads)

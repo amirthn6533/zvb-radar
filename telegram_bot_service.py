@@ -708,6 +708,48 @@ def realtime_fast_radar(token, group_chat_id):
                         existing_leads[job_id] = new_item
                         new_discovered.append(new_item)
                         
+            # Check Daibau.bg for brand new Sofia electrical projects
+            try:
+                r_db = requests.get('https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii', headers=headers, timeout=10)
+                if r_db.status_code == 200:
+                    soup_db = BeautifulSoup(r_db.text, 'html.parser')
+                    db_items = soup_db.find_all('a', href=lambda h: h and '/proekti/elektrotehnik_elektroinstalatsii/' in h and h.count('/') >= 5)
+                    for a in db_items[:10]:
+                        href = a['href'].split('?')[0]
+                        full_url = urllib.parse.urljoin('https://www.daibau.bg', href)
+                        m = re.search(r'/(\d+)$', href)
+                        job_id = f"daibau_{m.group(1)}" if m else f"daibau_{hash(href)}"
+                        if job_id not in existing_leads:
+                            card = a
+                            for _ in range(4):
+                                if card.parent:
+                                    card = card.parent
+                            card_text = card.get_text(separator=' | ', strip=True)
+                            parts = [p.strip() for p in card_text.split('|') if p.strip()]
+                            if any('софия' in p.lower() for p in parts):
+                                urgency = ""
+                                for p in parts:
+                                    if any(u in p.lower() for u in ['веднага', 'спешно', 'месец', 'дни']):
+                                        urgency = f" ({p})"
+                                        break
+                                title = a.get_text(' ', strip=True)
+                                new_item = {
+                                    "id": job_id,
+                                    "title": f"[Daibau] {title}{urgency}",
+                                    "url": full_url,
+                                    "source": "Daibau",
+                                    "keyword": "Спешна клиентска заявка (Daibau)",
+                                    "category": "urgent_client",
+                                    "category_label": "🎯 Директна клиентска заявка (Daibau.bg)",
+                                    "location": "София",
+                                    "phone": "",
+                                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                                }
+                                existing_leads[job_id] = new_item
+                                new_discovered.append(new_item)
+            except Exception as e_db:
+                print(f"Daibau fast radar check error: {e_db}")
+
             if new_discovered:
                 lead_scraper.save_leads(existing_leads)
                 for item in new_discovered:
