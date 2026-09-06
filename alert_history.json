@@ -43,5 +43,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-06 10:24:39"
+  },
+  "mp_96187": {
+    "id": "mp_96187",
+    "title": "[MaistorPlus] Ремонт на ел. инсталация (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96187",
+    "url_hash": "6905206bac324c4542b7024c7800ac2a",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:24:42"
   }
 }
