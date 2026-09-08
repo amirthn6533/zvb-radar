@@ -5,6 +5,9 @@
 <img src="media/hero.png" alt="ZVB Banner" width="100%" />
 <br/><br/>
 
+![Status: Production Ready](https://img.shields.io/badge/Status-Production_Ready_v2.0-brightgreen?style=for-the-badge&logo=fastapi)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=for-the-badge)](https://github.com/amirthn6533/zvb-radar/blob/main/CONTRIBUTING.md)
+[![Code of Conduct](https://img.shields.io/badge/Contributor_Covenant-2.1-4baaaa.svg?style=for-the-badge)](https://github.com/amirthn6533/zvb-radar/blob/main/CODE_OF_CONDUCT.md)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Telegram](https://img.shields.io/badge/Telegram_Bot-24/7-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
 ![CI/CD](https://img.shields.io/badge/GitHub_Actions-Active_24/7-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
