@@ -41,8 +41,15 @@ jobs:
           cache: 'pip'          # Cache pip packages for faster restarts
 
       # ── 3. Install dependencies ──
-      - name: "\U0001F4E6 Install dependencies"
+      - name: "📦 Install dependencies"
         run: pip install -r requirements.txt
+
+      # ── 3.1 Create config.json from Secret ──
+      - name: "🔐 Create config.json from Secret"
+        run: |
+          echo "$CONFIG_JSON" > config.json
+        env:
+          CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
 
       # ── 4. Run the bot for ~5 hours ──
       - name: "\U0001F680 Run Zagros Bot (5h session)"

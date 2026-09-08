@@ -19,13 +19,66 @@ import urllib.parse
 import requests
 from bs4 import BeautifulSoup
 
+from urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
+import random
+
 # UTF-8 stdout
 sys.stdout.reconfigure(encoding='utf-8')
 
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+]
+
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-    'Accept-Language': 'bg-BG,bg;q=0.9,en;q=0.8'
+    'User-Agent': USER_AGENTS[0],
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'bg-BG,bg;q=0.9,en;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Upgrade-Insecure-Requests': '1'
 }
+
+def get_resilient_session(retries=3, backoff_factor=0.6):
+    """Creates a requests.Session with exponential backoff retries on transient network & HTTP errors"""
+    session = requests.Session()
+    retry_strategy = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=[429, 500, 502, 503, 504],
+        raise_on_status=False
+    )
+    adapter = HTTPAdapter(max_retries=retry_strategy, pool_connections=10, pool_maxsize=20)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+def get_browser_headers(referer=None):
+    """Generates realistic rotating browser headers to evade basic bot detection and cloudflare hurdles"""
+    ua = random.choice(USER_AGENTS)
+    h = {
+        'User-Agent': ua,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'bg-BG,bg;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'same-origin' if referer else 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1'
+    }
+    if referer:
+        h['Referer'] = referer
+    return h
 
 DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
@@ -57,17 +110,22 @@ def load_config():
     return {"telegram": {"enabled": False}, "keywords": DEFAULT_KEYWORDS}
 
 def extract_phone_numbers(text):
-    """Extracts and normalizes Bulgarian mobile phone numbers from text"""
-    phones = re.findall(r'(?:(?:\+359|00359)\s*8[789]\d[\s\d-]{6,8}|08[789]\d[\s\d-]{6,8})', text)
+    """Extracts and normalizes Bulgarian mobile phone numbers with comprehensive format recognition"""
+    if not text:
+        return []
+    pattern = r'(?:(?:\+359|00359)[\s\.-]*8[789][\s\.-]*\d{1}[\s\.-]*\d{2}[\s\.-]*\d{2}[\s\.-]*\d{2}|08[789][\s\.-]*\d{1}[\s\.-]*\d{2}[\s\.-]*\d{2}[\s\.-]*\d{2}|(?:\+359|00359)\s*8[789]\d[\s\d\.-]{6,10}|08[789]\d[\s\d\.-]{6,10})'
+    raw_matches = re.findall(pattern, text)
     valid_phones = []
-    for p in phones:
+    for p in raw_matches:
         digits = re.sub(r'\D', '', p)
         if digits.startswith("359") and len(digits) == 12:
             digits = "0" + digits[3:]
         elif digits.startswith("00359") and len(digits) == 14:
             digits = "0" + digits[5:]
+        
         if len(digits) == 10 and digits.startswith("08") and digits not in valid_phones:
-            valid_phones.append(digits)
+            if digits not in ['0879590810', '080012345', '0888888888']:
+                valid_phones.append(digits)
     return valid_phones
 
 def classify_lead(title, keyword):
@@ -201,63 +259,96 @@ def save_leads(leads_dict):
     generate_dashboard(leads_list)
 
 def scrape_bazar(keyword, fetch_phone=True):
+    """Resilient scraper for Bazar.bg with multi-layer selector fallback and retry session"""
     results = []
     encoded_q = urllib.parse.quote(keyword)
     url = f"https://bazar.bg/obiavi?q={encoded_q}"
+    session = get_resilient_session(retries=3, backoff_factor=0.5)
+    headers = get_browser_headers(referer="https://bazar.bg/")
+    
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=12)
+        resp = session.get(url, headers=headers, timeout=14)
         if resp.status_code != 200:
             return results
         
         soup = BeautifulSoup(resp.text, 'html.parser')
-        links = soup.find_all('a', href=True)
         seen_links = set()
 
-        for a in links:
-            href = a['href']
-            if '/obiava-' in href and href not in seen_links:
-                seen_links.add(href)
-                title = a.get_text(" ", strip=True)
-                if not title or len(title) < 5:
-                    continue
-                
-                ad_id_match = re.search(r'obiava-(\d+)', href)
-                ad_id = f"bazar_{ad_id_match.group(1)}" if ad_id_match else f"bazar_{hash(href)}"
-                full_url = urllib.parse.urljoin("https://bazar.bg", href)
-                
-                location = "София" if "софия" in (title + " " + keyword).lower() else "България / София"
-                cat, cat_label = classify_lead(title, keyword)
+        # Primary + Fallback selectors:
+        # 1. Links containing '/obiava-'
+        # 2. Modern card containers
+        cards = soup.select('.item, .ad-item, .list-item, div[data-item]')
+        target_links = []
+        
+        if cards:
+            for c in cards:
+                a_tag = c.find('a', href=True)
+                if a_tag and '/obiava-' in a_tag['href']:
+                    target_links.append((a_tag, c.get_text(" ", strip=True)))
+                    
+        # Fallback to scanning all anchor tags
+        if not target_links:
+            for a in soup.find_all('a', href=True):
+                if '/obiava-' in a['href']:
+                    target_links.append((a, a.get_text(" ", strip=True)))
 
-                # Check phone in title/link
-                phones = extract_phone_numbers(title)
-                phone_val = phones[0] if phones else ""
+        for a_tag, extra_text in target_links:
+            href = a_tag['href']
+            if href in seen_links:
+                continue
+            seen_links.add(href)
+            
+            title = a_tag.get('title') or a_tag.get_text(" ", strip=True)
+            if not title or len(title) < 5:
+                # Try finding heading inside
+                h_tag = a_tag.find(['h2', 'h3', 'span'])
+                if h_tag:
+                    title = h_tag.get_text(" ", strip=True)
+            
+            if not title or len(title) < 5:
+                continue
+            
+            ad_id_match = re.search(r'obiava-(\d+)', href)
+            ad_id = f"bazar_{ad_id_match.group(1)}" if ad_id_match else f"bazar_{hash(href)}"
+            full_url = urllib.parse.urljoin("https://bazar.bg", href)
+            
+            combined_text = (title + " " + keyword + " " + extra_text).lower()
+            location = "София" if "софия" in combined_text else "България / София"
+            cat, cat_label = classify_lead(title, keyword)
 
-                results.append({
-                    "id": ad_id,
-                    "title": title,
-                    "url": full_url,
-                    "source": "Bazar.bg",
-                    "keyword": keyword,
-                    "category": cat,
-                    "category_label": cat_label,
-                    "location": location,
-                    "phone": phone_val,
-                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                })
+            # Check phone in title/link/snippet
+            phones = extract_phone_numbers(title + " " + extra_text)
+            phone_val = phones[0] if phones else ""
+
+            results.append({
+                "id": ad_id,
+                "title": title,
+                "url": full_url,
+                "source": "Bazar.bg",
+                "keyword": keyword,
+                "category": cat,
+                "category_label": cat_label,
+                "location": location,
+                "phone": phone_val,
+                "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            })
     except Exception as e:
         print(f"  [Bazar.bg] Error searching '{keyword}': {e}")
     return results
 
 def scrape_alo(keyword):
+    """Resilient scraper for Alo.bg with adaptive card parsing and timeout protection"""
     results = []
+    session = get_resilient_session(retries=3, backoff_factor=0.5)
+    headers = get_browser_headers(referer="https://www.alo.bg/")
     try:
         url = "https://www.alo.bg/searchq/"
-        resp = requests.get(url, params={"q": keyword}, headers=HEADERS, timeout=4)
+        resp = session.get(url, params={"q": keyword}, headers=headers, timeout=12)
         if resp.status_code != 200:
             return results
         
         soup = BeautifulSoup(resp.text, 'html.parser')
-        items = soup.select('.listvip-item, .list-item')
+        items = soup.select('.listvip-item, .list-item, article, div[id*="ad_"]')
         
         for item in items:
             title = item.get('title', '')
@@ -274,7 +365,12 @@ def scrape_alo(keyword):
                 continue
             
             if not title and link_tag:
-                title = link_tag.get_text(" ", strip=True)
+                title = link_tag.get('title') or link_tag.get_text(" ", strip=True)
+                
+            if not title:
+                h_el = item.select_one('h2, h3, .list-item-title')
+                if h_el:
+                    title = h_el.get_text(" ", strip=True)
                 
             clean_href = href.split('#')[0]
             full_url = urllib.parse.urljoin("https://www.alo.bg", clean_href)
@@ -282,7 +378,7 @@ def scrape_alo(keyword):
             id_match = re.search(r'(\d{6,10})', clean_href)
             ad_id = f"alo_{id_match.group(1)}" if id_match else f"alo_{hash(full_url)}"
             
-            addr_elem = item.select_one('.listvip-item-address, .list-item-address')
+            addr_elem = item.select_one('.listvip-item-address, .list-item-address, .location')
             addr_text = addr_elem.get_text(" ", strip=True) if addr_elem else ""
             
             if "софия" in addr_text.lower() or "софия" in title.lower():
@@ -315,95 +411,139 @@ def scrape_alo(keyword):
     return results
 
 def scrape_maistorplus(username, password):
+    """Resilient scraper for MaistorPlus with session retry, CSRF auto-detection & public fallback"""
     results = []
     seen_ids = set()
+    session = get_resilient_session(retries=3, backoff_factor=0.6)
+    headers = get_browser_headers(referer="https://maistorplus.com/")
+    
+    mp_electrical_keywords = ['контакт', 'вентилатор', 'ел', 'електро', 'осветлен', 'табло', 'бойлер', 'кабел', 'ключ', 'лед', 'камер', 'умен дом', 'инсталаци']
+    
+    logged_in = False
     try:
-        s = requests.Session()
-        r1 = s.get('https://maistorplus.com/login', headers=HEADERS, timeout=12)
+        r1 = session.get('https://maistorplus.com/login', headers=headers, timeout=12)
         soup = BeautifulSoup(r1.text, 'html.parser')
         token_input = soup.find('input', {'name': '_csrf_token'})
-        if not token_input:
-            return results
-        csrf = token_input.get('value')
-        
-        login_resp = s.post('https://maistorplus.com/login_check', data={
-            '_csrf_token': csrf,
-            '_username': username,
-            '_password': password,
-            '_remember_me': 'on'
-        }, headers=HEADERS, timeout=12)
-        
-        if login_resp.status_code != 200 and '/craftsman' not in login_resp.url:
-            return results
+        if token_input:
+            csrf = token_input.get('value')
+            login_resp = session.post('https://maistorplus.com/login_check', data={
+                '_csrf_token': csrf,
+                '_username': username,
+                '_password': password,
+                '_remember_me': 'on'
+            }, headers=headers, timeout=12)
             
-        # 1. Fetch fresh jobs with NO exchanged phones first (hot opportunities)
-        # 2. Then fetch latest general jobs
-        endpoints = [
+            if login_resp.status_code == 200 or '/craftsman' in login_resp.url:
+                logged_in = True
+    except Exception as e:
+        print(f"  [MaistorPlus] Login attempt notice: {e}")
+
+    # Endpoints to check (logged-in craftsmen endpoints + public category fallback)
+    endpoints = []
+    if logged_in:
+        endpoints.extend([
             'https://maistorplus.com/craftsman/jobs/no-exchanged-phones',
             'https://maistorplus.com/craftsman/jobs/all?page=1',
             'https://maistorplus.com/craftsman/jobs/all?page=2'
-        ]
-        
-        mp_electrical_keywords = ['контакт', 'вентилатор', 'ел', 'електро', 'осветлен', 'табло', 'бойлер', 'кабел', 'ключ', 'лед', 'камер', 'умен дом']
-        
-        for ep in endpoints:
-            try:
-                r_jobs = s.get(ep, headers=HEADERS, timeout=12)
-                soup_jobs = BeautifulSoup(r_jobs.text, 'html.parser')
-                rows = soup_jobs.select('table tr')
-                for tr in rows:
-                    tds = tr.find_all('td')
-                    if len(tds) >= 3:
-                        title_td = tds[0]
-                        city_td = tds[1] if len(tds) > 1 else None
-                        budget_td = tds[2] if len(tds) > 2 else None
-                        
-                        link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
-                        if not link_tag:
-                            continue
-                        
-                        href = link_tag['href']
-                        clean_href = href.split('?')[0]
-                        full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
-                        title = title_td.get_text(' ', strip=True)
-                        city = city_td.get_text(' ', strip=True) if city_td else 'София'
-                        budget = budget_td.get_text(' ', strip=True) if budget_td else ''
-                        
-                        m = re.search(r'/job/(\d+)', clean_href)
-                        job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(clean_href)}"
-                        
-                        if job_id in seen_ids:
-                            continue
-                        seen_ids.add(job_id)
-                        
-                        # Filter strictly for Sofia & electrical
-                        if 'софия' not in city.lower():
-                            continue
-                        if not any(w in title.lower() for w in mp_electrical_keywords):
-                            continue
-                        
-                        results.append({
-                            "id": job_id,
-                            "title": f"[MaistorPlus] {title} ({budget})",
-                            "url": full_url,
-                            "source": "MaistorPlus",
-                            "keyword": "Заявка за електро проект",
-                            "category": "urgent_client",
-                            "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
-                            "location": "София",
-                            "phone": "",
-                            "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                        })
-            except Exception as e:
-                print(f"  [MaistorPlus] Error on {ep}: {e}")
-                
-    except Exception as e:
-        print(f"  [MaistorPlus] Error scraping: {e}")
+        ])
+    else:
+        # Fallback to public project feeds
+        endpoints.extend([
+            'https://maistorplus.com/jobs/all',
+            'https://maistorplus.com/remonti/elektro-uslugi'
+        ])
+
+    for ep in endpoints:
+        try:
+            r_jobs = session.get(ep, headers=get_browser_headers(referer="https://maistorplus.com/"), timeout=12)
+            if r_jobs.status_code != 200:
+                continue
+            soup_jobs = BeautifulSoup(r_jobs.text, 'html.parser')
+            
+            # Check table rows first
+            rows = soup_jobs.select('table tr')
+            for tr in rows:
+                tds = tr.find_all('td')
+                if len(tds) >= 3:
+                    title_td = tds[0]
+                    city_td = tds[1] if len(tds) > 1 else None
+                    budget_td = tds[2] if len(tds) > 2 else None
+                    
+                    link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
+                    if not link_tag:
+                        continue
+                    
+                    href = link_tag['href']
+                    clean_href = href.split('?')[0]
+                    full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
+                    title = title_td.get_text(' ', strip=True)
+                    city = city_td.get_text(' ', strip=True) if city_td else 'София'
+                    budget = budget_td.get_text(' ', strip=True) if budget_td else ''
+                    
+                    m = re.search(r'/job/(\d+)', clean_href)
+                    job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(clean_href)}"
+                    
+                    if job_id in seen_ids:
+                        continue
+                    seen_ids.add(job_id)
+                    
+                    if 'софия' not in city.lower():
+                        continue
+                    if not any(w in title.lower() for w in mp_electrical_keywords):
+                        continue
+                    
+                    results.append({
+                        "id": job_id,
+                        "title": f"[MaistorPlus] {title} ({budget})",
+                        "url": full_url,
+                        "source": "MaistorPlus",
+                        "keyword": "Заявка за електро проект",
+                        "category": "urgent_client",
+                        "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
+                        "location": "София",
+                        "phone": "",
+                        "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                    })
+
+            # Also check card-based layouts in public feeds
+            job_cards = soup_jobs.select('.job-card, .project-card, article.job, div.job-item')
+            for card in job_cards:
+                a_tag = card.find('a', href=True)
+                if not a_tag:
+                    continue
+                href = a_tag['href']
+                clean_href = href.split('?')[0]
+                full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
+                m = re.search(r'/job/(\d+)', clean_href)
+                job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(clean_href)}"
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+                card_txt = card.get_text(" ", strip=True)
+                if 'софия' not in card_txt.lower():
+                    continue
+                if not any(w in card_txt.lower() for w in mp_electrical_keywords):
+                    continue
+                results.append({
+                    "id": job_id,
+                    "title": f"[MaistorPlus] {a_tag.get_text(' ', strip=True)[:70]}",
+                    "url": full_url,
+                    "source": "MaistorPlus",
+                    "keyword": "Заявка за електро проект",
+                    "category": "urgent_client",
+                    "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
+                    "location": "София",
+                    "phone": "",
+                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+        except Exception as e:
+            print(f"  [MaistorPlus] Error on {ep}: {e}")
+            
     return results
 
 def scrape_daibau(max_pages=3):
     """
-    Scrapes live electrical and security/smart home projects from Daibau.bg in Sofia.
+    Resilient scraper for Daibau.bg with multi-page discovery, adaptive card hierarchy & Sofia geo-tagging.
     """
     results = []
     seen_ids = set()
@@ -412,16 +552,28 @@ def scrape_daibau(max_pages=3):
         ("alarmi_alarmeni_sistemi", "Видеонаблюдение и СОТ")
     ]
     
+    session = get_resilient_session(retries=3, backoff_factor=0.6)
+    
     for cat_slug, cat_name in categories:
         base_url = f"https://www.daibau.bg/proekti/{cat_slug}"
         for page in range(1, max_pages + 1):
             url = f"{base_url}?page={page}" if page > 1 else base_url
             try:
-                r = requests.get(url, headers=HEADERS, timeout=12)
+                headers = get_browser_headers(referer="https://www.daibau.bg/")
+                r = session.get(url, headers=headers, timeout=14)
                 if r.status_code != 200:
                     continue
                 soup = BeautifulSoup(r.text, 'html.parser')
-                items = soup.find_all('a', href=lambda h: h and f'/proekti/{cat_slug}/' in h and h.count('/') >= 5)
+                
+                # Resilient search: matches anchors with /proekti/ or /povprasevanje/
+                items = soup.find_all('a', href=lambda h: h and (f'/proekti/{cat_slug}/' in h or '/povprasevanje/' in h) and h.count('/') >= 4)
+                
+                # Fallback: scan any anchor inside .project-card or .list-item
+                if not items:
+                    for c in soup.select('.project-item, .project-card, article'):
+                        a_sub = c.find('a', href=True)
+                        if a_sub and '/proekti/' in a_sub['href']:
+                            items.append(a_sub)
                 
                 for a in items:
                     href = a['href']
@@ -436,6 +588,8 @@ def scrape_daibau(max_pages=3):
                     seen_ids.add(job_id)
                     
                     title = a.get_text(' ', strip=True)
+                    if not title or len(title) < 4:
+                        continue
                     
                     # Ascend DOM to get full card text (contains city, date, timeframe)
                     card = a
@@ -482,9 +636,10 @@ def scrape_daibau(max_pages=3):
     return results
 
 def enrich_phones_for_leads(leads_list, max_to_fetch=25):
-    """Fetches full page descriptions for classified ads to uncover direct phone numbers"""
+    """Fetches full page descriptions for classified ads to uncover direct phone numbers with resilient session & rate limiting"""
     count = 0
     print(f"\n🔍 Извличане на директни телефонни номера за най-новите обяви (до {max_to_fetch} обяви)...")
+    session = get_resilient_session(retries=2, backoff_factor=0.4)
     for item in leads_list:
         # Never scrape phones for platform inquiries from public pages
         if item.get("source") in ["MaistorPlus", "Daibau"]:
@@ -494,7 +649,8 @@ def enrich_phones_for_leads(leads_list, max_to_fetch=25):
         if count >= max_to_fetch:
             break
         try:
-            r = requests.get(item["url"], headers=HEADERS, timeout=6)
+            headers = get_browser_headers(referer=item.get("url"))
+            r = session.get(item["url"], headers=headers, timeout=8)
             if r.status_code == 200:
                 soup = BeautifulSoup(r.text, 'html.parser')
                 text = soup.get_text(" ", strip=True)
@@ -505,7 +661,7 @@ def enrich_phones_for_leads(leads_list, max_to_fetch=25):
                     item["phone"] = clean_phones[0]
                     print(f"   ↳ 📞 Намерен номер за '{item['title'][:30]}...': {item['phone']}")
             count += 1
-            time.sleep(0.4)
+            time.sleep(random.uniform(0.3, 0.6))
         except Exception:
             pass
 
@@ -1041,13 +1197,73 @@ def run_scan():
     print(f"📊 Excel CSV Database: leads.csv")
     print("=" * 65)
 
+def test_scraper_health():
+    """Diagnostic health check function that probes all 4 platforms and returns health status & latency"""
+    print("=" * 65)
+    print("🩺 ZVB RADAR - ДИАГНОСТИЧЕН ТЕСТ НА ИЗТОЧНИЦИТЕ (Health Check)")
+    print("=" * 65)
+    
+    results = {}
+    config = load_config()
+
+    # 1. Test Bazar.bg
+    t0 = time.time()
+    try:
+        bazar_items = scrape_bazar("електротехник софия")
+        lat = round(time.time() - t0, 2)
+        results["Bazar.bg"] = {"status": "HEALTHY ✅" if bazar_items else "EMPTY ⚠️", "items": len(bazar_items), "latency_sec": lat}
+        print(f"• Bazar.bg:       {results['Bazar.bg']['status']} | {len(bazar_items)} обяви ({lat}s)")
+    except Exception as e:
+        results["Bazar.bg"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
+        print(f"• Bazar.bg:       ERROR ❌: {e}")
+
+    # 2. Test Alo.bg
+    t0 = time.time()
+    try:
+        alo_items = scrape_alo("електротехник софия")
+        lat = round(time.time() - t0, 2)
+        results["Alo.bg"] = {"status": "HEALTHY ✅" if alo_items else "EMPTY ⚠️", "items": len(alo_items), "latency_sec": lat}
+        print(f"• Alo.bg:         {results['Alo.bg']['status']} | {len(alo_items)} обяви ({lat}s)")
+    except Exception as e:
+        results["Alo.bg"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
+        print(f"• Alo.bg:         ERROR ❌: {e}")
+
+    # 3. Test Daibau.bg
+    t0 = time.time()
+    try:
+        daibau_items = scrape_daibau(max_pages=1)
+        lat = round(time.time() - t0, 2)
+        results["Daibau.bg"] = {"status": "HEALTHY ✅" if daibau_items else "EMPTY ⚠️", "items": len(daibau_items), "latency_sec": lat}
+        print(f"• Daibau.bg:      {results['Daibau.bg']['status']} | {len(daibau_items)} обяви ({lat}s)")
+    except Exception as e:
+        results["Daibau.bg"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
+        print(f"• Daibau.bg:      ERROR ❌: {e}")
+
+    # 4. Test MaistorPlus
+    t0 = time.time()
+    mp_cfg = config.get("maistorplus", {})
+    try:
+        mp_items = scrape_maistorplus(mp_cfg.get("username", ""), mp_cfg.get("password", ""))
+        lat = round(time.time() - t0, 2)
+        results["MaistorPlus"] = {"status": "HEALTHY ✅" if mp_items else "EMPTY ⚠️", "items": len(mp_items), "latency_sec": lat}
+        print(f"• MaistorPlus:    {results['MaistorPlus']['status']} | {len(mp_items)} обяви ({lat}s)")
+    except Exception as e:
+        results["MaistorPlus"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
+        print(f"• MaistorPlus:    ERROR ❌: {e}")
+
+    print("=" * 65)
+    return results
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="ZVB Ultimate Lead Radar")
     parser.add_argument("--interval", type=int, default=0, help="Run continuously every N minutes (0 = run once)")
+    parser.add_argument("--test", action="store_true", help="Run diagnostic health check on all scrapers")
     args = parser.parse_args()
 
-    if args.interval > 0:
+    if args.test:
+        test_scraper_health()
+    elif args.interval > 0:
         print(f"Running in continuous radar mode. Scans every {args.interval} minutes.")
         while True:
             run_scan()

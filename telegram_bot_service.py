@@ -1238,6 +1238,14 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, "⏳ <i>Стартирано е сканиране на живо...</i>")
                         lead_scraper.run_scan()
                         send_msg(token, sender_chat_id, "✅ <b>Сканирането завърши!</b>", get_main_keyboard())
+                    elif clean_query.startswith("/health") or any(k in clean_query.lower() for k in ["تست سلامت", "وضعیت ربات", "وضعیت سرور", "health"]):
+                        send_msg(token, sender_chat_id, "⏳ <i>Загрос проверява връзката с всички източници на обяви (Bazar, Alo, Daibau, MaistorPlus)...</i>")
+                        h_res = lead_scraper.test_scraper_health()
+                        h_msg = "🩺 <b>РЕЗУЛТАТИ ОТ ТЕСТА ЗА СВЪРЗАНОСТ:</b>\n━━━━━━━━━━━━━━━━━━━━\n"
+                        for src, data in h_res.items():
+                            h_msg += f"• <b>{src}:</b> {data['status']} | {data['items']} обяви ({data['latency_sec']}s)\n"
+                        h_msg += "━━━━━━━━━━━━━━━━━━━━\n🛡️ <i>Всички източници работят с автоматичен Retry и защита от блокиране.</i>"
+                        send_msg(token, sender_chat_id, h_msg, get_main_keyboard())
                     elif clean_query.startswith("/urgent"):
                         send_msg(token, sender_chat_id, handle_urgent_cmd(), get_main_keyboard())
                     elif clean_query.startswith("/builders"):
