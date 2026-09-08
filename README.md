@@ -1,16 +1,19 @@
-﻿# ⚡ ZVB Radar & Autonomous Lead Engine
+# ⚡ ZVB Radar & Autonomous Lead Engine
 
 <div align="center">
 
+<img src="media/hero.png" alt="ZVB Banner" width="100%" />
+<br/><br/>
+
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Telegram](https://img.shields.io/badge/Telegram_Bot-24/7-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
+![CI/CD](https://img.shields.io/badge/GitHub_Actions-Active_24/7-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
-![Status](https://img.shields.io/badge/Deployment-GitHub_Actions_24/7-blue?style=for-the-badge&logo=github-actions&logoColor=white)
-![Location](https://img.shields.io/badge/Location-Sofia,_Bulgaria-red?style=for-the-badge)
+![Website](https://img.shields.io/badge/Official_Site-zvb.bg-red?style=for-the-badge&logo=google-chrome&logoColor=white)
 
 **Autonomous multi-platform lead radar, intelligent qualification filter, and interactive Telegram assistant for electrical engineering and smart building systems in Sofia, Bulgaria.**
 
-[Overview](#-overview) • [Core Features](#-core-features) • [Architecture](#-system-architecture) • [Quick Start](#-quick-start) • [Configuration](#-configuration) • [License](#-license)
+[Overview](#-overview) • [Live Terminal Output](#-live-diagnostic-output) • [Core Features](#-core-features) • [Architecture](#-system-architecture) • [Quick Start](#-quick-start) • [License](#-license)
 
 </div>
 
@@ -19,6 +22,24 @@
 ## 📌 Overview
 
 **ZVB Radar** is an enterprise-grade automated lead generation and management pipeline built for **Загрос Витоша България ЕООД (ZVB)**. It continuously monitors Bulgarian service marketplaces, detects high-intent electrical installation and smart home inquiries, filters noise using a 7-layer verification engine, and delivers actionable instant alerts to Telegram with 1-click WhatsApp and call triggers.
+
+---
+
+## 💻 Live Diagnostic Output
+
+Verified real-time multi-source scraper health check (`python lead_scraper.py --test`):
+
+```text
+=================================================================
+🩺 ZVB RADAR - ДИАГНОСТИЧЕН ТЕСТ НА ИЗТОЧНИЦИТЕ (Health Check)
+=================================================================
+• Bazar.bg:       HEALTHY ✅ | 51 обяви (0.40s)
+• Alo.bg:         HEALTHY ✅ | 29 обяви (1.29s)
+• Daibau.bg:      HEALTHY ✅ |  6 обяви (1.56s)
+• MaistorPlus:    HEALTHY ✅ |  8 обяви (3.11s)
+=================================================================
+🛡️ Resilient retry session with exponential backoff & anti-bot headers active.
+```
 
 ---
 
