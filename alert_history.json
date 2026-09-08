@@ -133,5 +133,23 @@
     "source": "Daibau",
     "location": "София, София-град",
     "alerted_at": "2026-09-08 09:56:57"
+  },
+  "mp_96291": {
+    "id": "mp_96291",
+    "title": "[MaistorPlus] Озеленяване (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96291",
+    "url_hash": "a2946bdb2824782fe85309d598b88584",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-08 14:15:27"
+  },
+  "mp_96371": {
+    "id": "mp_96371",
+    "title": "[MaistorPlus] Ремонт на домофон Директен телефон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96371",
+    "url_hash": "49b184b0694fe0b7325790a24ac64820",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-08 14:15:27"
   }
 }
