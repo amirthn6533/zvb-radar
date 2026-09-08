@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 """
 ZVB Interactive Telegram Bot Service (24/7)
 Handles:
