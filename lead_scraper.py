@@ -204,8 +204,17 @@ def send_telegram_alert(lead, bot_token, chat_id):
     # 1-Click Zagros AI Instant Proposal & PDF Buttons
     lead_id = lead.get("id", "")
     buttons.append([
-        {"text": "✍️ Генерирай оферта (Текст)", "callback_data": f"p_{lead_id}"[:60]},
+        {"text": "✍️ Генерирай оферта", "callback_data": f"p_{lead_id}"[:60]},
         {"text": "📑 Свали PDF Оферта", "callback_data": f"pdf_{lead_id}"[:60]}
+    ])
+    # CRM Action Buttons
+    buttons.append([
+        {"text": "📞 تماس گرفته شد", "callback_data": f"crm_c_{lead_id}"[:60]},
+        {"text": "⏰ یادآوری ۲ روز", "callback_data": f"crm_r2_{lead_id}"[:60]}
+    ])
+    buttons.append([
+        {"text": "🤝 قرارداد بسته شد", "callback_data": f"crm_w_{lead_id}"[:60]},
+        {"text": "❌ رد / نامربوط", "callback_data": f"crm_l_{lead_id}"[:60]}
     ])
 
     reply_markup = {"inline_keyboard": buttons}
@@ -225,6 +234,13 @@ def send_telegram_alert(lead, bot_token, chat_id):
         return False
 
 def load_existing_leads():
+    try:
+        import db_manager
+        db_leads = db_manager.get_all_leads()
+        if db_leads:
+            return db_leads
+    except Exception as e:
+        print(f"DB load leads fallback: {e}")
     if os.path.exists(LEADS_JSON_PATH):
         try:
             with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
@@ -234,6 +250,12 @@ def load_existing_leads():
     return {}
 
 def save_leads(leads_dict):
+    try:
+        import db_manager
+        db_manager.save_leads_batch(leads_dict)
+    except Exception as e:
+        print(f"DB save leads error: {e}")
+    
     with open(LEADS_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(leads_dict, f, ensure_ascii=False, indent=2)
     

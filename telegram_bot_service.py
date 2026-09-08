@@ -22,6 +22,7 @@ import daily_digest
 import sofia_b2b_extractor
 import pdf_offer_generator
 import candidate_manager
+import db_manager
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -85,7 +86,8 @@ def get_main_keyboard():
                 {"text": "📑 صدور پیش‌فاکتور رسمی (PDF)", "callback_data": "cmd_pdf"}
             ],
             [
-                {"text": "👥 مدیریت برق‌کارها (کاندیداها)", "callback_data": "cmd_candidates"}
+                {"text": "📊 خط لوله فروش (CRM)", "callback_data": "cmd_crm"},
+                {"text": "👥 مدیریت برق‌کارها", "callback_data": "cmd_candidates"}
             ]
         ]
     }
@@ -228,6 +230,34 @@ def handle_stats_cmd():
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"🌐 <i>ZVB | Електрически и умни системи</i>"
     )
+
+def handle_crm_cmd():
+    stats = db_manager.get_crm_stats()
+    due_reminders = db_manager.get_due_reminders()
+    
+    msg = (
+        "📊 <b>داشبورد خط لوله فروش و لیدهای ZVB (CRM Pipeline):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"📥 <b>کل پروژه‌ها و لیدهای ثبت‌شده:</b> {stats.get('total', 0)}\n"
+        f"🆕 <b>لیدهای جدید (بررسی نشده):</b> {stats.get('new', 0)}\n"
+        f"📞 <b>تماس گرفته شده (در جریان):</b> {stats.get('contacted', 0)}\n"
+        f"📑 <b>پیشنهاد و فاکتور ارسال شده:</b> {stats.get('offer_sent', 0)}\n"
+        f"🏆 <b>قراردادهای بسته شده (WON):</b> {stats.get('won', 0)}\n"
+        f"❌ <b>نامربوط / رد شده:</b> {stats.get('lost', 0)}\n"
+        f"👥 <b>برق‌کارهای فعال در بانک تیم:</b> {stats.get('active_candidates', 0)} نفر\n\n"
+    )
+    
+    if due_reminders:
+        msg += "⏰ <b>یادآوری‌های پیگیری امروز:</b>\n"
+        for idx, rem in enumerate(due_reminders[:5], 1):
+            r_phone = rem.get('phone') or 'В обявата'
+            msg += f"{idx}. <b>{rem.get('title')[:50]}</b>\n   📞 تماس: <code>{r_phone}</code> | وضعیت: <i>{rem.get('status')}</i>\n   👉 <a href='{rem.get('url', '#')}'>مشاهده پروژه</a>\n\n"
+    else:
+        msg += "✅ <i>امروز هیچ پروژه منتظر پیگیری فوری وجود ندارد.</i>\n"
+        
+    msg += "━━━━━━━━━━━━━━━━━━━━\n"
+    msg += "💡 <i>برای تغییر وضعیت هر پروژه، از دکمه‌های شیشه‌ای زیر آگهی مربوطه استفاده کنید.</i>"
+    return msg
 
 def handle_calc_cmd(query=""):
     """
@@ -1007,6 +1037,30 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, text, get_ai_keyboard())
                     elif cb_data == "cmd_fb":
                         send_msg(token, sender_chat_id, get_fb_menu(), get_main_keyboard())
+                    elif cb_data == "cmd_crm":
+                        answer_callback(token, cb_id)
+                        send_msg(token, sender_chat_id, handle_crm_cmd(), get_main_keyboard())
+                    elif cb_data.startswith("crm_c_"):
+                        target_id = cb_data[6:]
+                        answer_callback(token, cb_id, "📞 ثبت شد: تماس گرفته شد")
+                        db_manager.update_lead_status(target_id, "CONTACTED")
+                        send_msg(token, sender_chat_id, f"📞 <b>وضعیت لید <code>{target_id}</code> به «تماس گرفته شده» تغییر یافت.</b>\nمی‌توانید برای صدور پیش‌فاکتور یا پیگیری مجدد اقدام کنید.")
+                    elif cb_data.startswith("crm_r2_"):
+                        target_id = cb_data[7:]
+                        answer_callback(token, cb_id, "⏰ تنظیم شد: پیگیری ۲ روز بعد")
+                        rem_date = (datetime.date.today() + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
+                        db_manager.update_lead_status(target_id, "CONTACTED", reminder_date=rem_date)
+                        send_msg(token, sender_chat_id, f"⏰ <b>یادآوری برای تاریخ {rem_date} (۲ روز بعد) تنظیم شد.</b>\nربات در گزارش صبحگاهی ساعت ۰۹:۰۰ این پروژه را برای تماس مجدد یادآوری خواهد کرد.")
+                    elif cb_data.startswith("crm_w_"):
+                        target_id = cb_data[6:]
+                        answer_callback(token, cb_id, "🎉 تبریک! قرارداد بسته شد")
+                        db_manager.update_lead_status(target_id, "WON")
+                        send_msg(token, sender_chat_id, f"🎉 <b>تبریک مهندس! پروژه <code>{target_id}</code> به عنوان قرارداد برنده (WON) ثبت شد.</b>\nآمار خط لوله فروش بروزرسانی شد.")
+                    elif cb_data.startswith("crm_l_"):
+                        target_id = cb_data[6:]
+                        answer_callback(token, cb_id, "❌ بایگانی شد")
+                        db_manager.update_lead_status(target_id, "LOST")
+                        send_msg(token, sender_chat_id, f"❌ <b>پروژه <code>{target_id}</code> به عنوان نامربوط/رد شده علامت‌گذاری شد و بایگانی گشت.</b>")
                     elif cb_data == "cmd_candidates":
                         text, kbd = candidate_manager.get_candidate_list_view()
                         send_msg(token, sender_chat_id, text, kbd)
@@ -1213,6 +1267,8 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, handle_builders_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["طراح", "دیزاینر", "معمار", "طراحان", "designers"]):
                         send_msg(token, sender_chat_id, handle_designers_cmd(), get_main_keyboard())
+                    elif any(k in clean_query.lower() for k in ["crm", "سی آر ام", "خط لوله", "pipeline", "پیگیری"]):
+                        send_msg(token, sender_chat_id, handle_crm_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["آمار", "وضعیت", "stats"]):
                         send_msg(token, sender_chat_id, handle_stats_cmd(), get_main_keyboard())
                     elif any(k in clean_query.lower() for k in ["پیشنهاد", "متن پیام", "پیچ", "pitches", "آفر"]):
@@ -1232,6 +1288,8 @@ def run_telegram_bot():
                         send_msg(token, sender_chat_id, get_welcome_text(), get_main_keyboard())
                     elif clean_query.startswith("/calc"):
                         send_msg(token, sender_chat_id, handle_calc_cmd(clean_query), get_main_keyboard())
+                    elif clean_query.startswith("/crm") or clean_query.startswith("/pipeline"):
+                        send_msg(token, sender_chat_id, handle_crm_cmd(), get_main_keyboard())
                     elif clean_query.startswith("/ai"):
                         send_msg(token, sender_chat_id, handle_ai_menu(), get_ai_keyboard())
                     elif clean_query.startswith("/scan"):

@@ -6,9 +6,17 @@ import subprocess
 import urllib.request
 import urllib.parse
 
+import db_manager
+
 CANDIDATES_FILE = os.path.join(os.path.dirname(__file__), "candidates.json")
 
 def load_candidates():
+    try:
+        db_cands = db_manager.get_all_candidates()
+        if db_cands:
+            return db_cands
+    except Exception as e:
+        print(f"DB load candidates fallback: {e}")
     if not os.path.exists(CANDIDATES_FILE):
         return {}
     try:
@@ -20,6 +28,12 @@ def load_candidates():
 
 def save_candidates(data):
     try:
+        # 1. Update SQLite DB
+        for cid, cinfo in data.items():
+            if not cinfo.get("id"):
+                cinfo["id"] = cid
+            db_manager.save_candidate(cinfo)
+        # 2. Sync to JSON file for git persistence
         with open(CANDIDATES_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
         sync_git()
@@ -214,6 +228,10 @@ def delete_candidate_by_query(query):
             break
             
     if matched_id:
+        try:
+            db_manager.delete_candidate(matched_id)
+        except Exception:
+            pass
         del candidates[matched_id]
         save_candidates(candidates)
         return True, matched_name

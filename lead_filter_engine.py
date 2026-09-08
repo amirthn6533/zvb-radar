@@ -44,6 +44,13 @@ HIGH_VALUE_INDICATORS = [
 ]
 
 def load_alert_history():
+    try:
+        import db_manager
+        db_history = db_manager.get_alert_history()
+        if db_history:
+            return db_history
+    except Exception:
+        pass
     if not os.path.exists(HISTORY_FILE):
         return {}
     try:
@@ -54,6 +61,14 @@ def load_alert_history():
         return {}
 
 def save_alert_history(history):
+    try:
+        import db_manager
+        for k, v in history.items():
+            if not v.get("id"):
+                v["id"] = k
+            db_manager.mark_alerted(v)
+    except Exception as e:
+        print(f"DB save alert history error: {e}")
     try:
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
             json.dump(history, f, ensure_ascii=False, indent=2)

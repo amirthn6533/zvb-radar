@@ -246,6 +246,18 @@ def build_daily_digest(period_name="Дневен бюлетин"):
             actions_str = " | ".join(action_links)
             msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
 
+    # 4. CRM Due Follow-up Reminders
+    try:
+        import db_manager
+        due_reminders = db_manager.get_due_reminders()
+        if due_reminders:
+            msg += "⏰ <b>ПРОЕКТИ ЗА ДНЕШНО ПРОСЛЕДЯВАНЕ (CRM FOLLOW-UP):</b>\n"
+            for r_idx, rem in enumerate(due_reminders[:5], 1):
+                r_phone = rem.get('phone') or 'В обявата'
+                msg += f"{r_idx}. <b>{rem.get('title')[:55]}</b>\n   📞 Телефон: <code>{r_phone}</code> | Статус: <i>{rem.get('status')}</i>\n   👉 <a href='{rem.get('url', '#')}'>Отвори проекта</a>\n\n"
+    except Exception as e:
+        print(f"CRM reminder digest error: {e}")
+
     msg += "━━━━━━━━━━━━━━━━━━━━\n"
     msg += "💡 <i>Прецизно филтрирано за ZVB: Само електроуслуги, камери и умен дом в София.</i>\n"
     msg += "🌐 <b>ZVB Sofia</b> | <a href='https://zvb.bg'>zvb.bg</a>"

@@ -307,6 +307,78 @@ def create_and_send_pdf_offer(token, chat_id, description, client_name="Клие
             os.remove(pdf_path)
         return False
 
+def send_offer_email(pdf_path, recipient_email, project_title="Електромонтажни дейности", total_sum=0.0):
+    """
+    Sends official PDF proposal to client's email via SMTP with full Bulgarian cover letter.
+    """
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.mime.application import MIMEApplication
+
+    cfg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+    cfg = {}
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+        except Exception:
+            pass
+            
+    smtp_cfg = cfg.get("smtp", {})
+    host = smtp_cfg.get("host", "smtp.gmail.com")
+    port = smtp_cfg.get("port", 587)
+    user = smtp_cfg.get("user")
+    password = smtp_cfg.get("password")
+    from_email = smtp_cfg.get("from_email", user)
+
+    if not (user and password):
+        return False, "SMTP credentials not configured in config.json (add 'smtp': {'user': '...', 'password': '...'})."
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"ZVB Electrical Systems <{from_email}>"
+        msg['To'] = recipient_email
+        msg['Subject'] = f"Официална оферта ZVB: {project_title} (гр. София)"
+
+        body_html = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; color: #1e293b; line-height: 1.6;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <h2 style="color: #0f2b48; margin-top: 0;">ZVB — Електроинженеринг и Умни Системи</h2>
+                <p>Уважаеми клиенти,</p>
+                <p>Благодарим Ви за проявения интерес към услугите на <b>ZVB</b>. Прикачено ще намерите официалната подробна оферта и количествено-стойностна сметка за Вашия обект:</p>
+                <div style="background-color: #f8fafc; border-left: 4px solid #f59e0b; padding: 12px; margin: 16px 0;">
+                    <b>Обект:</b> {project_title}<br>
+                    <b>Обща стойност:</b> {total_sum:,.2f} лв. с ДДС<br>
+                    <b>Гаранция:</b> 5 години пълна с приемо-предавателен протокол
+                </div>
+                <p>Оставаме на Ваше разположение за безплатен оглед на място и уточняване на удобен за Вас график.</p>
+                <br>
+                <p style="margin-bottom: 2px;">С уважение,</p>
+                <b>Инж. екип на ZVB София</b><br>
+                📞 Телефон: +359 87 7944353<br>
+                🌐 Уебсайт: <a href="https://zvb.bg">https://zvb.bg</a>
+            </div>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(body_html, 'html', 'utf-8'))
+
+        with open(pdf_path, "rb") as f:
+            part = MIMEApplication(f.read(), Name=os.path.basename(pdf_path))
+            part['Content-Disposition'] = f'attachment; filename="{os.path.basename(pdf_path)}"'
+            msg.attach(part)
+
+        server = smtplib.SMTP(host, port, timeout=15)
+        server.starttls()
+        server.login(user, password)
+        server.send_message(msg)
+        server.quit()
+        return True, "Имейлът е изпратен успешно!"
+    except Exception as e:
+        return False, str(e)
+
 if __name__ == "__main__":
     out = "test_zvb_offer.pdf"
     p, tot = generate_pdf_offer(out, client_name="Иван Петров", location="гр. София, кв. Манастирски ливади", project_title="Ремонт на ел. инсталация и ново табло")
