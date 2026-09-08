@@ -115,5 +115,23 @@
     "source": "Daibau",
     "location": "София, София-град",
     "alerted_at": "2026-09-06 10:26:11"
+  },
+  "mp_96303": {
+    "id": "mp_96303",
+    "title": "[MaistorPlus] Довършителен ремонт на апартамент ново строителство Снимки (Пакет Про+)",
+    "url": "https://maistorplus.com/craftsman/job/96303",
+    "url_hash": "018caa1b6c5172a1f7c86f74039b769b",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-08 09:56:57"
+  },
+  "daibau_62407": {
+    "id": "daibau_62407",
+    "title": "[Daibau] подмяна на старата електрическа инсталац...",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/podmyana_na_starata_elektricheska_instalatsiya_na_apartament/62407",
+    "url_hash": "65470ecc71b64cac1ddb86d8ec298654",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-08 09:56:57"
   }
 }
