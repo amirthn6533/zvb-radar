@@ -1,23 +1,26 @@
-﻿---
+---
 name: Bug report
-about: Create a report to help us improve ZVB Radar
+about: Create a report to help us improve the project
 title: '[BUG] '
 labels: bug
-assignees: amirthn6533
+assignees: ''
 ---
 
-**Describe the bug**
+### Describe the Bug
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Run command '...'
-2. Platform: Bazar / Alo / Daibau / MaistorPlus
+### Steps to Reproduce
+1. Go to '...'
+2. Run command / action '....'
 3. See error
 
-**Expected behavior**
+### Expected Behavior
 A clear and concise description of what you expected to happen.
 
-**Environment:**
-- OS: [e.g. Ubuntu 22.04, Windows 11]
-- Python Version: [e.g. 3.11]
+### Screenshots & Logs
+If applicable, add screenshots or console output to help explain your problem.
+
+### Environment
+- OS: [e.g. Windows 11, Ubuntu 22.04, macOS]
+- Runtime: [e.g. Python 3.10+, Node 18+]
+- Version: [e.g. 1.0.0]

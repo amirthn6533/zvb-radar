@@ -1,16 +1,19 @@
-﻿---
+---
 name: Feature request
-about: Suggest an idea or new lead source for ZVB Radar
+about: Suggest an idea or feature enhancement for this project
 title: '[FEATURE] '
 labels: enhancement
-assignees: amirthn6533
+assignees: ''
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is.
+### Problem Statement
+A clear and concise description of what problem this feature solves.
 
-**Describe the solution you'd like**
+### Proposed Solution
 A clear and concise description of what you want to happen.
 
-**Target Platform or API**
-e.g. Daibau, Facebook Groups, Olx, Viber
+### Alternatives Considered
+A clear and concise description of any alternative solutions or features you've considered.
+
+### Additional Context
+Add any other context, UI/CLI mockups, or screenshots about the feature request here.
