@@ -160,5 +160,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-09 09:19:00"
+  },
+  "mp_96435": {
+    "id": "mp_96435",
+    "title": "[MaistorPlus] Преправяне на ел. инсталация (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96435",
+    "url_hash": "b7ca6844af81f10f5c911e0334813d2d",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-11 09:16:43"
   }
 }
