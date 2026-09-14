@@ -169,5 +169,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-11 09:16:43"
+  },
+  "mp_96522": {
+    "id": "mp_96522",
+    "title": "[MaistorPlus] Монтаж на осветителни тела (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96522",
+    "url_hash": "c0b1d4f9429ffc263a1ab9842df254a9",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-14 13:00:17"
   }
 }
