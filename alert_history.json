@@ -178,5 +178,23 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-14 13:00:17"
+  },
+  "mp_96485": {
+    "id": "mp_96485",
+    "title": "[MaistorPlus] Пренасяне на мебели (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96485",
+    "url_hash": "e566431d146dbaa03b87798cd64725f6",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-15 09:42:56"
+  },
+  "mp_96538": {
+    "id": "mp_96538",
+    "title": "[MaistorPlus] Ел. инсталация за апартамент (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96538",
+    "url_hash": "1119e10b1d7a8bd16aafe78f4d512c33",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-15 09:42:56"
   }
 }
