@@ -214,5 +214,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-17 07:15:22"
+  },
+  "mp_96586": {
+    "id": "mp_96586",
+    "title": "[MaistorPlus] Ремонт на две бани ново строителство (Пакет Про+)",
+    "url": "https://maistorplus.com/craftsman/job/96586",
+    "url_hash": "862b926e870a5cd3c417678288d2d0af",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-17 09:44:49"
   }
 }
