@@ -232,5 +232,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-17 11:30:15"
+  },
+  "mp_96615": {
+    "id": "mp_96615",
+    "title": "[MaistorPlus] Прозвъняване на ел инсталация и монтаж на ключ и контакти (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96615",
+    "url_hash": "b609c6a82c08e2556ebd58c384e50880",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-18 09:18:25"
   }
 }
