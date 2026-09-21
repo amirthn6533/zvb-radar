@@ -250,5 +250,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-21 14:00:09"
+  },
+  "mp_96639": {
+    "id": "mp_96639",
+    "title": "[MaistorPlus] Монтаж на ел. табло (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96639",
+    "url_hash": "427afd9f3f31c04b01f75c38aa3163dd",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-21 20:00:21"
   }
 }
