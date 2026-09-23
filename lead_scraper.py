@@ -148,6 +148,31 @@ def classify_lead(title, keyword):
     
     return "direct_electrical", "⚡ Директни електроуслуги и камери"
 
+def normalize_bg_phone(raw_phone):
+    """
+    Cleans and normalizes Bulgarian phone numbers.
+    Returns tuple: (clean_local_08, intl_359) or (None, None)
+    Examples:
+    '0888123456' -> ('0888123456', '359888123456')
+    '+359888123456' -> ('0888123456', '359888123456')
+    '00359888123456' -> ('0888123456', '359888123456')
+    """
+    if not raw_phone:
+        return None, None
+    digits = re.sub(r'[^\d+]', '', str(raw_phone).strip())
+    if digits.startswith('+359'):
+        digits = '0' + digits[4:]
+    elif digits.startswith('00359'):
+        digits = '0' + digits[5:]
+    elif digits.startswith('359') and len(digits) >= 11:
+        digits = '0' + digits[3:]
+    
+    if digits.startswith('08') and len(digits) == 10:
+        return digits, '359' + digits[1:]
+    elif digits.startswith('02') and len(digits) >= 8:
+        return digits, '359' + digits[1:]
+    return None, None
+
 def send_telegram_alert(lead, bot_token, chat_id):
     category_icon = "⚡"
     if lead.get("category") == "urgent_client":
@@ -158,7 +183,27 @@ def send_telegram_alert(lead, bot_token, chat_id):
         category_icon = "🔨"
 
     phone = lead.get('phone')
-    phone_str = f"📞 <b>Телефон:</b> <code>{phone}</code>\n" if phone else ""
+    local_phone, intl_phone = normalize_bg_phone(phone)
+    
+    buttons = []
+    first_row = []
+    
+    if local_phone:
+        wa_text = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
+        wa_url = f"https://wa.me/{intl_phone}?text={wa_text}"
+        viber_url = f"viber://chat?number=%2B{intl_phone}"
+        phone_str = (
+            f"📞 <b>Телефон:</b> <code>{local_phone}</code>\n"
+            f"👉 <a href='tel:+{intl_phone}'>📞 Обади се</a> | "
+            f"<a href='{viber_url}'>🟣 Viber</a> | "
+            f"<a href='{wa_url}'>💬 WhatsApp</a>\n"
+        )
+        first_row.append({"text": f"📞 Обади се ({local_phone})", "url": f"tel:+{intl_phone}"})
+        first_row.append({"text": "🟣 Viber", "url": viber_url})
+        first_row.append({"text": "💬 WhatsApp", "url": wa_url})
+        buttons.append(first_row)
+    else:
+        phone_str = ""
 
     if lead.get("source") == "MaistorPlus":
         header = "⚡🚨 <b>СВЕТКАВИЧНО ИЗВЕСТИЕ ЗА НОВ ЕЛЕКТРО ПРОЕКТ!</b>\n<i>(Нова заявка в реално време — София)</i>"
@@ -181,18 +226,6 @@ def send_telegram_alert(lead, bot_token, chat_id):
         f"🏢 <i>ZVB Sofia — Електрически и умни инсталации (zvb.bg)</i>"
     )
     
-    # Inline buttons: WhatsApp, Direct Call, View Ad
-    buttons = []
-    first_row = []
-    
-    if phone and phone.startswith("08") and len(phone) == 10:
-        intl_phone = "359" + phone[1:]
-        wa_text = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
-        wa_url = f"https://wa.me/{intl_phone}?text={wa_text}"
-        first_row.append({"text": "💬 WhatsApp (1-клик)", "url": wa_url})
-        first_row.append({"text": f"📞 Обади се ({phone})", "url": f"tel:+{intl_phone}"})
-        buttons.append(first_row)
-        
     if lead.get("source") == "MaistorPlus":
         action_btn_text = "🚀 Кандидатствай ПЪРВИ в MaistorPlus"
     elif lead.get("source") == "Daibau":
@@ -207,10 +240,11 @@ def send_telegram_alert(lead, bot_token, chat_id):
         {"text": "✍️ Генерирай оферта", "callback_data": f"p_{lead_id}"[:60]},
         {"text": "📑 Свали PDF Оферта", "callback_data": f"pdf_{lead_id}"[:60]}
     ])
-    # CRM Action Buttons
+    # CRM Action & Smart Reminders Buttons
     buttons.append([
         {"text": "📞 تماس گرفته شد", "callback_data": f"crm_c_{lead_id}"[:60]},
-        {"text": "⏰ یادآوری ۲ روز", "callback_data": f"crm_r2_{lead_id}"[:60]}
+        {"text": "⏰ یادآوری فردا", "callback_data": f"crm_rem_t_{lead_id}"[:60]},
+        {"text": "⏰ یادآوری ۳ روز", "callback_data": f"crm_rem_3d_{lead_id}"[:60]}
     ])
     buttons.append([
         {"text": "🤝 قرارداد بسته شد", "callback_data": f"crm_w_{lead_id}"[:60]},

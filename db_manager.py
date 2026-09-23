@@ -2,6 +2,7 @@ import sqlite3
 import os
 import json
 import datetime
+import time
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -73,6 +74,22 @@ def init_db():
         )
     ''')
     c.execute('CREATE INDEX IF NOT EXISTS idx_alerts_hash ON alert_history (url_hash)')
+
+    # 4. Custom Reminders table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS custom_reminders (
+            id TEXT PRIMARY KEY,
+            chat_id TEXT,
+            title TEXT NOT NULL,
+            phone TEXT,
+            lead_id TEXT,
+            remind_at TEXT NOT NULL,
+            status TEXT DEFAULT 'PENDING',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    c.execute('CREATE INDEX IF NOT EXISTS idx_reminders_status ON custom_reminders (status)')
+    c.execute('CREATE INDEX IF NOT EXISTS idx_reminders_time ON custom_reminders (remind_at)')
     
     conn.commit()
     
@@ -347,6 +364,71 @@ def get_alert_history():
     rows = c.fetchall()
     conn.close()
     return {r["id"]: dict(r) for r in rows}
+
+# --- Custom Reminders API ---
+def add_custom_reminder(chat_id, title, phone="", remind_at="", lead_id=None):
+    if not remind_at:
+        remind_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    rem_id = f"rem_{int(time.time()*1000)}"
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('''
+        INSERT INTO custom_reminders (id, chat_id, title, phone, lead_id, remind_at, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'PENDING')
+    ''', (rem_id, str(chat_id or ""), title, phone or "", lead_id or "", remind_at))
+    conn.commit()
+    conn.close()
+    return rem_id
+
+def get_today_reminders(target_date=None):
+    """Returns pending reminders for target_date (YYYY-MM-DD), default today"""
+    if not target_date:
+        target_date = datetime.date.today().strftime("%Y-%m-%d")
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('''
+        SELECT * FROM custom_reminders
+        WHERE substr(remind_at, 1, 10) <= ?
+          AND status = 'PENDING'
+        ORDER BY remind_at ASC
+    ''', (target_date,))
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+def get_due_custom_reminders(now_str=None):
+    """Returns reminders where remind_at <= current time and status is PENDING"""
+    if not now_str:
+        now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('''
+        SELECT * FROM custom_reminders
+        WHERE remind_at <= ?
+          AND status = 'PENDING'
+        ORDER BY remind_at ASC
+    ''', (now_str,))
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+def mark_custom_reminder_status(rem_id, status='DONE'):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('UPDATE custom_reminders SET status = ? WHERE id = ?', (status, rem_id))
+    affected = c.rowcount
+    conn.commit()
+    conn.close()
+    return affected > 0
+
+def delete_custom_reminder(rem_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute('DELETE FROM custom_reminders WHERE id = ?', (rem_id,))
+    affected = c.rowcount
+    conn.commit()
+    conn.close()
+    return affected > 0
 
 if __name__ == '__main__':
     init_db()

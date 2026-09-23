@@ -10,6 +10,7 @@ import time
 import datetime
 import urllib.parse
 import requests
+import lead_scraper
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -193,14 +194,15 @@ def build_daily_digest(period_name="Дневен бюлетин"):
         msg += "⚡ <b>ДИРЕКТНИ ЗАПИТВАНИЯ ЗА ЕЛЕКТРОТЕХНИК:</b>\n"
         for idx, l in enumerate(urgent_leads[:5], 1):
             phone = l.get('phone')
+            local_phone, intl_phone = lead_scraper.normalize_bg_phone(phone)
             phone_part = ""
             action_links = []
-            if phone and phone.startswith("08") and len(phone) == 10:
-                phone_part = f"\n   📞 Телефон: <b>{phone}</b>"
-                intl = "359" + phone[1:]
+            if local_phone:
+                phone_part = f"\n   📞 Телефон: <b>{local_phone}</b>"
                 wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги, София) относно Вашия проект. https://zvb.bg")
-                action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
-                action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+                action_links.append(f"<a href='tel:+{intl_phone}'>📞 Обади се</a>")
+                action_links.append(f"<a href='viber://chat?number=%2B{intl_phone}'>🟣 Viber</a>")
+                action_links.append(f"<a href='https://wa.me/{intl_phone}?text={wa_txt}'>💬 WhatsApp</a>")
             
             if l.get('source') == 'MaistorPlus':
                 link_label = "📋 Кандидатствай в MaistorPlus"
@@ -217,14 +219,15 @@ def build_daily_digest(period_name="Дневен бюлетин"):
         msg += "📹 <b>ВИДЕОНАБЛЮДЕНИЕ И УМЕН ДОМ:</b>\n"
         for idx, l in enumerate(cctv_smart_leads[:3], 1):
             phone = l.get('phone')
+            local_phone, intl_phone = lead_scraper.normalize_bg_phone(phone)
             phone_part = ""
             action_links = []
-            if phone and phone.startswith("08") and len(phone) == 10:
-                phone_part = f"\n   📞 Телефон: <b>{phone}</b>"
-                intl = "359" + phone[1:]
+            if local_phone:
+                phone_part = f"\n   📞 Телефон: <b>{local_phone}</b>"
                 wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Видеонаблюдение & Умен дом, София). https://zvb.bg")
-                action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
-                action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+                action_links.append(f"<a href='tel:+{intl_phone}'>📞 Обади се</a>")
+                action_links.append(f"<a href='viber://chat?number=%2B{intl_phone}'>🟣 Viber</a>")
+                action_links.append(f"<a href='https://wa.me/{intl_phone}?text={wa_txt}'>💬 WhatsApp</a>")
             action_links.append(f"<a href='{l.get('url')}'>🔗 Виж проекта</a>")
             actions_str = " | ".join(action_links)
             msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
@@ -234,27 +237,47 @@ def build_daily_digest(period_name="Дневен бюлетин"):
         msg += "🏗️ <b>ЕЛ. ИНСТАЛАЦИИ И ОБЕКТИ В СОФИЯ:</b>\n"
         for idx, l in enumerate(contractor_leads[:3], 1):
             phone = l.get('phone')
+            local_phone, intl_phone = lead_scraper.normalize_bg_phone(phone)
             phone_part = ""
             action_links = []
-            if phone and phone.startswith("08") and len(phone) == 10:
-                phone_part = f"\n   📞 Телефон: <b>{phone}</b>"
-                intl = "359" + phone[1:]
+            if local_phone:
+                phone_part = f"\n   📞 Телефон: <b>{local_phone}</b>"
                 wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Ел. инсталации подизпълнител, София). https://zvb.bg")
-                action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
-                action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+                action_links.append(f"<a href='tel:+{intl_phone}'>📞 Обади се</a>")
+                action_links.append(f"<a href='viber://chat?number=%2B{intl_phone}'>🟣 Viber</a>")
+                action_links.append(f"<a href='https://wa.me/{intl_phone}?text={wa_txt}'>💬 WhatsApp</a>")
             action_links.append(f"<a href='{l.get('url')}'>🔗 Виж офертата</a>")
             actions_str = " | ".join(action_links)
             msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
 
-    # 4. CRM Due Follow-up Reminders
+    # 4. Due Reminders for Today (Custom Reminders & CRM Leads)
     try:
         import db_manager
+        custom_reminders = db_manager.get_today_reminders()
         due_reminders = db_manager.get_due_reminders()
-        if due_reminders:
-            msg += "⏰ <b>ПРОЕКТИ ЗА ДНЕШНО ПРОСЛЕДЯВАНЕ (CRM FOLLOW-UP):</b>\n"
-            for r_idx, rem in enumerate(due_reminders[:5], 1):
+        if custom_reminders or due_reminders:
+            msg += "⏰ <b>ДНЕВНИ ЗАДАЧИ И НАПОМНЯНИЯ ЗА ОБАЖДАНЕ:</b>\n"
+            r_count = 1
+            for cr in custom_reminders[:5]:
+                r_phone = cr.get('phone') or ''
+                phone_act = ""
+                if r_phone:
+                    lp, ip = lead_scraper.normalize_bg_phone(r_phone)
+                    if lp:
+                        phone_act = f"\n   👉 <a href='tel:+{ip}'>📞 Обади се</a> | <a href='viber://chat?number=%2B{ip}'>🟣 Viber</a>"
+                    else:
+                        phone_act = f" (📞 {r_phone})"
+                msg += f"{r_count}. 🔔 <b>{cr.get('title')}</b>\n   Час: <i>{cr.get('remind_at')}</i>{phone_act}\n\n"
+                r_count += 1
+                
+            for rem in due_reminders[:4]:
                 r_phone = rem.get('phone') or 'В обявата'
-                msg += f"{r_idx}. <b>{rem.get('title')[:55]}</b>\n   📞 Телефон: <code>{r_phone}</code> | Статус: <i>{rem.get('status')}</i>\n   👉 <a href='{rem.get('url', '#')}'>Отвори проекта</a>\n\n"
+                phone_act = ""
+                lp, ip = lead_scraper.normalize_bg_phone(r_phone)
+                if lp:
+                    phone_act = f"\n   👉 <a href='tel:+{ip}'>📞 Обади се</a> | <a href='viber://chat?number=%2B{ip}'>🟣 Viber</a>"
+                msg += f"{r_count}. 📋 <b>{rem.get('title')[:55]}</b>\n   📞 Телефон: <code>{r_phone}</code> | Статус: <i>{rem.get('status')}</i>{phone_act}\n\n"
+                r_count += 1
     except Exception as e:
         print(f"CRM reminder digest error: {e}")
 

@@ -71,6 +71,10 @@ def get_main_keyboard():
                 {"text": "🔍 Сканирай сега (Live)", "callback_data": "cmd_scan"}
             ],
             [
+                {"text": "⏰ کارهای امروز (یادآوری‌ها)", "callback_data": "cmd_reminders"},
+                {"text": "➕ ثبت یادآوری جدید", "callback_data": "cmd_add_reminder_help"}
+            ],
+            [
                 {"text": "💰 Калкулатор за оферти", "callback_data": "cmd_calc"},
                 {"text": "🧠 Загрос AI Експерт", "callback_data": "cmd_ai"}
             ],
@@ -164,14 +168,15 @@ def handle_urgent_cmd():
     msg = "🎯 <b>ТОП ПРОВЕРЕНИ КЛИЕНТСКИ ПРОЕКТИ (София):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
     for idx, l in enumerate(valid[:5], 1):
         phone = l.get('phone')
+        local_phone, intl = lead_scraper.normalize_bg_phone(phone)
         phone_block = ""
         action_links = []
-        if phone and phone.startswith("08") and len(phone) == 10:
-            phone_block = f"\n📞 Телефон: <b>{phone}</b>"
-            intl = "359" + phone[1:]
+        if local_phone:
+            phone_block = f"\n📞 Телефон: <b>{local_phone}</b>"
             wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
-            action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
             action_links.append(f"<a href='tel:+{intl}'>📞 Обади се</a>")
+            action_links.append(f"<a href='viber://chat?number=%2B{intl}'>🟣 Viber</a>")
+            action_links.append(f"<a href='https://wa.me/{intl}?text={wa_txt}'>💬 WhatsApp</a>")
             
         link_label = "📋 Кандидатствай в MaistorPlus" if l.get('source') == 'MaistorPlus' else "🔗 Виж обявата"
         action_links.append(f"<a href='{l.get('url')}'>{link_label}</a>")
@@ -259,6 +264,154 @@ def handle_crm_cmd():
     msg += "━━━━━━━━━━━━━━━━━━━━\n"
     msg += "💡 <i>برای تغییر وضعیت هر پروژه، از دکمه‌های شیشه‌ای زیر آگهی مربوطه استفاده کنید.</i>"
     return msg
+
+def get_reminder_help_text():
+    return (
+        "⏰ <b>راهنمای ثبت هوشمند یادآوری و تماس‌ها (ZVB Reminder Assistant):</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n\n"
+        "شما می‌توانید به سادگی و به زبان محاوره‌ای فارسی یا بلغاری به زاگرس بگویید چه زمانی و به چه کسی باید زنگ بزنید:\n\n"
+        "📌 <b>نمونه‌ها (روی هرکدام بزنید تا کپی شود):</b>\n"
+        "• <code>یادآوری: فردا ساعت ۱۰ زنگ زدن به ایوان 0888123456</code>\n"
+        "• <code>یادآوری فردا 11:30 تماس با کارفرمای پروژه ملادوست</code>\n"
+        "• <code>یادآوری ۲ روز دیگه ساعت ۰۹:۰۰ پیگیری پیش‌فاکتور 0877998811</code>\n"
+        "• <code>/remind утре 10:00 звънни на 0888123456</code>\n\n"
+        "🔔 ربات در روز و ساعت موعد، اعلان هشدار را به همراه <b>دکمه‌های مستقیم تماس تلفنی و وایبر (Viber)</b> برایتان ارسال خواهد کرد!"
+    )
+
+def handle_reminders_cmd():
+    """Builds a rich view of today's tasks and reminders with Call, Viber, Done buttons."""
+    custom_rems = db_manager.get_today_reminders()
+    crm_rems = db_manager.get_due_reminders()
+    
+    if not custom_rems and not crm_rems:
+        msg = (
+            "⏰ <b>لیست کارهای امروز و یادآوری‌ها (Sofia):</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "✅ <i>برای امروز هیچ تماس یا یادآوری معوقه‌ای ثبت نشده است!</i>\n\n"
+            "💡 <b>چگونه یادآوری ثبت کنیم؟</b>\n"
+            "کافیست در چت بنویسید:\n"
+            "<code>یادآوری: فردا ساعت ۱۰ به ایوان 0888123456 زنگ بزن</code>\n"
+            "یا روی دکمه «⏰ یادآوری فردا» زیر آگهی‌ها ضربه بزنید."
+        )
+        return msg, {"inline_keyboard": [[{"text": "➕ ثبت یادآوری جدید", "callback_data": "cmd_add_reminder_help"}, {"text": "🔙 منوی اصلی", "callback_data": "cmd_main_menu"}]]}
+
+    msg = "⏰ <b>لیست تماس‌ها و کارهای امروز (ZVB Sofia):</b>\n━━━━━━━━━━━━━━━━━━━━\n\n"
+    buttons = []
+    
+    idx = 1
+    for r in custom_rems:
+        r_phone = r.get("phone", "")
+        lp, ip = lead_scraper.normalize_bg_phone(r_phone)
+        phone_txt = f"\n   📞 تماس: <code>{lp or r_phone}</code>" if r_phone else ""
+        msg += f"<b>{idx}. 🔔 {r.get('title')}</b>\n   ⏰ موعد: <i>{r.get('remind_at')}</i>{phone_txt}\n\n"
+        
+        row = []
+        if lp:
+            row.append({"text": "📞 تماس", "url": f"tel:+{ip}"})
+            row.append({"text": "🟣 Viber", "url": f"viber://chat?number=%2B{ip}"})
+            row.append({"text": "💬 WhatsApp", "url": f"https://wa.me/{ip}"})
+        row.append({"text": f"✅ انجام شد ({idx})", "callback_data": f"rem_done_{r.get('id')}"[:60]})
+        row.append({"text": f"🗑 حذف", "callback_data": f"rem_del_{r.get('id')}"[:60]})
+        buttons.append(row)
+        idx += 1
+        
+    for r in crm_rems:
+        r_phone = r.get("phone", "")
+        lp, ip = lead_scraper.normalize_bg_phone(r_phone)
+        phone_txt = f"\n   📞 تماس: <code>{lp or r_phone}</code>" if r_phone else ""
+        msg += f"<b>{idx}. 📋 {r.get('title')[:55]}</b>\n   📊 وضعیت: <i>{r.get('status')}</i>{phone_txt}\n\n"
+        row = []
+        if lp:
+            row.append({"text": "📞 تماس", "url": f"tel:+{ip}"})
+            row.append({"text": "🟣 Viber", "url": f"viber://chat?number=%2B{ip}"})
+        row.append({"text": f"🤝 قرارداد (WON)", "callback_data": f"crm_w_{r.get('id')}"[:60]})
+        buttons.append(row)
+        idx += 1
+        
+    buttons.append([
+        {"text": "➕ ثبت یادآوری جدید", "callback_data": "cmd_add_reminder_help"},
+        {"text": "🔙 منوی اصلی", "callback_data": "cmd_main_menu"}
+    ])
+    return msg, {"inline_keyboard": buttons}
+
+def parse_reminder_text(text, chat_id):
+    """
+    Parses natural language reminder requests in Persian and Bulgarian.
+    Extracts target date/time, phone number, and description.
+    Returns (success: bool, response_msg: str)
+    """
+    clean_text = text.strip()
+    if clean_text.startswith('/remind '):
+        clean_text = clean_text[8:].strip()
+    elif clean_text.startswith('/remind'):
+        clean_text = clean_text[7:].strip()
+        
+    for prefix in ['یادآوری کن:', 'یادآوری کن', 'یادآوری:', 'یادآوری', 'یاد اوری:', 'یاد اوری', 'напомни ми:', 'напомни ми', 'напомни']:
+        if clean_text.lower().startswith(prefix):
+            clean_text = clean_text[len(prefix):].strip().lstrip(":, ")
+            break
+            
+    if not clean_text:
+        return False, None
+        
+    # Extract phone number if present
+    found_phone = ""
+    phone_match = re.search(r'(?:\+?359|00359|0)\s*(?:8[789]\d{7}|2\d{6,7})', clean_text.replace(' ', ''))
+    if phone_match:
+        lp, ip = lead_scraper.normalize_bg_phone(phone_match.group(0))
+        if lp:
+            found_phone = lp
+            
+    # Determine date
+    now = datetime.datetime.now()
+    target_date = now.date()
+    target_hour = 10
+    target_minute = 0
+    
+    lower = clean_text.lower()
+    if 'فردا' in lower or 'утре' in lower:
+        target_date = now.date() + datetime.timedelta(days=1)
+    elif 'پس‌فردا' in lower or 'پس فردا' in lower or 'вдругиден' in lower:
+        target_date = now.date() + datetime.timedelta(days=2)
+    elif re.search(r'(\d+)\s*(?:روز|дни)', lower):
+        m_days = re.search(r'(\d+)\s*(?:روز|дни)', lower)
+        target_date = now.date() + datetime.timedelta(days=int(m_days.group(1)))
+    elif 'امروز' in lower or 'днес' in lower:
+        target_date = now.date()
+        
+    # Extract time like 10:00 or 14:30 or ساعت ۱۰
+    time_match = re.search(r'(\d{1,2})[:.](\d{2})', clean_text)
+    if time_match:
+        target_hour = int(time_match.group(1))
+        target_minute = int(time_match.group(2))
+    else:
+        hour_match = re.search(r'(?:ساعت|в)\s*(\d{1,2})', lower)
+        if hour_match:
+            target_hour = int(hour_match.group(1))
+            
+    remind_at = f"{target_date.strftime('%Y-%m-%d')} {target_hour:02d}:{target_minute:02d}"
+    
+    # Clean up description
+    title = clean_text
+    for w in ['فردا', 'پس فردا', 'پس‌فردا', 'امروز', 'утре', 'днес', 'вдругиден']:
+        title = re.sub(rf'\b{w}\b', '', title, flags=re.IGNORECASE)
+    title = re.sub(r'(?:ساعت|в)?\s*\d{1,2}[:.]\d{2}', '', title)
+    title = re.sub(r'(?:ساعت|в)\s*\d{1,2}', '', title)
+    title = re.sub(r'\s+', ' ', title).strip(': -')
+    if not title:
+        title = f"تماس با {found_phone}" if found_phone else "پیگیری پروژه"
+        
+    rem_id = db_manager.add_custom_reminder(chat_id, title, found_phone, remind_at)
+    
+    phone_info = f"\n📞 <b>شماره ثبت‌شده:</b> <code>{found_phone}</code>" if found_phone else ""
+    ack = (
+        "⏰ <b>یادآوری با موفقیت در سیستم ثبت شد!</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        f"📌 <b>موضوع:</b> {title}\n"
+        f"📅 <b>زمان موعد:</b> {remind_at}{phone_info}\n\n"
+        "🔔 ربات در زمان موعد هشدار فوری به همراه <b>دکمه‌های مستقیم تماس تلفنی و وایبر (Viber)</b> ارسال خواهد کرد."
+    )
+    return True, ack
 
 def handle_calc_cmd(query=""):
     """
@@ -791,6 +944,41 @@ def background_scheduler(token, chat_id):
                 print(f"[{now.strftime('%H:%M')}] Автоматичен 15-минутен скан...")
                 lead_scraper.run_scan()
 
+            # Check due custom reminders and send instant push alert
+            try:
+                due_customs = db_manager.get_due_custom_reminders()
+                for dc in due_customs:
+                    rem_phone = dc.get("phone", "")
+                    lp, ip = lead_scraper.normalize_bg_phone(rem_phone)
+                    phone_block = f"\n📞 <b>شماره تماس:</b> <code>{lp}</code>" if lp else ""
+                    
+                    alert_text = (
+                        "🚨 <b>زاگرس یادآوری می‌کند: موعد پیگیری فرا رسید!</b>\n"
+                        "━━━━━━━━━━━━━━━━━━━━\n"
+                        f"📌 <b>وظیفه:</b> {dc.get('title')}\n"
+                        f"⏰ <b>زمان موعد:</b> {dc.get('remind_at')}"
+                        f"{phone_block}\n\n"
+                        "💡 <i>لطفاً تماس یا پیگیری را انجام دهید و وضعیت را مشخص کنید:</i>"
+                    )
+                    
+                    btns = []
+                    if lp:
+                        btns.append([
+                            {"text": f"📞 تماس با {lp}", "url": f"tel:+{ip}"},
+                            {"text": "🟣 Viber", "url": f"viber://chat?number=%2B{ip}"},
+                            {"text": "💬 WhatsApp", "url": f"https://wa.me/{ip}"}
+                        ])
+                    btns.append([
+                        {"text": "✅ انجام شد", "callback_data": f"rem_done_{dc.get('id')}"[:60]},
+                        {"text": "⏰ ۱ ساعت بعد", "callback_data": f"rem_snooze_1h_{dc.get('id')}"[:60]}
+                    ])
+                    
+                    target_chat = dc.get("chat_id") or chat_id
+                    send_msg(token, target_chat, alert_text, {"inline_keyboard": btns})
+                    db_manager.mark_custom_reminder_status(dc.get("id"), "NOTIFIED")
+            except Exception as e_rem:
+                print(f"Error checking due custom reminders: {e_rem}")
+
         except Exception as e:
             print(f"Scheduler error: {e}")
             
@@ -1041,6 +1229,49 @@ def run_telegram_bot():
                     elif cb_data == "cmd_crm":
                         answer_callback(token, cb_id)
                         send_msg(token, sender_chat_id, handle_crm_cmd(), get_main_keyboard())
+                    elif cb_data == "cmd_reminders":
+                        answer_callback(token, cb_id)
+                        text, kbd = handle_reminders_cmd()
+                        send_msg(token, sender_chat_id, text, kbd)
+                    elif cb_data == "cmd_add_reminder_help":
+                        answer_callback(token, cb_id)
+                        send_msg(token, sender_chat_id, get_reminder_help_text(), get_main_keyboard())
+                    elif cb_data.startswith("rem_done_"):
+                        target_id = cb_data[9:]
+                        answer_callback(token, cb_id, "✅ انجام شد")
+                        db_manager.mark_custom_reminder_status(target_id, "DONE")
+                        send_msg(token, sender_chat_id, "✅ <b>یادآوری به عنوان انجام‌شده ثبت شد.</b>")
+                        text, kbd = handle_reminders_cmd()
+                        send_msg(token, sender_chat_id, text, kbd)
+                    elif cb_data.startswith("rem_del_"):
+                        target_id = cb_data[8:]
+                        answer_callback(token, cb_id, "🗑 حذف شد")
+                        db_manager.delete_custom_reminder(target_id)
+                        send_msg(token, sender_chat_id, "🗑 <b>یادآوری با موفقیت حذف شد.</b>")
+                        text, kbd = handle_reminders_cmd()
+                        send_msg(token, sender_chat_id, text, kbd)
+                    elif cb_data.startswith("rem_snooze_1h_"):
+                        target_id = cb_data[14:]
+                        answer_callback(token, cb_id, "⏰ ۱ ساعت بعد")
+                        new_time = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H:%M")
+                        conn = db_manager.get_connection()
+                        c = conn.cursor()
+                        c.execute("UPDATE custom_reminders SET remind_at = ?, status = 'PENDING' WHERE id = ?", (new_time, target_id))
+                        conn.commit()
+                        conn.close()
+                        send_msg(token, sender_chat_id, f"⏰ <b>یادآوری ۱ ساعت به تعویق افتاد (موعد جدید: {new_time}).</b>")
+                    elif cb_data.startswith("crm_rem_t_"):
+                        target_id = cb_data[10:]
+                        answer_callback(token, cb_id, "⏰ تنظیم شد: فردا")
+                        rem_date = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+                        db_manager.update_lead_status(target_id, "CONTACTED", reminder_date=rem_date)
+                        send_msg(token, sender_chat_id, f"⏰ <b>یادآوری برای فردا ({rem_date}) ساعت ۰۹:۰۰ تنظیم شد.</b>\nربات در گزارش صبحگاهی تماس با این کارفرما را به همراه لینک مستقیم وایبر یادآوری خواهد کرد.")
+                    elif cb_data.startswith("crm_rem_3d_"):
+                        target_id = cb_data[11:]
+                        answer_callback(token, cb_id, "⏰ تنظیم شد: ۳ روز بعد")
+                        rem_date = (datetime.date.today() + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+                        db_manager.update_lead_status(target_id, "CONTACTED", reminder_date=rem_date)
+                        send_msg(token, sender_chat_id, f"⏰ <b>یادآوری برای ۳ روز بعد ({rem_date}) تنظیم شد.</b>")
                     elif cb_data.startswith("crm_c_"):
                         target_id = cb_data[6:]
                         answer_callback(token, cb_id, "📞 ثبت شد: تماس گرفته شد")
@@ -1156,13 +1387,18 @@ def run_telegram_bot():
                     # In groups, respond if called "زاگرس", mentioned, replied to bot, or command
                     is_private = msg.get("chat", {}).get("type") == "private"
                     
-                    # Also trigger directly on candidate actions even without saying "زاگرس"
+                    # Also trigger directly on candidate and reminder actions even without saying "زاگرس"
                     candidate_triggers = [
                         "حذف ", "حذف:", "پاک کن", "پاک:", "اضافه کن", "ثبت کاندید", "کاندیداها", "کاندیدها", "لیست کاندید", "/del_cand", "/add_cand"
                     ]
                     is_candidate_action = any(lower_text.startswith(t) or t in lower_text for t in candidate_triggers)
                     
-                    if not (is_command or is_zagros or is_reply_to_bot or is_private or is_candidate_action):
+                    reminder_triggers = [
+                        "یادآوری", "یاد اوری", "یادآوری کن", "یاد اوری کن", "напомни", "/remind", "/reminders"
+                    ]
+                    is_reminder_action = any(lower_text.startswith(t) or t in lower_text for t in reminder_triggers)
+                    
+                    if not (is_command or is_zagros or is_reply_to_bot or is_private or is_candidate_action or is_reminder_action):
                         # Ignore normal chatter between group members
                         continue
                     
@@ -1175,6 +1411,15 @@ def run_telegram_bot():
                     
                     if not clean_query or clean_query in ["منو", "menu", "help", "کمک"]:
                         send_msg(token, sender_chat_id, "درود مهندس جان! در خدمتم. می‌توانید بفرمایید چه کاری انجام دهم:\n\n" + get_welcome_text(), get_main_keyboard())
+                    elif clean_query.startswith("/reminders") or any(k in clean_query.lower() for k in ["یادآوری‌ها", "یادآوریها", "یاد اوری ها", "کارهای امروز", "تماس‌های امروز", "reminders", "напомняния"]):
+                        text, kbd = handle_reminders_cmd()
+                        send_msg(token, sender_chat_id, text, kbd)
+                    elif clean_query.startswith("/remind") or any(clean_query.lower().startswith(p) for p in ["یادآوری:", "یادآوری کن:", "یادآوری کن", "یادآوری", "یاد اوری:", "یاد اوری", "напомни ми:", "напомни ми", "напомни"]):
+                        ok, res_text = parse_reminder_text(clean_query, sender_chat_id)
+                        if ok:
+                            send_msg(token, sender_chat_id, res_text, get_main_keyboard())
+                        else:
+                            send_msg(token, sender_chat_id, get_reminder_help_text(), get_main_keyboard())
                     elif any(clean_query.lower().startswith(p) for p in ["/pdf", "pdf", "پی دی اف", "فاکتور:", "پیش فاکتور:", "پیش‌فاکتور:", "صدور فاکتور"]) or any(k in clean_query.lower() for k in ["فاکتور رسمی", "pdf رسمی", "پیش فاکتور رسمی", "پیش‌فاکتور رسمی"]):
                         spec = clean_query
                         for w in ["/pdf", "pdf:", "pdf", "پی دی اف:", "پی دی اف", "فاکتور رسمی:", "فاکتور رسمی", "صدور فاکتور:", "صدور فاکتور", "پیش فاکتور رسمی:", "پیش فاکتور رسمی", "پیش‌فاکتور رسمی:", "پیش‌فاکتور رسمی", "فاکتور:", "فاکتور", "پیش فاکتور:", "پیش فاکتور", "پیش‌فاکتور:", "پیش‌فاکتور"]:
