@@ -277,5 +277,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-23 12:30:28"
+  },
+  "mp_96862": {
+    "id": "mp_96862",
+    "title": "[MaistorPlus] Захранване на тоалетна с топла вода и изкарване на контакт (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96862",
+    "url_hash": "0cac47aea8376cef9ce3645ac55a9123",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-28 07:15:08"
   }
 }
