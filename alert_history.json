@@ -286,5 +286,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-09-28 07:15:08"
+  },
+  "mp_96905": {
+    "id": "mp_96905",
+    "title": "[MaistorPlus] Смяна на спирателен кран и мека връзка (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96905",
+    "url_hash": "21622c10c5e683b6514caf57aceed23d",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-30 19:45:19"
   }
 }
