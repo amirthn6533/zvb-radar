@@ -322,5 +322,23 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-05 07:15:12"
+  },
+  "mp_96984": {
+    "id": "mp_96984",
+    "title": "[MaistorPlus] Довършителен ремонт (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96984",
+    "url_hash": "bd5bcee6cfd7d1055563efcbf822b4c4",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-05 21:45:10"
+  },
+  "mp_96978": {
+    "id": "mp_96978",
+    "title": "[MaistorPlus] Монтаж на модулен контактор (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96978",
+    "url_hash": "94dac4585e7c9faf2d22ea21cde2fd38",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-05 21:45:10"
   }
 }
