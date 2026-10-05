@@ -313,5 +313,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-02 11:00:19"
+  },
+  "mp_97011": {
+    "id": "mp_97011",
+    "title": "[MaistorPlus] Преместване на контакти през гипсокартон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97011",
+    "url_hash": "5d8cd59210d763ffd587a25ada34be75",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-05 07:15:12"
   }
 }
