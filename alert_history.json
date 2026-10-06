@@ -340,5 +340,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-05 21:45:10"
+  },
+  "mp_97058": {
+    "id": "mp_97058",
+    "title": "[MaistorPlus] Диагностика и ремонт на осветление в баня (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97058",
+    "url_hash": "be35f22c2b58f893778189299803aa0b",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-06 12:00:25"
   }
 }
