@@ -349,5 +349,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-06 12:00:25"
+  },
+  "mp_97113": {
+    "id": "mp_97113",
+    "title": "[MaistorPlus] Монтаж на стенна лампа и врата на секция Директен телефон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97113",
+    "url_hash": "d0dc8c03e75614689885fd07d367de3d",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-08 08:30:10"
   }
 }
