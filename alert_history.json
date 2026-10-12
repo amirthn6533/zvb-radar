@@ -358,5 +358,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-08 08:30:10"
+  },
+  "mp_97216": {
+    "id": "mp_97216",
+    "title": "[MaistorPlus] Монтаж на лунички и LED осветление (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97216",
+    "url_hash": "08343128d01a200f17d368623636cb0c",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-12 12:45:18"
   }
 }
