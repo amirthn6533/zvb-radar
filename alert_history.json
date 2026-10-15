@@ -376,5 +376,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-12 13:00:25"
+  },
+  "mp_97269": {
+    "id": "mp_97269",
+    "title": "[MaistorPlus] Мебели по поръчка (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/97269",
+    "url_hash": "3be77b1f5b1dfa6c2a1b7a3e4b2ad566",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-15 09:32:00"
   }
 }
