@@ -421,5 +421,32 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-20 02:45:08"
+  },
+  "daibau_64574": {
+    "id": "daibau_64574",
+    "title": "[Daibau] Смяна на външно табло за бойлер... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/smyana_na_vanshno_tablo_za_boyler/64574",
+    "url_hash": "227f6aedaad05d4a031b75c158a4c23b",
+    "source": "Daibau",
+    "location": "Самоков, София",
+    "alerted_at": "2026-10-21 15:00:32"
+  },
+  "daibau_63340": {
+    "id": "daibau_63340",
+    "title": "[Daibau] Разклоняване на окабеляване... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/razklonyavane_na_okabelyavane/63340",
+    "url_hash": "58af6d5d964cc4a7641cb806797063fa",
+    "source": "Daibau",
+    "location": "Банкя, София-град",
+    "alerted_at": "2026-10-21 15:00:32"
+  },
+  "daibau_64045": {
+    "id": "daibau_64045",
+    "title": "[Daibau] Изпълнение на електро проект за еднофами... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/izpalnenie_na_elektro_proekt_za_ednofamilna_kashta/64045",
+    "url_hash": "24fc2b93b452babacc0768fe9571d0f4",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-10-21 15:00:32"
   }
 }
