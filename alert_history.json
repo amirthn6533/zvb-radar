@@ -448,5 +448,50 @@
     "source": "Daibau",
     "location": "София, София-град",
     "alerted_at": "2026-10-21 15:00:32"
+  },
+  "mp_97404": {
+    "id": "mp_97404",
+    "title": "[MaistorPlus] Проект за изместване на електрически стълб Директен телефон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97404",
+    "url_hash": "e2519faf9ab8f42a9fff0e9371b6fa32",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-22 09:45:23"
+  },
+  "daibau_64945": {
+    "id": "daibau_64945",
+    "title": "[Daibau] Ремонт на осветление под кухненски шкафо... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/remont_na_osvetlenie_pod_kuhnenski_shkafove/64945",
+    "url_hash": "c77ec8a782048e8c264f7ef388b1110f",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-10-22 09:45:23"
+  },
+  "daibau_64927": {
+    "id": "daibau_64927",
+    "title": "[Daibau] Електротехник.Нов ключ и контакт... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/elektrotehnik_nov_klyuch_i_kontakt/64927",
+    "url_hash": "7d2e2604497425ba22b89eaccece60fe",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-10-22 09:45:23"
+  },
+  "daibau_64222": {
+    "id": "daibau_64222",
+    "title": "[Daibau] Електроинженер-електротехник... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/elektroinzhener-elektrotehnik/64222",
+    "url_hash": "978f827d3410abce270c2d99e38103b9",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-10-22 09:45:23"
+  },
+  "daibau_64715": {
+    "id": "daibau_64715",
+    "title": "[Daibau] Подмяна на електро табло...",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/podmyana_na_elektro_tablo/64715",
+    "url_hash": "dfd594a02653fb674cb6aa90c3e346ce",
+    "source": "Daibau",
+    "location": "Петърч, София",
+    "alerted_at": "2026-10-22 09:45:23"
   }
 }
