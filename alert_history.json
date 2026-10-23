@@ -493,5 +493,14 @@
     "source": "Daibau",
     "location": "Петърч, София",
     "alerted_at": "2026-10-22 09:45:23"
+  },
+  "mp_97452": {
+    "id": "mp_97452",
+    "title": "[MaistorPlus] Поправка на ел. предпазител (клиент с английски) Директен телефон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97452",
+    "url_hash": "7af8bccb80b170fb02bb5de1f977f37f",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-23 10:30:09"
   }
 }
