@@ -520,5 +520,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-23 14:00:20"
+  },
+  "mp_97405": {
+    "id": "mp_97405",
+    "title": "[MaistorPlus] Подмяна на бойлер Снимки (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97405",
+    "url_hash": "2fd8178d6dabe670e7ce051691dc5e47",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-23 18:49:17"
   }
 }
