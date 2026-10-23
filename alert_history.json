@@ -502,5 +502,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-23 10:30:09"
+  },
+  "mp_97454": {
+    "id": "mp_97454",
+    "title": "[MaistorPlus] Монтаж на ВиК изводи за съдомиялна и поставяне на допълнителен контакт (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97454",
+    "url_hash": "8d6d86d3ec4a3a239b721f9cd38b6d39",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-23 12:00:24"
   }
 }
