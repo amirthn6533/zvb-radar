@@ -538,5 +538,32 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-10-26 10:45:26"
+  },
+  "mp_97514": {
+    "id": "mp_97514",
+    "title": "[MaistorPlus] Смяна на климатични тела (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97514",
+    "url_hash": "a8af6f5d04eba306a840f08c6041775b",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-27 19:45:25"
+  },
+  "mp_97541": {
+    "id": "mp_97541",
+    "title": "[MaistorPlus] Подмяна на лампа за баня и редуцир вентил на газов котлон Директен телефон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97541",
+    "url_hash": "668c41408ae228735fb8f92a882ef2d4",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-10-27 19:45:25"
+  },
+  "daibau_65422": {
+    "id": "daibau_65422",
+    "title": "[Daibau] Електроукабеляване (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/elektroukabelyavane/65422",
+    "url_hash": "e2b8598fc79ba1cb41f73c591df07551",
+    "source": "Daibau",
+    "location": "Красно село, София-град",
+    "alerted_at": "2026-10-27 19:45:25"
   }
 }
