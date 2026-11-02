@@ -565,5 +565,14 @@
     "source": "Daibau",
     "location": "Красно село, София-град",
     "alerted_at": "2026-10-27 19:45:25"
+  },
+  "mp_97610": {
+    "id": "mp_97610",
+    "title": "[MaistorPlus] Преправяне на RJ45 розетка и прекарване на LAN кабел между 2 стаи (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/97610",
+    "url_hash": "3f78c1338669d9e6736f4014c23fb419",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-11-02 13:00:29"
   }
 }
