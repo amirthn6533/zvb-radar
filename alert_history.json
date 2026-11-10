@@ -574,5 +574,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-11-02 13:00:29"
+  },
+  "mp_97792": {
+    "id": "mp_97792",
+    "title": "[MaistorPlus] Изграждане на електрическо захранване за нов бойлер (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/97792",
+    "url_hash": "1d7856353a4b346f4070175d163666da",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-11-10 09:00:09"
   }
 }
