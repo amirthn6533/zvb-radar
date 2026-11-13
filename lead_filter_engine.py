@@ -259,7 +259,7 @@ def sync_git_history():
             cwd=DATA_DIR, capture_output=True, text=True, check=False
         )
         if "nothing to commit" not in (res.stdout or "") and "nothing to commit" not in (res.stderr or ""):
-            subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=DATA_DIR, capture_output=True, check=False)
+            subprocess.run(["git", "pull", "--rebase", "-X", "theirs", "origin", "main"], cwd=DATA_DIR, capture_output=True, check=False)
             subprocess.run(["git", "push", "origin", "main"], cwd=DATA_DIR, capture_output=True, check=False)
     except Exception:
         pass
