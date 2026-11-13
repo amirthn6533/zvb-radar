@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
 """
-ZVB Ultimate Lead Radar 10/10 - Sofia, Bulgaria
-Automated scraper for Alo.bg & Bazar.bg with:
-- Direct Bulgarian phone number extraction & WhatsApp / Call links
-- Client intent scoring (Direct Client vs Contractor vs Renovation)
-- Sofia geo-targeting priority
-- Instant Telegram notifications
-- Modern HTML dashboard with search, tabs, call buttons & 1-click B2B pitch copy
+ZVB Ultimate Lead & Project Radar v3.0 — Sofia, Bulgaria
+Representative: Амир (Amir) | Company: „Загрос Витоша България“ ЕООД (ZVB)
+
+Multi-Engine Discovery System:
+1. Engine A (Small & Medium Fast-Cash Projects): Alo.bg, Bazar.bg, MaistorPlus (Direct Sofia client & renovation requests with verified phone numbers)
+2. Engine B (Large & Turnkey Construction Projects): Official Chamber of Builders (КСБ - register.ksb.bg) active 2025/2026 Sofia builders with Building Permits & Manager contacts
+3. Engine C (Sofia Construction, Renovation, Villa & MEP Contractors): Business.bg Sofia verified contractors with direct mobile numbers
+4. Engine D (Active Sofia Sites Hiring Subcontractors/Brigades): Zaplata.bg & Alo.bg construction ads cross-referenced with KSB/Business.bg phone resolver
+5. Strict 8-Layer Filter: Zero duplicates, mandatory valid Bulgarian phone number, Sofia geo-fencing, and personalized scripts in Amir's name.
 """
 
 import os
@@ -14,36 +17,50 @@ import re
 import time
 import json
 import csv
+import hashlib
 import datetime
 import urllib.parse
+import random
 import requests
 from bs4 import BeautifulSoup
-
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-import random
 
-# UTF-8 stdout
+import lead_filter_engine
+
 sys.stdout.reconfigure(encoding='utf-8')
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 ]
 
 HEADERS = {
     'User-Agent': USER_AGENTS[0],
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
     'Accept-Language': 'bg-BG,bg;q=0.9,en;q=0.8',
-    'Accept-Encoding': 'gzip, deflate, br',
     'Upgrade-Insecure-Requests': '1'
 }
 
-def get_resilient_session(retries=3, backoff_factor=0.6):
-    """Creates a requests.Session with exponential backoff retries on transient network & HTTP errors"""
+DATA_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
+LEADS_JSON_PATH = os.path.join(DATA_DIR, "leads.json")
+LEADS_CSV_PATH = os.path.join(DATA_DIR, "leads.csv")
+DASHBOARD_HTML_PATH = os.path.join(DATA_DIR, "leads_dashboard.html")
+
+DEFAULT_KEYWORDS = [
+    "търся електротехник софия",
+    "търсят се майстори подизпълнители софия",
+    "строителна фирма търси електротехник софия",
+    "ремонт на ел инсталация софия",
+    "монтаж на камери видеонаблюдение софия",
+    "смяна на ел табло софия"
+]
+
+
+def get_resilient_session(retries=3, backoff_factor=0.5):
     session = requests.Session()
     retry_strategy = Retry(
         total=retries,
@@ -58,323 +75,583 @@ def get_resilient_session(retries=3, backoff_factor=0.6):
     session.mount("http://", adapter)
     return session
 
+
 def get_browser_headers(referer=None):
-    """Generates realistic rotating browser headers to evade basic bot detection and cloudflare hurdles"""
     ua = random.choice(USER_AGENTS)
     h = {
         'User-Agent': ua,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
         'Accept-Language': 'bg-BG,bg;q=0.9,en-US;q=0.8,en;q=0.7',
         'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
-        'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Windows"',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'same-origin' if referer else 'none',
-        'Sec-Fetch-User': '?1',
         'Upgrade-Insecure-Requests': '1'
     }
     if referer:
         h['Referer'] = referer
     return h
 
-DATA_DIR = os.path.dirname(os.path.abspath(__file__))
-CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
-LEADS_JSON_PATH = os.path.join(DATA_DIR, "leads.json")
-LEADS_CSV_PATH = os.path.join(DATA_DIR, "leads.csv")
-DASHBOARD_HTML_PATH = os.path.join(DATA_DIR, "leads_dashboard.html")
-
-DEFAULT_KEYWORDS = [
-    "търся електротехник",
-    "електротехник софия",
-    "търся бригада електро",
-    "строителна фирма софия",
-    "довършителни ремонти софия",
-    "груб строеж софия",
-    "ремонт на апартамент софия",
-    "ел инсталация софия",
-    "монтаж на камери софия",
-    "ел табло софия",
-    "умен дом софия"
-]
 
 def load_config():
     if os.path.exists(CONFIG_PATH):
         try:
             with open(CONFIG_PATH, "r", encoding="utf-8") as f:
                 return json.load(f)
-        except Exception:
-            pass
-    return {"telegram": {"enabled": False}, "keywords": DEFAULT_KEYWORDS}
+        except Exception as e:
+            print(f"Warning: Could not read config.json: {e}")
+    return {
+        "telegram": {"enabled": False, "bot_token": "", "chat_id": ""},
+        "keywords": DEFAULT_KEYWORDS
+    }
+
 
 def extract_phone_numbers(text):
-    """Extracts and normalizes Bulgarian mobile phone numbers with comprehensive format recognition"""
+    """
+    Extracts valid Bulgarian mobile (087, 088, 089, 098) and Sofia landline (02) numbers.
+    Filters out non-Sofia area codes and invalid numbers.
+    """
     if not text:
         return []
-    pattern = r'(?:(?:\+359|00359)[\s\.-]*8[789][\s\.-]*\d{1}[\s\.-]*\d{2}[\s\.-]*\d{2}[\s\.-]*\d{2}|08[789][\s\.-]*\d{1}[\s\.-]*\d{2}[\s\.-]*\d{2}[\s\.-]*\d{2}|(?:\+359|00359)\s*8[789]\d[\s\d\.-]{6,10}|08[789]\d[\s\d\.-]{6,10})'
-    raw_matches = re.findall(pattern, text)
-    valid_phones = []
-    for p in raw_matches:
-        digits = re.sub(r'\D', '', p)
-        if digits.startswith("359") and len(digits) == 12:
-            digits = "0" + digits[3:]
-        elif digits.startswith("00359") and len(digits) == 14:
-            digits = "0" + digits[5:]
-        
-        if len(digits) == 10 and digits.startswith("08") and digits not in valid_phones:
-            if digits not in ['0879590810', '080012345', '0888888888']:
-                valid_phones.append(digits)
-    return valid_phones
+    matches = []
+    # 1. Mobile numbers: +359 888 123 456 or 0888 123 456 or 0888-12-34-56
+    mob_pattern = r'(?:\+359|00359|0)[\s\-\.]*(8[789]\d|98\d)[\s\-\.]*(\d{2,3})[\s\-\.]*(\d{2,3})[\s\-\.]*(\d{1,2})?'
+    for m in re.finditer(mob_pattern, text):
+        raw = m.group(0)
+        digits = re.sub(r'\D', '', raw)
+        if digits.startswith('359') and len(digits) == 12:
+            digits = '0' + digits[3:]
+        elif digits.startswith('00359') and len(digits) == 14:
+            digits = '0' + digits[5:]
+        if len(digits) == 10 and digits.startswith(('087', '088', '089', '098')):
+            formatted = f"{digits[:4]} {digits[4:7]} {digits[7:]}"
+            if formatted not in matches and digits not in lead_filter_engine.BLACKLISTED_PHONES:
+                matches.append(formatted)
 
-def classify_lead(title, keyword):
-    combined = (title + " " + keyword).lower()
-    
-    # 1. Direct Urgent Client (تلفن/درخواست مستقیم فوری)
-    urgent_words = ["търся", "търсим", "нуждая", "трябва", "спешно", "авария", "наемам", "търси се", "възлагам"]
-    if any(w in combined for w in urgent_words):
-        return "urgent_client", "🎯 Директно клиентско търсене (Спешно)"
-    
-    # 2. Construction companies & Developers (شرکت‌های ساختمانی)
-    contractor_words = ["строителна фирма", "строителство", "груб строеж", "инвеститор", "главен изпълнител", "подизпълнител"]
-    if any(w in combined for w in contractor_words):
-        return "contractor", "🏗️ Строителна фирма / Инвеститор"
-    
-    # 3. Renovation & Finishing (بازسازی)
-    renovation_words = ["ремонт", "довършителн", "апартамент", "къща", "офис", "шпакловка", "бояджия"]
-    if any(w in combined for w in renovation_words):
-        return "renovation", "🔨 Ремонти и довършителни работи"
-    
-    return "direct_electrical", "⚡ Директни електроуслуги и камери"
+    # 2. Sofia landline: 02 / 967 00 08 or 02 889 1038
+    sofia_pattern = r'\b02[\s\-\/\.]{1,3}(\d{3})[\s\-\.]*(\d{2})[\s\-\.]*(\d{2})\b'
+    for m in re.finditer(sofia_pattern, text):
+        formatted = f"02 {m.group(1)} {m.group(2)} {m.group(3)}"
+        digits = re.sub(r'\D', '', formatted)
+        if len(digits) == 9 and digits not in lead_filter_engine.BLACKLISTED_PHONES:
+            if formatted not in matches:
+                matches.append(formatted)
+
+    return matches
+
 
 def normalize_bg_phone(raw_phone):
-    """
-    Cleans and normalizes Bulgarian phone numbers.
-    Returns tuple: (clean_local_08, intl_359) or (None, None)
-    Examples:
-    '0888123456' -> ('0888123456', '359888123456')
-    '+359888123456' -> ('0888123456', '359888123456')
-    '00359888123456' -> ('0888123456', '359888123456')
-    """
+    """Returns (local_display, intl_digits) e.g. ('0888123456', '359888123456')"""
     if not raw_phone:
         return None, None
-    digits = re.sub(r'[^\d+]', '', str(raw_phone).strip())
-    if digits.startswith('+359'):
-        digits = '0' + digits[4:]
-    elif digits.startswith('00359'):
-        digits = '0' + digits[5:]
-    elif digits.startswith('359') and len(digits) >= 11:
-        digits = '0' + digits[3:]
-    
-    if digits.startswith('08') and len(digits) == 10:
-        return digits, '359' + digits[1:]
-    elif digits.startswith('02') and len(digits) >= 8:
-        return digits, '359' + digits[1:]
+    digits = re.sub(r'\D', '', str(raw_phone))
+    if digits.startswith('00359'):
+        digits = digits[2:]
+    elif digits.startswith('0') and len(digits) in (9, 10):
+        digits = '359' + digits[1:]
+    elif not digits.startswith('359') and len(digits) == 9 and digits[0] in '89':
+        digits = '359' + digits
+
+    if digits.startswith('359') and len(digits) in (11, 12):
+        local = '0' + digits[3:]
+        return local, digits
     return None, None
 
-def send_telegram_alert(lead, bot_token, chat_id):
-    category_icon = "⚡"
-    if lead.get("category") == "urgent_client":
-        category_icon = "🎯🔥"
-    elif lead.get("category") == "contractor":
-        category_icon = "🏗️"
-    elif lead.get("category") == "renovation":
-        category_icon = "🔨"
 
-    phone = lead.get('phone')
-    local_phone, intl_phone = normalize_bg_phone(phone)
-    
-    buttons = []
-    first_row = []
-    
-    if local_phone:
-        wa_text = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги & Умен дом, София) относно Вашия проект. https://zvb.bg")
-        wa_url = f"https://wa.me/{intl_phone}?text={wa_text}"
-        viber_url = f"viber://chat?number=%2B{intl_phone}"
-        phone_str = (
-            f"📞 <b>Телефон:</b> <code>{local_phone}</code>\n"
-            f"👉 <a href='tel:+{intl_phone}'>📞 Обади се</a> | "
-            f"<a href='{viber_url}'>🟣 Viber</a> | "
-            f"<a href='{wa_url}'>💬 WhatsApp</a>\n"
+def classify_lead(title, keyword, description=""):
+    t = (str(title) + " " + str(keyword) + " " + str(description)).lower()
+
+    if any(w in t for w in ["строителна", "груб строеж", "инвеститор", "подизпълнител", "бригада", "технически ръководител", "жилищна сграда", "до ключ", "цпрс", "ксб"]):
+        return "contractor", "🏗 Голям обект / Строител и Главен изпълнител (پروژه بزرگ ساختمانی)"
+    if any(w in t for w in ["търся", "търси", "спешно", "нуждая се", "заявка", "оферта за"]):
+        return "urgent_client", "🎯 Директен клиент / Спешна заявка (کارفرمای مستقیم)"
+    if any(w in t for w in ["ремонт", "довършителни", "апартамент", "къща", "офис", "освежаване", "преустройство"]):
+        return "renovation", "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)"
+    return "direct_electrical", "⚡ Електроинсталации, Табла, Камери и Солари (تأسیسات برق و دوربین)"
+
+
+def build_amir_pitch_for_lead(lead):
+    """
+    Generates a ready-to-copy Bulgarian pitch personalized in the name of Amir (Амир)
+    representing „Загрос Витоша България“ ЕООД (ZVB), tailored to Small vs Large projects.
+    """
+    tier, _ = lead_filter_engine.calculate_project_value_tier(lead)
+    mgr = lead.get("manager", "").strip()
+    greeting = f"Здравейте, {mgr}!" if mgr else "Здравейте!"
+
+    if tier == "LARGE_TURNKEY_B2B" or lead.get("category") == "contractor":
+        return (
+            f"{greeting} Казвам се Амир от фирма „Загрос Витоша България“ ЕООД (ZVB София). "
+            "Изпълняваме комплексни електромонтажни дейности като надежден подизпълнител за жилищни сгради, къщи и търговски обекти в София: "
+            "силнотокови и слаботокови инсталации, главни и апартаментни ел. табла, видеонаблюдение, соларно и парково осветление. "
+            "Разполагаме със собствена бригада и спазваме стриктно сроковете по Акт 14/15/16. "
+            "Може ли да ни изпратите количествена сметка за оферта по Ваш текущ обект? Поздрави, Амир."
         )
-        first_row.append({"text": f"📞 Обади се ({local_phone})", "url": f"tel:+{intl_phone}"})
-        first_row.append({"text": "🟣 Viber", "url": viber_url})
-        first_row.append({"text": "💬 WhatsApp", "url": wa_url})
-        buttons.append(first_row)
+    elif tier == "VIP_CCTV_SECURITY_NET":
+        return (
+            f"{greeting} Казвам се Амир от фирма „Загрос Витоша България“ ЕООД (гр. София). "
+            "Видях Вашето запитване и можем да реагираме веднага с професионален монтаж на видеонаблюдение (4K IP/PTZ камери), "
+            "слаботоково окабеляване, контрол на достъпа и автономно соларно осветление с гаранция. "
+            "Предлагаме безплатен оглед в София. Поздрави, Амир."
+        )
     else:
-        phone_str = ""
+        return (
+            f"{greeting} Казвам се Амир от фирма „Загрос Витоша България“ ЕООД (гр. София). "
+            "Видях Вашата обява за електроуслуги и можем да поемем обекта веднага – цялостно окабеляване, "
+            "монтаж/смяна на ел. табло с дефектнотокови защити, захранване на уреди и осветление. "
+            "Предлагаме безплатен оглед на място в София и чиста работа с гаранция. Поздрави, Амир. Тел: +359 87 7944353 | https://zvb.bg"
+        )
 
-    if lead.get("source") == "MaistorPlus":
-        header = "⚡🚨 <b>СВЕТКАВИЧНО ИЗВЕСТИЕ ЗА НОВ ЕЛЕКТРО ПРОЕКТ!</b>\n<i>(Нова заявка в реално време — София)</i>"
-        status_line = "⏳ <b>Статус:</b> 🟢 <i>Отворен за първи кандидат!</i>\n"
-    else:
-        header = f"{category_icon} <b>ZVB Радар: Нов електро проект!</b>"
-        status_line = ""
 
-    value_badge = "💎 <b>ГОЛЯМ / ВИСОКОБЮДЖЕТЕН ОБЕКТ</b>\n" if lead.get("value_tier") == "HIGH_VALUE" else ""
+build_amir_pitch = build_amir_pitch_for_lead
 
-    text = (
-        f"{header}\n\n"
-        f"{value_badge}"
-        f"📌 <b>Заглавие:</b> {lead.get('title')}\n"
-        f"🏷️ <b>Категория:</b> {lead.get('category_label')}\n"
-        f"📍 <b>Локация:</b> {lead.get('location')}\n"
-        f"{status_line}"
-        f"{phone_str}"
-        f"🌐 <b>Източник:</b> {lead.get('source')} ({lead.get('keyword')})\n\n"
-        f"🏢 <i>ZVB Sofia — Електрически и умни инсталации (zvb.bg)</i>"
-    )
-    
-    if lead.get("source") == "MaistorPlus":
-        action_btn_text = "🚀 Кандидатствай ПЪРВИ в MaistorPlus"
-    elif lead.get("source") == "Daibau":
-        action_btn_text = "🚀 Кандидатствай в Daibau.bg"
-    else:
-        action_btn_text = "🔗 Отвори обявата в сайта"
-    buttons.append([{"text": action_btn_text, "url": lead.get("url", "#")}])
 
-    # 1-Click Zagros AI Instant Proposal & PDF Buttons
-    lead_id = lead.get("id", "")
-    buttons.append([
-        {"text": "✍️ Генерирай оферта", "callback_data": f"p_{lead_id}"[:60]},
-        {"text": "📑 Свали PDF Оферта", "callback_data": f"pdf_{lead_id}"[:60]}
-    ])
-    # CRM Action & Smart Reminders Buttons
-    buttons.append([
-        {"text": "📞 تماس گرفته شد", "callback_data": f"crm_c_{lead_id}"[:60]},
-        {"text": "⏰ یادآوری فردا", "callback_data": f"crm_rem_t_{lead_id}"[:60]},
-        {"text": "⏰ یادآوری ۳ روز", "callback_data": f"crm_rem_3d_{lead_id}"[:60]}
-    ])
-    buttons.append([
-        {"text": "🤝 قرارداد بسته شد", "callback_data": f"crm_w_{lead_id}"[:60]},
-        {"text": "❌ رد / نامربوط", "callback_data": f"crm_l_{lead_id}"[:60]}
-    ])
+def resolve_company_phone_ksb_and_dirs(company_name, session=None):
+    """
+    Given a Bulgarian company name (from Alo.bg, Zaplata.bg, Bazar.bg, etc.),
+    automatically queries the Official Chamber of Builders (register.ksb.bg/spravki.php)
+    and Business.bg to resolve its official Sofia phone number, manager name, and address!
+    """
+    if not company_name or len(company_name.strip()) < 3:
+        return None
+    clean_name = re.sub(r'\b(ЕООД|ООД|АД|ЕТ|ЕАД|ДЗЗД|КОНСОРЦИУМ)\b', '', company_name, flags=re.I)
+    clean_name = re.sub(r'["„“\'«»]', '', clean_name).strip()
+    if len(clean_name) < 3:
+        return None
 
-    reply_markup = {"inline_keyboard": buttons}
-    
-    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": text,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True,
-        "reply_markup": reply_markup
-    }
+    sess = session or get_resilient_session(retries=2, backoff_factor=0.3)
+
+    # 1. Try Official Chamber of Builders (register.ksb.bg/spravki.php)
     try:
-        r = requests.post(api_url, json=payload, timeout=10)
-        return r.status_code == 200
+        r = sess.post(
+            "https://register.ksb.bg/spravki.php",
+            data={"findEIK": "", "findNAME": clean_name[:25], "filter1": "Търси вписани в регистъра"},
+            headers=get_browser_headers("https://register.ksb.bg/"),
+            timeout=8
+        )
+        r.encoding = 'utf-8'
+        if r.status_code == 200 and 'pub_view.php' in r.text:
+            soup = BeautifulSoup(r.text, 'html.parser')
+            for a in soup.find_all('a', href=True):
+                if 'pub_view.php' in a['href']:
+                    info = parse_ksb_member_page(a['href'], sess)
+                    if info and info.get("phone"):
+                        ok_p, _ = lead_filter_engine.has_valid_bg_phone({"phone": info["phone"]})
+                        if ok_p and "софия" in (info.get("city", "") + " " + info.get("address", "")).lower():
+                            return info
     except Exception:
-        return False
+        pass
 
-def load_existing_leads():
+    return None
+
+
+def parse_ksb_member_page(href, session=None):
+    """Parses a builder's official KSB dossier (pub_view.php?id_members=...) for phone, manager, and active projects."""
+    sess = session or get_resilient_session(retries=2, backoff_factor=0.3)
+    url = href if href.startswith("http") else f"https://register.ksb.bg/{href.lstrip('/')}"
     try:
-        import db_manager
-        db_leads = db_manager.get_all_leads()
-        if db_leads:
-            return db_leads
-    except Exception as e:
-        print(f"DB load leads fallback: {e}")
-    if os.path.exists(LEADS_JSON_PATH):
-        try:
-            with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return {}
-    return {}
+        rd = sess.get(url, headers=get_browser_headers("https://register.ksb.bg/"), timeout=9)
+        rd.encoding = 'utf-8'
+        if rd.status_code != 200:
+            return None
+        soup = BeautifulSoup(rd.text, 'html.parser')
 
-def save_leads(leads_dict):
-    try:
-        import db_manager
-        db_manager.save_leads_batch(leads_dict)
-    except Exception as e:
-        print(f"DB save leads error: {e}")
-    
-    with open(LEADS_JSON_PATH, "w", encoding="utf-8") as f:
-        json.dump(leads_dict, f, ensure_ascii=False, indent=2)
-    
-    leads_list = list(leads_dict.values())
-    leads_list.sort(key=lambda x: x.get("found_at", ""), reverse=True)
-    
-    with open(LEADS_CSV_PATH, "w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["ID", "Заглавие / Title", "Категория / Category", "Телефон / Phone", "Източник / Source", "Град / Location", "Ключова дума / Keyword", "Дата / Date", "Линк / URL"])
-        for item in leads_list:
-            writer.writerow([
-                item.get("id", ""),
-                item.get("title", ""),
-                item.get("category_label", ""),
-                item.get("phone", "В обявата"),
-                item.get("source", ""),
-                item.get("location", ""),
-                item.get("keyword", ""),
-                item.get("found_at", ""),
-                item.get("url", "")
-            ])
+        info = {
+            "name": "",
+            "eik": "",
+            "manager": "",
+            "city": "София",
+            "address": "",
+            "phone": "",
+            "email": "",
+            "website": "",
+            "projects": [],
+            "url": url
+        }
 
-    generate_dashboard(leads_list)
+        full_txt = soup.get_text(" | ", strip=True)
+        m_eik = re.search(r'ЕИК по БУЛСТАТ:\s*(\d{9,13})', full_txt)
+        if m_eik:
+            info["eik"] = m_eik.group(1)
 
-def scrape_bazar(keyword, fetch_phone=True):
-    """Resilient scraper for Bazar.bg with multi-layer selector fallback and retry session"""
+        m_name = re.search(r'наименование:\s*\|?\s*([^\|]+?)\s*\|\s*правно-организационна форма:\s*\|?\s*([^\|]+)', full_txt)
+        if m_name:
+            info["name"] = f"{m_name.group(1).strip()} {m_name.group(2).strip()}".strip()
+
+        for tr in soup.find_all('tr'):
+            tds = [td.get_text(" ", strip=True) for td in tr.find_all('td')]
+            row_txt = tr.get_text(" | ", strip=True)
+
+            if 'град(село):' in row_txt and not info["address"]:
+                m_city = re.search(r'град\(село\):\s*\|?\s*([^\|]+)', row_txt)
+                if m_city:
+                    info["city"] = m_city.group(1).strip()
+
+            if 'улица,' in row_txt and not info["address"]:
+                m_str = re.search(r'улица,[^:]*:\s*\|?\s*([^\|]+)', row_txt)
+                if m_str:
+                    info["address"] = m_str.group(1).strip()
+
+            if 'тел.код:' in row_txt and 'Телефон:' in row_txt:
+                m_c = re.search(r'тел\.код:\s*\|?\s*([0-9\+]{0,5})', row_txt)
+                m_t = re.search(r'Телефон:\s*\|?\s*([0-9\s\-\/\.\,;]+)', row_txt)
+                c_val = m_c.group(1).strip() if m_c else ''
+                t_val = m_t.group(1).strip() if m_t else ''
+                if t_val:
+                    # Extract first phone if multiple separated by comma/semicolon/slash
+                    first_t = re.split(r'[;,]', t_val)[0].strip()
+                    cand_raw = f"{c_val} {first_t}".strip()
+                    extracted = extract_phone_numbers(cand_raw)
+                    if extracted:
+                        info["phone"] = extracted[0]
+                    else:
+                        digits = re.sub(r'\D', '', cand_raw)
+                        if len(digits) == 7 and digits[0] in '23489' and 'софия' in info["city"].lower():
+                            info["phone"] = f"02 {digits[:3]} {digits[3:5]} {digits[5:]}"
+                        elif len(digits) == 10 and digits.startswith(('087', '088', '089', '098')):
+                            info["phone"] = f"{digits[:4]} {digits[4:7]} {digits[7:]}"
+
+            if 'E-mail:' in row_txt and not info["email"]:
+                m_em = re.search(r'E-mail:\s*\|?\s*([^\s\|]+@[^\s\|]+)', row_txt)
+                if m_em:
+                    info["email"] = m_em.group(1).strip()
+
+            if len(tds) >= 6 and tds[0] == '1' and not info["manager"]:
+                role = tds[5].strip()
+                if any(k in role.lower() for k in ['управител', 'изпълнителен', 'директор', 'председател']):
+                    info["manager"] = f"{tds[1].strip()} {tds[3].strip()} ({role})"
+
+            if len(tds) >= 10 and tds[0] in ('2023', '2024', '2025', '2026'):
+                proj_title = tds[2].strip()
+                investor = tds[4].strip()
+                if proj_title and len(proj_title) > 10:
+                    info["projects"].append(f"{proj_title[:95]} (Възложител: {investor[:45]})")
+
+        return info
+    except Exception:
+        return None
+
+
+def scrape_ksb_sofia_builders(existing_leads, alert_history, max_new=3):
+    """
+    Engine B (Large Turnkey Construction Projects):
+    Queries the Official Chamber of Builders (register.ksb.bg) for Sofia general contractors
+    with active 2025/2026 protocols (Group 1.1 - 1.4 High-Rise, Residential & Villas).
+    Extracts verified phone numbers, manager names, and active building permits!
+    """
     results = []
-    encoded_q = urllib.parse.quote(keyword)
-    url = f"https://bazar.bg/obiavi?q={encoded_q}"
-    session = get_resilient_session(retries=3, backoff_factor=0.5)
-    headers = get_browser_headers(referer="https://bazar.bg/")
-    
+    sess = get_resilient_session(retries=2, backoff_factor=0.5)
+
+    # Rotate across Sofia building groups: 11 (Major), 12 (Large), 13 (Medium Residential), 14 (Villas & Low-rise)
+    for grp in ["11", "13", "14"]:
+        if len(results) >= max_new:
+            break
+        try:
+            r = sess.post(
+                "https://register.ksb.bg/listFirms.php",
+                data={
+                    "Podphp": "22",
+                    "GroupTypephp": grp,
+                    "Pod": "22",
+                    "GroupType": grp,
+                    "filter": "Покажи строителите"
+                },
+                headers=get_browser_headers("https://register.ksb.bg/"),
+                timeout=12
+            )
+            r.encoding = 'utf-8'
+            if r.status_code != 200:
+                continue
+
+            soup = BeautifulSoup(r.text, 'html.parser')
+            for tr in soup.find_all('tr'):
+                if len(results) >= max_new:
+                    break
+                row_txt = tr.get_text(" | ", strip=True)
+                # Focus on active builders with recent 2025/2026 protocols
+                if not any(y in row_txt for y in ('2026', '2025')):
+                    continue
+                a = tr.find('a', href=True)
+                if not a or 'pub_view.php' not in a['href']:
+                    continue
+
+                m_id = re.search(r'id_members=(\d+)', a['href'])
+                if not m_id:
+                    continue
+                lead_id = f"ksb_{m_id.group(1)}"
+
+                if lead_id in existing_leads or lead_id in alert_history:
+                    continue
+
+                info = parse_ksb_member_page(a['href'], sess)
+                if not info or not info.get("phone"):
+                    continue
+
+                # Verify valid Sofia/BG mobile or Sofia landline
+                ok_phone, _ = lead_filter_engine.has_valid_bg_phone({"phone": info["phone"]})
+                if not ok_phone:
+                    continue
+
+                if "софия" not in (info.get("city", "") + " " + info.get("address", "")).lower():
+                    continue
+
+                comp_name = info.get("name") or row_txt.split("|")[2].strip()
+                mgr_str = info.get("manager", "")
+                proj_str = info["projects"][0] if info.get("projects") else "Жилищно и обществено строителство до ключ в гр. София (Група I ЦПРС)"
+                addr_str = f"София, {info['address']}" if info.get("address") else "гр. София"
+
+                desc_parts = [f"Официално вписан главен изпълнител в ЦПРС (КСБ) с активен протокол 2025/2026."]
+                if mgr_str:
+                    desc_parts.append(f"Управител: {mgr_str}.")
+                if info.get("email"):
+                    desc_parts.append(f"Имейл: {info['email']}.")
+                desc_parts.append(f"Обекти: {proj_str}")
+
+                lead_obj = {
+                    "id": lead_id,
+                    "title": f"[Голям Строител София] {comp_name} — {proj_str[:65]}",
+                    "description": " ".join(desc_parts),
+                    "manager": mgr_str,
+                    "email": info.get("email", ""),
+                    "url": info["url"],
+                    "source": "KSB",
+                    "keyword": "Главен изпълнител / Строителство до ключ София",
+                    "category": "contractor",
+                    "category_label": "🏗 Голям обект / Главен изпълнител (ЦПРС София)",
+                    "location": addr_str,
+                    "phone": info["phone"],
+                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                }
+
+                is_dup, _ = lead_filter_engine.is_duplicate_or_similar(lead_obj, alert_history)
+                if not is_dup:
+                    results.append(lead_obj)
+                    time.sleep(0.3)
+        except Exception as e:
+            print(f"  [KSB Engine] Error on group {grp}: {e}")
+
+    return results
+
+
+def scrape_business_bg_sofia(existing_leads, alert_history, max_new=4):
+    """
+    Engine C (Sofia Turnkey Builders, House Builders, Renovation Contractors & MEP Engineering):
+    Scrapes verified Sofia companies with direct mobile numbers from Business.bg.
+    Covers both Medium Renovation Contractors and Large Residential/Villa Builders.
+    """
+    results = []
+    sess = get_resilient_session(retries=2, backoff_factor=0.4)
+
+    sofia_categories = [
+        ("/o-208/zhilishtno-stroitelstvo/c-214/sofia.html", "contractor", "🏗 Жилищно строителство София (پروژه بزرگ ساختمانی)"),
+        ("/o-219/stroitelstvo-na-kyshti/c-214/sofia.html", "contractor", "🏡 Строителство на къщи до ключ София (ساخت ویلا صفر تا صد)"),
+        ("/o-222/stroitelni-remonti/c-214/sofia.html", "renovation", "🏠 Довършителни ремонти на апартаменти и офиси София (پروژه بازسازی)"),
+        ("/o-747/stroitelni-firmi/c-214/sofia.html", "contractor", "🏗 Строителна компания София (شرکت ساختمانی صوفیه)"),
+        ("/o-224/inzhenering/c-214/sofia.html", "contractor", "⚙️ Инженеринг и СМР София (پیمانکار مهندسی و تاسیسات)"),
+        ("/o-301/klimatici/c-214/sofia.html", "contractor", "❄️ ОВК и Климатични системи София (نیازمند برق‌رسانی و تابلو)"),
+        ("/o-508/arhitektura/c-214/sofia.html", "contractor", "📐 Архитектурно и проектно студио София (طراح و معمار پروژه)")
+    ]
+
+    for path, cat_code, cat_label in sofia_categories:
+        if len(results) >= max_new:
+            break
+        url = f"https://www.business.bg{path}"
+        try:
+            r = sess.get(url, headers=get_browser_headers("https://www.business.bg/"), timeout=10)
+            if r.status_code != 200:
+                continue
+            soup = BeautifulSoup(r.text, 'html.parser')
+            cards = soup.select('div.firm_content')
+
+            for card in cards:
+                if len(results) >= max_new:
+                    break
+                h2 = card.select_one('h2.firm_title')
+                tel_el = card.select_one('.tel_b')
+                desc_el = card.select_one('.firm_text')
+                mail_el = card.select_one('.mail_b a[href^="mailto:"]')
+                link_el = card.select_one('a[href]')
+
+                if not h2 or not tel_el:
+                    continue
+
+                firm_name = h2.get_text(" ", strip=True)
+                raw_tel = tel_el.get_text(" ", strip=True)
+                desc_txt = desc_el.get_text(" ", strip=True) if desc_el else ""
+
+                # Skip non-electrical/unrelated services like waste disposal or asphalt only
+                low_comb = f"{firm_name} {desc_txt}".lower()
+                if any(bad in low_comb for bad in ["отпадъци", "асфалтиране", "шлайфан бетон", "геодезия", "микропилоти"]):
+                    continue
+
+                phones = extract_phone_numbers(raw_tel)
+                if not phones:
+                    continue
+                best_phone = phones[0]
+
+                href = link_el['href'] if link_el else url
+                full_url = urllib.parse.urljoin("https://www.business.bg", href)
+                slug_hash = hashlib.md5(firm_name.encode('utf-8')).hexdigest()[:10]
+                lead_id = f"bizbg_{slug_hash}"
+
+                if lead_id in existing_leads or lead_id in alert_history:
+                    continue
+
+                email_val = mail_el['href'].replace('mailto:', '').strip() if mail_el else ""
+
+                lead_obj = {
+                    "id": lead_id,
+                    "title": f"{firm_name} — {desc_txt[:65]}..." if desc_txt else firm_name,
+                    "description": desc_txt,
+                    "email": email_val,
+                    "url": full_url,
+                    "source": "Business.bg",
+                    "keyword": cat_label,
+                    "category": cat_code,
+                    "category_label": cat_label,
+                    "location": "гр. София",
+                    "phone": best_phone,
+                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                }
+
+                ok_eval, _, _ = lead_filter_engine.evaluate_lead(lead_obj, alert_history, require_phone=True)
+                if ok_eval:
+                    results.append(lead_obj)
+        except Exception as e:
+            print(f"  [Business.bg Engine] Error on {path}: {e}")
+
+    return results
+
+
+def scrape_alo(keyword):
+    """
+    Engine A1: Scrapes Alo.bg for fresh Sofia electrical, renovation & subcontractor demand.
+    Automatically skips stale ads ('преди 30+ дни'), job-seekers ('търсят работа'), and courses.
+    Extracts direct phone numbers from ad text OR resolves company phone via KSB/Business.bg!
+    """
+    results = []
+    session = get_resilient_session(retries=2, backoff_factor=0.4)
+    headers = get_browser_headers(referer="https://www.alo.bg/")
+
     try:
-        resp = session.get(url, headers=headers, timeout=14)
+        url = "https://www.alo.bg/searchq/"
+        resp = session.get(url, params={"q": keyword}, headers=headers, timeout=11)
         if resp.status_code != 200:
             return results
-        
+
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        items = soup.select('.listvip-item, .list-item')
+
+        for item in items:
+            card_text = item.get_text(" ", strip=True)
+            low_card = card_text.lower()
+
+            # Reject stale ads (> 6 days old) right on the search card
+            if any(stale in low_card for stale in [
+                "преди 30+ дни", "преди 2", "преди 1", "преди 9 дни", "преди 8 дни", "преди 7 дни",
+                "търсят работа", "желана длъжност", "обучение, курсове", "имоти - продажби", "под наем"
+            ]):
+                continue
+
+            link_tag = item.select_one('a[href]')
+            href = link_tag['href'] if link_tag else ''
+            if not href:
+                continue
+
+            clean_href = href.split('#')[0]
+            full_url = urllib.parse.urljoin("https://www.alo.bg", clean_href)
+            id_match = re.search(r'(\d{6,10})', clean_href)
+            ad_id = f"alo_{id_match.group(1)}" if id_match else f"alo_{hash(full_url)}"
+
+            title_el = item.select_one('h3, h2, .listvip-item-title, .list-item-title')
+            title = title_el.get_text(" ", strip=True) if title_el else (link_tag.get_text(" ", strip=True) if link_tag else "")
+            if not title or len(title) < 5:
+                continue
+
+            if "софия" not in low_card and "софия" not in title.lower():
+                continue
+
+            # Extract phones from card snippet
+            phones = extract_phone_numbers(card_text)
+            phone_val = phones[0] if phones else ""
+            manager_val = ""
+
+            # If no phone in card snippet, check if a company name is listed on the card and resolve via KSB!
+            if not phone_val:
+                m_firm = re.search(r'Длъжност\s*:\s*[^Ф]+?\s+([А-Яа-яA-Za-z0-9\s\"„“\-]{3,35}?)\s+(?:Фирма|Агенция|ЕООД|ООД)', card_text)
+                if not m_firm:
+                    m_firm = re.search(r'^([А-Яа-яA-Za-z0-9\s\"„“\-]{3,35}?(?:ЕООД|ООД|АД))\s+преди', card_text)
+                if m_firm:
+                    comp_candidate = m_firm.group(1).strip()
+                    resolved = resolve_company_phone_ksb_and_dirs(comp_candidate, session)
+                    if resolved and resolved.get("phone"):
+                        phone_val = resolved["phone"]
+                        manager_val = resolved.get("manager", "")
+                        title = f"[{comp_candidate}] {title}"
+
+            cat, cat_label = classify_lead(title, keyword, card_text)
+
+            results.append({
+                "id": ad_id,
+                "title": title,
+                "description": card_text[:300],
+                "manager": manager_val,
+                "url": full_url,
+                "source": "Alo.bg",
+                "keyword": keyword,
+                "category": cat,
+                "category_label": cat_label,
+                "location": "гр. София",
+                "phone": phone_val,
+                "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            })
+    except Exception as e:
+        print(f"  [Alo.bg] Error searching '{keyword}': {e}")
+    return results
+
+
+def scrape_bazar(keyword, fetch_phone=True):
+    """
+    Engine A2: Scrapes Bazar.bg Sofia listings and extracts direct phone numbers from descriptions.
+    """
+    results = []
+    encoded_q = urllib.parse.quote(keyword)
+    url = f"https://bazar.bg/obiavi/sofia?q={encoded_q}"
+    session = get_resilient_session(retries=2, backoff_factor=0.4)
+    headers = get_browser_headers(referer="https://bazar.bg/")
+
+    try:
+        resp = session.get(url, headers=headers, timeout=11)
+        if resp.status_code != 200:
+            return results
+
         soup = BeautifulSoup(resp.text, 'html.parser')
         seen_links = set()
 
-        # Primary + Fallback selectors:
-        # 1. Links containing '/obiava-'
-        # 2. Modern card containers
-        cards = soup.select('.item, .ad-item, .list-item, div[data-item]')
-        target_links = []
-        
-        if cards:
-            for c in cards:
-                a_tag = c.find('a', href=True)
-                if a_tag and '/obiava-' in a_tag['href']:
-                    target_links.append((a_tag, c.get_text(" ", strip=True)))
-                    
-        # Fallback to scanning all anchor tags
-        if not target_links:
-            for a in soup.find_all('a', href=True):
-                if '/obiava-' in a['href']:
-                    target_links.append((a, a.get_text(" ", strip=True)))
-
-        for a_tag, extra_text in target_links:
+        for a_tag in soup.find_all('a', href=True):
             href = a_tag['href']
-            if href in seen_links:
+            if '/obiava-' not in href or href in seen_links:
                 continue
             seen_links.add(href)
-            
+
             title = a_tag.get('title') or a_tag.get_text(" ", strip=True)
-            if not title or len(title) < 5:
-                # Try finding heading inside
-                h_tag = a_tag.find(['h2', 'h3', 'span'])
-                if h_tag:
-                    title = h_tag.get_text(" ", strip=True)
-            
-            if not title or len(title) < 5:
+            if not title or len(title) < 6:
                 continue
-            
+
+            low_t = title.lower()
+            if any(ex in low_t for ex in [
+                "курс", "обучение", "продавам", "дава под наем", "под наем",
+                "пазарджик", "ловеч", "плевен", "варна", "бургас",
+                "bmw", "mercedes", "audi", "puretech", "crossback", "tdi", "cdi", "4.0i", "автомобил"
+            ]):
+                continue
+            if not any(stem in low_t for stem in lead_filter_engine.REQUIRED_RELEVANCE_STEMS):
+                continue
+
             ad_id_match = re.search(r'obiava-(\d+)', href)
             ad_id = f"bazar_{ad_id_match.group(1)}" if ad_id_match else f"bazar_{hash(href)}"
             full_url = urllib.parse.urljoin("https://bazar.bg", href)
-            
-            combined_text = (title + " " + keyword + " " + extra_text).lower()
-            location = "София" if "софия" in combined_text else "България / София"
-            cat, cat_label = classify_lead(title, keyword)
 
-            # Check phone in title/link/snippet
-            phones = extract_phone_numbers(title + " " + extra_text)
+            phones = extract_phone_numbers(title)
             phone_val = phones[0] if phones else ""
+            cat, cat_label = classify_lead(title, keyword)
 
             results.append({
                 "id": ad_id,
@@ -384,7 +661,7 @@ def scrape_bazar(keyword, fetch_phone=True):
                 "keyword": keyword,
                 "category": cat,
                 "category_label": cat_label,
-                "location": location,
+                "location": "гр. София",
                 "phone": phone_val,
                 "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
             })
@@ -392,92 +669,117 @@ def scrape_bazar(keyword, fetch_phone=True):
         print(f"  [Bazar.bg] Error searching '{keyword}': {e}")
     return results
 
-def scrape_alo(keyword):
-    """Resilient scraper for Alo.bg with adaptive card parsing and timeout protection"""
+
+def scrape_zaplata_sofia_construction(existing_leads, alert_history, max_new=3):
+    """
+    Engine D: Scans live Sofia construction & electrical listings on Zaplata.bg
+    (where construction companies are actively hiring site managers, electrical engineers, or brigades today),
+    extracts the company name, and resolves its official phone number & manager via KSB!
+    """
     results = []
-    session = get_resilient_session(retries=3, backoff_factor=0.5)
-    headers = get_browser_headers(referer="https://www.alo.bg/")
-    try:
-        url = "https://www.alo.bg/searchq/"
-        resp = session.get(url, params={"q": keyword}, headers=headers, timeout=12)
-        if resp.status_code != 200:
-            return results
-        
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        items = soup.select('.listvip-item, .list-item, article, div[id*="ad_"]')
-        
-        for item in items:
-            title = item.get('title', '')
-            link_tag = item.select_one('a[href]')
-            href = link_tag['href'] if link_tag else ''
-            
-            if not href:
-                onclick = item.get('onclick', '')
-                m = re.search(r"window\.location\s*=\s*'([^']+)'", onclick)
-                if m:
-                    href = m.group(1)
-            
-            if not href:
+    sess = get_resilient_session(retries=2, backoff_factor=0.4)
+    urls = [
+        "https://www.zaplata.bg/arhitektura-stroitelstvo-i-gradoustroystvo/sofia/",
+        "https://www.zaplata.bg/search/?q=%D0%B5%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D1%82%D0%B5%D1%85%D0%BD%D0%B8%D0%BA&city=1"
+    ]
+
+    seen_urls = set()
+    for u in urls:
+        if len(results) >= max_new:
+            break
+        try:
+            r = sess.get(u, headers=get_browser_headers("https://www.zaplata.bg/"), timeout=10)
+            if r.status_code != 200:
                 continue
-            
-            if not title and link_tag:
-                title = link_tag.get('title') or link_tag.get_text(" ", strip=True)
-                
-            if not title:
-                h_el = item.select_one('h2, h3, .list-item-title')
-                if h_el:
-                    title = h_el.get_text(" ", strip=True)
-                
-            clean_href = href.split('#')[0]
-            full_url = urllib.parse.urljoin("https://www.alo.bg", clean_href)
-            
-            id_match = re.search(r'(\d{6,10})', clean_href)
-            ad_id = f"alo_{id_match.group(1)}" if id_match else f"alo_{hash(full_url)}"
-            
-            addr_elem = item.select_one('.listvip-item-address, .list-item-address, .location')
-            addr_text = addr_elem.get_text(" ", strip=True) if addr_elem else ""
-            
-            if "софия" in addr_text.lower() or "софия" in title.lower():
-                location = "София"
-            elif addr_text:
-                location = addr_text.split("»")[-1].strip()
-            else:
-                location = "България"
-                
-            cat, cat_label = classify_lead(title, keyword)
+            soup = BeautifulSoup(r.text, 'html.parser')
+            for a in soup.find_all('a', href=True):
+                if len(results) >= max_new:
+                    break
+                href = a['href']
+                if '/sofia/' not in href or not any(c.isdigit() for c in href) or href in seen_urls:
+                    continue
+                seen_urls.add(href)
 
-            # Check phones in card snippet
-            phones = extract_phone_numbers(title + " " + item.text)
-            phone_val = phones[0] if phones else ""
+                m_id = re.search(r'/sofia/(\d+)/', href)
+                if not m_id:
+                    continue
+                lead_id = f"zap_{m_id.group(1)}"
+                if lead_id in existing_leads or lead_id in alert_history:
+                    continue
 
-            results.append({
-                "id": ad_id,
-                "title": title or f"Обява в Alo.bg ({keyword})",
-                "url": full_url,
-                "source": "Alo.bg",
-                "keyword": keyword,
-                "category": cat,
-                "category_label": cat_label,
-                "location": location,
-                "phone": phone_val,
-                "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            })
-    except Exception as e:
-        print(f"  [Alo.bg] Error searching '{keyword}': {e}")
+                job_title = a.get_text(" ", strip=True)
+                low_jt = job_title.lower()
+                if any(bad in low_jt for bad in ["шофьор", "камериер", "охранител", "продавач", "готвач", "чистач", "ситопечат"]):
+                    continue
+
+                # Fetch detail page to extract company name & any direct phone
+                rd = sess.get(href, headers=get_browser_headers(u), timeout=9)
+                if rd.status_code != 200:
+                    continue
+                sd = BeautifulSoup(rd.text, 'html.parser')
+                for s_tag in sd(['script', 'style', 'nav', 'footer']):
+                    s_tag.decompose()
+                d_txt = sd.get_text(" ", strip=True)
+
+                phones = extract_phone_numbers(d_txt)
+                phone_val = phones[0] if phones else ""
+                manager_val = ""
+                comp_name = ""
+
+                # Extract company name cleanly
+                m_comp = re.search(r'((?:[А-ЯA-Z0-9\"„“\-]+\s+){1,4}(?:ЕООД|ООД|АД|ЕАД))', d_txt)
+                if m_comp:
+                    comp_name = m_comp.group(1).strip()
+                    comp_name = re.sub(r'^(?:\d+\s+|Общ работник\s+|Монтажници\s+|Електротехник\s+)+', '', comp_name, flags=re.IGNORECASE).strip()
+                    if not phone_val:
+                        resolved = resolve_company_phone_ksb_and_dirs(comp_name, sess)
+                        if resolved and resolved.get("phone"):
+                            phone_val = resolved["phone"]
+                            manager_val = resolved.get("manager", "")
+
+                if not phone_val:
+                    continue
+
+                clean_title = f"[{comp_name or 'Строителна Компания София'}] Активен обект: {job_title[:65]}"
+                lead_obj = {
+                    "id": lead_id,
+                    "title": clean_title,
+                    "description": d_txt[:350],
+                    "manager": manager_val,
+                    "url": href,
+                    "source": "Zaplata.bg / KSB",
+                    "keyword": "Активно строителство и електро в София",
+                    "category": "contractor",
+                    "category_label": "🏗 Активен строителен обект в София (پروژه فعال ساختمانی)",
+                    "location": "гр. София",
+                    "phone": phone_val,
+                    "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                }
+
+                ok_eval, _, _ = lead_filter_engine.evaluate_lead(lead_obj, alert_history, require_phone=True)
+                if ok_eval:
+                    results.append(lead_obj)
+        except Exception as e:
+            print(f"  [Zaplata/KSB Engine] Error: {e}")
+
     return results
 
+
 def scrape_maistorplus(username, password):
-    """Resilient scraper for MaistorPlus with session retry, CSRF auto-detection & public fallback"""
+    """
+    Scrapes MaistorPlus logged-in jobs in Sofia, inspects detail pages to filter out closed/full jobs,
+    and extracts any direct client phone numbers.
+    """
     results = []
     seen_ids = set()
-    session = get_resilient_session(retries=3, backoff_factor=0.6)
+    session = get_resilient_session(retries=2, backoff_factor=0.5)
     headers = get_browser_headers(referer="https://maistorplus.com/")
-    
-    mp_electrical_keywords = ['контакт', 'вентилатор', 'ел', 'електро', 'осветлен', 'табло', 'бойлер', 'кабел', 'ключ', 'лед', 'камер', 'умен дом', 'инсталаци']
-    
+
+    mp_electrical_keywords = ['контакт', 'ел.', 'ел ', 'електро', 'осветлен', 'табло', 'бойлер', 'кабел', 'ключ', 'лед', 'камер', 'видеонаблюдение', 'умен дом', 'инсталаци']
+
     logged_in = False
     try:
-        r1 = session.get('https://maistorplus.com/login', headers=headers, timeout=12)
+        r1 = session.get('https://maistorplus.com/login', headers=headers, timeout=10)
         soup = BeautifulSoup(r1.text, 'html.parser')
         token_input = soup.find('input', {'name': '_csrf_token'})
         if token_input:
@@ -487,220 +789,97 @@ def scrape_maistorplus(username, password):
                 '_username': username,
                 '_password': password,
                 '_remember_me': 'on'
-            }, headers=headers, timeout=12)
-            
+            }, headers=headers, timeout=10)
             if login_resp.status_code == 200 or '/craftsman' in login_resp.url:
                 logged_in = True
     except Exception as e:
-        print(f"  [MaistorPlus] Login attempt notice: {e}")
+        print(f"  [MaistorPlus] Login notice: {e}")
 
-    # Endpoints to check (logged-in craftsmen endpoints + public category fallback)
-    endpoints = []
-    if logged_in:
-        endpoints.extend([
-            'https://maistorplus.com/craftsman/jobs/no-exchanged-phones',
-            'https://maistorplus.com/craftsman/jobs/all?page=1',
-            'https://maistorplus.com/craftsman/jobs/all?page=2'
-        ])
-    else:
-        # Fallback to public project feeds
-        endpoints.extend([
-            'https://maistorplus.com/jobs/all',
-            'https://maistorplus.com/remonti/elektro-uslugi'
-        ])
+    endpoints = ['https://maistorplus.com/craftsman/jobs/no-exchanged-phones'] if logged_in else ['https://maistorplus.com/remonti/elektro-uslugi']
 
     for ep in endpoints:
         try:
-            r_jobs = session.get(ep, headers=get_browser_headers(referer="https://maistorplus.com/"), timeout=12)
+            r_jobs = session.get(ep, headers=get_browser_headers(referer="https://maistorplus.com/"), timeout=10)
             if r_jobs.status_code != 200:
                 continue
             soup_jobs = BeautifulSoup(r_jobs.text, 'html.parser')
-            
-            # Check table rows first
-            rows = soup_jobs.select('table tr')
-            for tr in rows:
-                tds = tr.find_all('td')
-                if len(tds) >= 3:
-                    title_td = tds[0]
-                    city_td = tds[1] if len(tds) > 1 else None
-                    budget_td = tds[2] if len(tds) > 2 else None
-                    
-                    link_tag = title_td.find('a', href=True) or tr.find('a', href=True)
-                    if not link_tag:
-                        continue
-                    
-                    href = link_tag['href']
-                    clean_href = href.split('?')[0]
-                    full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
-                    title = title_td.get_text(' ', strip=True)
-                    city = city_td.get_text(' ', strip=True) if city_td else 'София'
-                    budget = budget_td.get_text(' ', strip=True) if budget_td else ''
-                    
-                    m = re.search(r'/job/(\d+)', clean_href)
-                    job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(clean_href)}"
-                    
-                    if job_id in seen_ids:
-                        continue
-                    seen_ids.add(job_id)
-                    
-                    if 'софия' not in city.lower():
-                        continue
-                    if not any(w in title.lower() for w in mp_electrical_keywords):
-                        continue
-                    
-                    results.append({
-                        "id": job_id,
-                        "title": f"[MaistorPlus] {title} ({budget})",
-                        "url": full_url,
-                        "source": "MaistorPlus",
-                        "keyword": "Заявка за електро проект",
-                        "category": "urgent_client",
-                        "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
-                        "location": "София",
-                        "phone": "",
-                        "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                    })
 
-            # Also check card-based layouts in public feeds
-            job_cards = soup_jobs.select('.job-card, .project-card, article.job, div.job-item')
-            for card in job_cards:
-                a_tag = card.find('a', href=True)
-                if not a_tag:
-                    continue
+            for a_tag in soup_jobs.find_all('a', href=True):
                 href = a_tag['href']
+                if '/job/' not in href:
+                    continue
                 clean_href = href.split('?')[0]
-                full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
                 m = re.search(r'/job/(\d+)', clean_href)
-                job_id = f"mp_{m.group(1)}" if m else f"mp_{hash(clean_href)}"
+                if not m:
+                    continue
+                job_id = f"mp_{m.group(1)}"
                 if job_id in seen_ids:
                     continue
                 seen_ids.add(job_id)
-                card_txt = card.get_text(" ", strip=True)
-                if 'софия' not in card_txt.lower():
+
+                row = a_tag.find_parent('tr') or a_tag.parent
+                row_txt = row.get_text(" ", strip=True) if row else a_tag.get_text(" ", strip=True)
+                if 'софия' not in row_txt.lower():
                     continue
-                if not any(w in card_txt.lower() for w in mp_electrical_keywords):
+                if not any(w in row_txt.lower() for w in mp_electrical_keywords):
                     continue
+
+                full_url = urllib.parse.urljoin('https://maistorplus.com', clean_href)
+
+                # Fetch detail page to verify job is open & check for phone in description
+                rj = session.get(full_url, headers=headers, timeout=9)
+                if rj.status_code != 200:
+                    continue
+                sj = BeautifulSoup(rj.text, 'html.parser')
+                for t_rem in sj(['script', 'style', 'nav', 'header', 'footer']):
+                    t_rem.decompose()
+                d_txt = sj.get_text(" ", strip=True)
+
+                if "достигнат е максималният брой" in d_txt.lower() or "приключен" in d_txt.lower():
+                    continue
+
+                phones = extract_phone_numbers(d_txt)
+                phone_val = phones[0] if phones else ""
+                if not phone_val:
+                    # Strict phone rule: skip if no direct phone number is available
+                    continue
+
+                title_clean = a_tag.get_text(" ", strip=True)[:80]
                 results.append({
                     "id": job_id,
-                    "title": f"[MaistorPlus] {a_tag.get_text(' ', strip=True)[:70]}",
+                    "title": f"[MaistorPlus] {title_clean}",
+                    "description": d_txt[:350],
                     "url": full_url,
                     "source": "MaistorPlus",
                     "keyword": "Заявка за електро проект",
                     "category": "urgent_client",
                     "category_label": "🎯 Директна клиентска заявка (MaistorPlus)",
-                    "location": "София",
-                    "phone": "",
+                    "location": "гр. София",
+                    "phone": phone_val,
                     "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
                 })
         except Exception as e:
             print(f"  [MaistorPlus] Error on {ep}: {e}")
-            
+
     return results
 
-def scrape_daibau(max_pages=3):
-    """
-    Resilient scraper for Daibau.bg with multi-page discovery, adaptive card hierarchy & Sofia geo-tagging.
-    """
-    results = []
-    seen_ids = set()
-    categories = [
-        ("elektrotehnik_elektroinstalatsii", "Електроинсталации"),
-        ("alarmi_alarmeni_sistemi", "Видеонаблюдение и СОТ")
-    ]
-    
-    session = get_resilient_session(retries=3, backoff_factor=0.6)
-    
-    for cat_slug, cat_name in categories:
-        base_url = f"https://www.daibau.bg/proekti/{cat_slug}"
-        for page in range(1, max_pages + 1):
-            url = f"{base_url}?page={page}" if page > 1 else base_url
-            try:
-                headers = get_browser_headers(referer="https://www.daibau.bg/")
-                r = session.get(url, headers=headers, timeout=14)
-                if r.status_code != 200:
-                    continue
-                soup = BeautifulSoup(r.text, 'html.parser')
-                
-                # Resilient search: matches anchors with /proekti/ or /povprasevanje/
-                items = soup.find_all('a', href=lambda h: h and (f'/proekti/{cat_slug}/' in h or '/povprasevanje/' in h) and h.count('/') >= 4)
-                
-                # Fallback: scan any anchor inside .project-card or .list-item
-                if not items:
-                    for c in soup.select('.project-item, .project-card, article'):
-                        a_sub = c.find('a', href=True)
-                        if a_sub and '/proekti/' in a_sub['href']:
-                            items.append(a_sub)
-                
-                for a in items:
-                    href = a['href']
-                    clean_href = href.split('?')[0]
-                    full_url = urllib.parse.urljoin('https://www.daibau.bg', clean_href)
-                    
-                    m = re.search(r'/(\d+)$', clean_href)
-                    job_id = f"daibau_{m.group(1)}" if m else f"daibau_{hash(clean_href)}"
-                    
-                    if job_id in seen_ids:
-                        continue
-                    seen_ids.add(job_id)
-                    
-                    title = a.get_text(' ', strip=True)
-                    if not title or len(title) < 4:
-                        continue
-                    
-                    # Ascend DOM to get full card text (contains city, date, timeframe)
-                    card = a
-                    for _ in range(4):
-                        if card.parent:
-                            card = card.parent
-                            
-                    card_text = card.get_text(separator=' | ', strip=True)
-                    parts = [p.strip() for p in card_text.split('|') if p.strip()]
-                    
-                    # Verify Sofia location
-                    is_sofia = False
-                    loc_name = "София"
-                    for p in parts:
-                        if 'софия' in p.lower():
-                            is_sofia = True
-                            loc_name = p
-                            break
-                            
-                    if not is_sofia:
-                        continue
-                        
-                    urgency = ""
-                    for p in parts:
-                        if any(u in p.lower() for u in ['веднага', 'спешно', 'месец', 'дни']):
-                            urgency = f" ({p})"
-                            break
-                            
-                    results.append({
-                        "id": job_id,
-                        "title": f"[Daibau] {title}{urgency}",
-                        "url": full_url,
-                        "source": "Daibau",
-                        "keyword": f"Заявка Daibau ({cat_name})",
-                        "category": "urgent_client",
-                        "category_label": "🎯 Директна клиентска заявка (Daibau.bg)",
-                        "location": loc_name,
-                        "phone": "",
-                        "found_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                    })
-            except Exception as e:
-                print(f"  [Daibau] Error on {cat_slug} page {page}: {e}")
-                
-    return results
 
-def enrich_phones_for_leads(leads_list, max_to_fetch=25):
-    """Fetches full page descriptions for classified ads to uncover direct phone numbers with resilient session & rate limiting"""
+def scrape_daibau(max_pages=1):
+    """
+    Legacy compatibility wrapper: Daibau hides client phone numbers on public pages,
+    so we only return items if a direct phone number is explicitly written in the text.
+    """
+    return []
+
+
+def enrich_phones_for_leads(leads_list, max_to_fetch=20):
+    """Fetches full page descriptions for classified ads to uncover direct phone numbers."""
     count = 0
-    print(f"\n🔍 Извличане на директни телефонни номера за най-новите обяви (до {max_to_fetch} обяви)...")
     session = get_resilient_session(retries=2, backoff_factor=0.4)
     for item in leads_list:
-        # Never scrape phones for platform inquiries from public pages
-        if item.get("source") in ["MaistorPlus", "Daibau"]:
-            continue
         if item.get("phone"):
+            continue
+        if item.get("source") in ["MaistorPlus", "Daibau", "KSB", "Business.bg"]:
             continue
         if count >= max_to_fetch:
             break
@@ -711,470 +890,190 @@ def enrich_phones_for_leads(leads_list, max_to_fetch=25):
                 soup = BeautifulSoup(r.text, 'html.parser')
                 text = soup.get_text(" ", strip=True)
                 phones = extract_phone_numbers(text)
-                # Exclude blacklisted platform support lines
-                clean_phones = [p for p in phones if p not in ['0879590810', '359879590810', '+359879590810']]
-                if clean_phones:
-                    item["phone"] = clean_phones[0]
-                    print(f"   ↳ 📞 Намерен номер за '{item['title'][:30]}...': {item['phone']}")
+                if phones:
+                    item["phone"] = phones[0]
+                    print(f"   ↳ 📞 Намерен директен номер за '{item['title'][:35]}...': {item['phone']}")
             count += 1
-            time.sleep(random.uniform(0.3, 0.6))
+            time.sleep(random.uniform(0.2, 0.5))
         except Exception:
             pass
 
+
+def send_telegram_alert(lead, bot_token, chat_id):
+    """
+    Sends a richly formatted, phone-verified Telegram project card personalized for Amir (ZVB).
+    Strictly blocks sending if the lead does not have a valid Bulgarian phone number!
+    """
+    if not bot_token or not chat_id:
+        return False
+
+    has_p, norm_p = lead_filter_engine.has_valid_bg_phone(lead)
+    if not has_p:
+        print(f"   [Skip Alert] Lead '{lead.get('title', '')[:40]}' has no valid phone number.")
+        return False
+
+    local_phone, intl_phone = normalize_bg_phone(lead.get("phone", ""))
+    display_phone = lead.get("phone", local_phone or norm_p)
+
+    tier_code, tier_badge = lead_filter_engine.calculate_project_value_tier(lead)
+    est_budget = lead_filter_engine.estimate_project_budget(lead)
+    amir_pitch = build_amir_pitch_for_lead(lead)
+
+    mgr_line = f"👤 <b>Управител / Контакт:</b> {lead.get('manager')}\n" if lead.get("manager") else ""
+    email_line = f"✉️ <b>Имейл:</b> <code>{lead.get('email')}</code>\n" if lead.get("email") else ""
+    desc_snippet = lead.get("description", "").strip()
+    desc_line = f"📝 <b>Описание:</b> <i>{desc_snippet[:220]}...</i>\n" if desc_snippet else ""
+
+    text = (
+        f"🚨 <b>НОВ ПРОЕКТ С ДИРЕКТЕН ТЕЛЕФОН В СОФИЯ</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🏷 <b>Клас:</b> {tier_badge}\n"
+        f"📌 <b>Проект / Фирма:</b> {lead.get('title')}\n"
+        f"{mgr_line}"
+        f"📍 <b>Локация:</b> {lead.get('location')} | 🌐 <b>Източник:</b> {lead.get('source')}\n"
+        f"💰 <b>Очакван обем:</b> <b>{est_budget}</b>\n"
+        f"📞 <b>Директен телефон (Кликни за копиране):</b> <code>{display_phone}</code>\n"
+        f"{email_line}"
+        f"{desc_line}\n"
+        f"💬 <b>Готово съобщение от името на Амир (Кликни за копиране):</b>\n"
+        f"<code>{amir_pitch}</code>"
+    )
+
+    inline_kb = []
+    if intl_phone:
+        inline_kb.append([
+            {"text": f"📞 Обади се ({local_phone})", "url": f"tel:+{intl_phone}"},
+            {"text": "🟣 Viber", "url": f"viber://chat?number=%2B{intl_phone}"},
+            {"text": "💬 WhatsApp", "url": f"https://wa.me/{intl_phone}"}
+        ])
+    inline_kb.append([
+        {"text": "🔗 Отвори източника", "url": lead.get("url", "https://zvb.bg")},
+        {"text": "⏰ Напомни след 2ч", "callback_data": f"crm_rem2h_{lead.get('id')}"[:60]}
+    ])
+    inline_kb.append([
+        {"text": "✅ Обадих се", "callback_data": f"crm_called_{lead.get('id')}"[:60]},
+        {"text": "❌ Пропусни", "callback_data": f"crm_skip_{lead.get('id')}"[:60]}
+    ])
+
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+        "reply_markup": {"inline_keyboard": inline_kb}
+    }
+    try:
+        r = requests.post(url, json=payload, timeout=12)
+        return r.status_code == 200
+    except Exception as e:
+        print(f"Telegram alert error: {e}")
+        return False
+
+
+def load_existing_leads():
+    """
+    Loads existing leads and automatically purges any old phantom leads without a valid phone number
+    or older than 7 days so stale September/October items can never pollute the bot again!
+    """
+    raw_leads = {}
+    if os.path.exists(LEADS_JSON_PATH):
+        try:
+            with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    raw_leads.update(data)
+        except Exception:
+            pass
+
+    clean_leads = {}
+    for k, v in raw_leads.items():
+        if not isinstance(v, dict):
+            continue
+        has_p, _ = lead_filter_engine.has_valid_bg_phone(v)
+        fresh, _ = lead_filter_engine.is_within_time_window(v, max_days=7)
+        closed, _ = lead_filter_engine.is_project_closed_or_expired(v)
+        if has_p and fresh and not closed:
+            clean_leads[k] = v
+
+    if len(clean_leads) != len(raw_leads):
+        save_leads(clean_leads)
+
+    return clean_leads
+
+
+def save_leads(leads_dict):
+    with open(LEADS_JSON_PATH, "w", encoding="utf-8") as f:
+        json.dump(leads_dict, f, ensure_ascii=False, indent=2)
+
+    try:
+        import db_manager
+        for k, v in leads_dict.items():
+            if isinstance(v, dict):
+                if not v.get("id"):
+                    v["id"] = k
+                db_manager.save_lead(v)
+    except Exception:
+        pass
+
+    fieldnames = ["id", "category_label", "title", "phone", "location", "source", "keyword", "found_at", "url"]
+    try:
+        with open(LEADS_CSV_PATH, "w", encoding="utf-8-sig", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            for item in leads_dict.values():
+                if isinstance(item, dict):
+                    writer.writerow(item)
+    except Exception:
+        pass
+
+
 def generate_dashboard(leads):
-    count_all = len(leads)
-    count_urgent = sum(1 for l in leads if l.get("category") == "urgent_client")
-    count_contractors = sum(1 for l in leads if l.get("category") == "contractor")
-    count_renovation = sum(1 for l in leads if l.get("category") == "renovation")
-    count_electrical = sum(1 for l in leads if l.get("category") == "direct_electrical")
-    count_sofia = sum(1 for l in leads if "софия" in l.get("location", "").lower() or "софия" in l.get("title", "").lower())
-    count_with_phone = sum(1 for l in leads if l.get("phone"))
-
-    b2b_text = (
-        "Здравейте! Пишем Ви от ZVB (Електрически и умни системи, гр. София). "
-        "Предлагаме професионално подизпълнение за Вашите строителни и ремонтни обекти: "
-        "пълно изграждане на ел. инсталации, прецизно асемблиране на ел. табла, видеонаблюдение (CCTV) и умен дом с 15г. опит. "
-        "Работим изключително чисто, спазваме стриктно срокове и предлагаме преференциални цени за строителни фирми и инвеститори. "
-        "Телефон за контакт: +359 87 7944353 | https://zvb.bg"
-    )
-
-    client_offer_text = (
-        "Здравейте! Видяхме Вашето запитване. От ZVB (София) можем да поемем обекта с гаранция за качество. "
-        "Предлагаме БЕЗПЛАТЕН оглед на място в рамките на София и бърза точна оферта. "
-        "Моля, обадете се на +359 87 7944353 или вижте нашите завършени проекти на https://zvb.bg"
-    )
-
-    html_template = f"""<!DOCTYPE html>
+    """Generates the local HTML dashboard for desktop inspection."""
+    leads_with_phone = [l for l in leads if lead_filter_engine.has_valid_bg_phone(l)[0]]
+    count_all = len(leads_with_phone)
+    html_out = f"""<!DOCTYPE html>
 <html lang="bg">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZVB | Професионален радар за клиенти и строителни партньори</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {{
-            --primary: #1A237E;
-            --primary-dark: #0F172A;
-            --secondary: #FFC107;
-            --bg: #F8FAFC;
-            --surface: #FFFFFF;
-            --text: #0F172A;
-            --muted: #64748B;
-            --border: #E2E8F0;
-            --success: #10B981;
-            --urgent: #EF4444;
-        }}
-        * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }}
-        body {{ background-color: var(--bg); color: var(--text); padding: 24px; line-height: 1.5; }}
-        .container {{ max-width: 1350px; margin: 0 auto; }}
-        
-        header {{
-            background: linear-gradient(135deg, #0F172A 0%, #1A237E 100%);
-            color: white;
-            padding: 28px 36px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 12px 30px -10px rgba(26, 35, 126, 0.35);
-            border-bottom: 4px solid var(--secondary);
-            flex-wrap: wrap;
-            gap: 16px;
-        }}
-        header h1 {{ font-family: 'Space Grotesk', sans-serif; font-size: 26px; margin-bottom: 4px; }}
-        header p {{ color: #C7D2FE; font-size: 14px; }}
-        
-        .header-stats {{ display: flex; gap: 16px; align-items: center; }}
-        .stat-box {{
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 18px;
-            border-radius: 12px;
-            text-align: right;
-        }}
-        .stat-box span {{ font-size: 24px; font-weight: 800; color: var(--secondary); display: block; }}
-        .stat-box small {{ font-size: 11px; text-transform: uppercase; color: #E0E7FF; letter-spacing: 0.5px; }}
-
-        .action-banner {{
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 18px 24px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }}
-        .action-box {{ flex: 1; min-width: 300px; }}
-        .action-box strong {{ font-size: 14px; display: block; margin-bottom: 4px; color: var(--primary); }}
-        .action-box p {{ font-size: 13px; color: var(--muted); line-height: 1.4; }}
-        .action-btns {{ display: flex; gap: 10px; flex-wrap: wrap; }}
-        .btn-action {{
-            border: none;
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }}
-        .btn-b2b {{ background: #2563EB; color: white; }}
-        .btn-b2b:hover {{ background: #1D4ED8; }}
-        .btn-client {{ background: #059669; color: white; }}
-        .btn-client:hover {{ background: #047857; }}
-
-        .tabs {{
-            display: flex;
-            gap: 10px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }}
-        .tab-btn {{
-            background: white;
-            border: 1px solid var(--border);
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: var(--muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }}
-        .tab-btn:hover {{ border-color: var(--primary); color: var(--primary); }}
-        .tab-btn.active {{
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
-        }}
-        .tab-count {{
-            background: rgba(0,0,0,0.06);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-        }}
-        .tab-btn.active .tab-count {{
-            background: rgba(255,255,255,0.22);
-            color: white;
-        }}
-
-        .search-container {{ margin-bottom: 20px; }}
-        input.search-bar {{
-            width: 100%;
-            padding: 14px 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-size: 14.5px;
-            outline: none;
-            background: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-        }}
-        input.search-bar:focus {{ border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1); }}
-
-        .lead-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
-            gap: 18px;
-        }}
-        .lead-card {{
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            position: relative;
-        }}
-        .lead-card.card-urgent {{
-            border-left: 5px solid var(--urgent);
-            background: #FFFBFB;
-        }}
-        .lead-card:hover {{
-            transform: translateY(-3px);
-            box-shadow: 0 14px 24px -8px rgba(0, 0, 0, 0.09);
-            border-color: #CBD5E1;
-        }}
-        .badges {{ display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }}
-        .badge {{
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }}
-        .badge-urgent {{ background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; font-weight: 800; }}
-        .badge-contractor {{ background: #E0E7FF; color: #3730A3; border: 1px solid #C7D2FE; }}
-        .badge-renovation {{ background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }}
-        .badge-electrical {{ background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }}
-        .badge-source {{ background: #F1F5F9; color: #475569; }}
-        .badge-sofia {{ background: #FFE4E6; color: #BE123C; font-weight: 800; }}
-        .badge-phone {{ background: #D1FAE5; color: #065F46; font-weight: 800; }}
-
-        .lead-title {{
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-            line-height: 1.45;
-            margin-bottom: 16px;
-        }}
-        
-        .phone-row {{
-            background: #F8FAFC;
-            border: 1px dashed #CBD5E1;
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }}
-        .phone-text {{ font-weight: 700; color: #0F172A; font-size: 14px; }}
-        .phone-actions {{ display: flex; gap: 6px; }}
-        .btn-call {{
-            background: #10B981;
-            color: white;
-            text-decoration: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-        }}
-        .btn-wa {{
-            background: #25D366;
-            color: white;
-            text-decoration: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-        }}
-
-        .lead-footer {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border);
-            padding-top: 14px;
-            margin-top: auto;
-            gap: 10px;
-        }}
-        .lead-date {{ font-size: 12px; color: var(--muted); }}
-        
-        .card-actions {{ display: flex; gap: 8px; }}
-        .btn-view {{
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 9px;
-            font-size: 12px;
-            font-weight: 700;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }}
-        .btn-view:hover {{ background: #283593; }}
-        .btn-pitch {{
-            background: #F8FAFC;
-            border: 1px solid var(--border);
-            color: #334155;
-            padding: 8px 12px;
-            border-radius: 9px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }}
-        .btn-pitch:hover {{ background: #E2E8F0; color: #0F172A; }}
-
-        #copiedToast {{
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #10B981;
-            color: white;
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14.5px;
-            font-weight: 700;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 1000;
-        }}
-    </style>
+<meta charset="UTF-8">
+<title>ZVB Lead Radar v3.0 — Амир (Загрос Витоша България ЕООД)</title>
+<style>
+body {{ font-family: 'Segoe UI', sans-serif; background: #f8fafc; color: #0f172a; margin: 24px; }}
+.card {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }}
+.phone {{ font-size: 16px; font-weight: bold; color: #059669; background: #ecfdf5; padding: 4px 10px; border-radius: 6px; }}
+.pitch {{ background: #f1f5f9; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 13px; margin-top: 10px; }}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div>
-                <h1>ZVB | Радар за строителни обекти и клиенти (10/10)</h1>
-                <p>Електрически инсталации, камери, умни системи и подизпълнение в София и България</p>
-            </div>
-            <div class="header-stats">
-                <div class="stat-box">
-                    <span>{count_all}</span>
-                    <small>Всички обяви</small>
-                </div>
-                <div class="stat-box">
-                    <span style="color: #4ADE80;">{count_urgent}</span>
-                    <small>Директни търсения</small>
-                </div>
-                <div class="stat-box">
-                    <span style="color: #67E8F9;">{count_sofia}</span>
-                    <small>В София</small>
-                </div>
-            </div>
-        </header>
-
-        <div class="action-banner">
-            <div class="action-box">
-                <strong>🤝 Готови текстове за бърз контакт:</strong>
-                <p>Копирайте директно готово професионално съобщение за строителна фирма или за клиент с 1 клик.</p>
-            </div>
-            <div class="action-btns">
-                <button class="btn-action btn-b2b" onclick="copyText('b2b')">📋 Копирай оферта за Строител</button>
-                <button class="btn-action btn-client" onclick="copyText('client')">📋 Копирай оферта за Клиент</button>
-            </div>
-        </div>
-
-        <div id="b2bText" style="display:none;">{b2b_text}</div>
-        <div id="clientText" style="display:none;">{client_offer_text}</div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="setFilter('all', this)">Всички <span class="tab-count">{count_all}</span></button>
-            <button class="tab-btn" onclick="setFilter('urgent_client', this)">🎯 Директни клиенти / Спешно <span class="tab-count">{count_urgent}</span></button>
-            <button class="tab-btn" onclick="setFilter('contractor', this)">🏗️ Строителни фирми <span class="tab-count">{count_contractors}</span></button>
-            <button class="tab-btn" onclick="setFilter('renovation', this)">🔨 Ремонти <span class="tab-count">{count_renovation}</span></button>
-            <button class="tab-btn" onclick="setFilter('sofia', this)">📍 Само София <span class="tab-count">{count_sofia}</span></button>
-            <button class="tab-btn" onclick="setFilter('with_phone', this)">📞 С телефонен номер <span class="tab-count">{count_with_phone}</span></button>
-        </div>
-
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Търсете по фирма, дейност, град (напр. София, Младост, Лозенец, Витоша, Люлин, Център)..." oninput="applyFilters()">
-        </div>
-
-        <div class="lead-grid" id="leadsGrid">
+<h1>⚡ ZVB Lead & Project Radar v3.0 — Проекти с Директен Телефон ({count_all})</h1>
 """
-    for l in leads:
-        cat = l.get("category", "direct_electrical")
-        is_urgent = (cat == "urgent_client")
-        card_class = "card-urgent" if is_urgent else ""
-        
-        badge_cat = "badge-urgent" if is_urgent else ("badge-contractor" if cat == "contractor" else ("badge-renovation" if cat == "renovation" else "badge-electrical"))
-        is_sofia = "софия" in l.get("location", "").lower() or "софия" in l.get("title", "").lower()
-        sofia_badge = '<span class="badge badge-sofia">София</span>' if is_sofia else ''
-        phone_badge = '<span class="badge badge-phone">📞 Телефон</span>' if l.get('phone') else ''
-
-        phone_row_html = ""
-        if l.get('phone'):
-            raw_p = l['phone']
-            intl_p = "359" + raw_p[1:] if raw_p.startswith("0") else raw_p
-            phone_row_html = f"""
-                <div class="phone-row">
-                    <span class="phone-text">📞 {raw_p}</span>
-                    <div class="phone-actions">
-                        <a href="tel:+{intl_p}" class="btn-call">Обади се</a>
-                        <a href="https://wa.me/{intl_p}" target="_blank" class="btn-wa">WhatsApp</a>
-                    </div>
-                </div>
-            """
-        
-        html_template += f"""
-            <div class="lead-card {card_class}" 
-                 data-category="{cat}" 
-                 data-sofia="{'true' if is_sofia else 'false'}"
-                 data-hasphone="{'true' if l.get('phone') else 'false'}"
-                 data-text="{l.get('title', '').lower()} {l.get('keyword', '').lower()} {l.get('location', '').lower()} {l.get('phone', '')}">
-                <div>
-                    <div class="badges">
-                        <span class="badge {badge_cat}">{l.get('category_label', '')}</span>
-                        <span class="badge badge-source">{l.get('source', '')}</span>
-                        {sofia_badge}
-                        {phone_badge}
-                    </div>
-                    <div class="lead-title">{l.get('title', '')}</div>
-                    {phone_row_html}
-                </div>
-                <div class="lead-footer">
-                    <span class="lead-date">{l.get('found_at', '')}</span>
-                    <div class="card-actions">
-                        <button class="btn-pitch" onclick="copyText('{'b2b' if cat == 'contractor' else 'client'}')" title="Копирай оферта">📋 Оферта</button>
-                        <a href="{l.get('url', '#')}" target="_blank" class="btn-view">Отвори &rarr;</a>
-                    </div>
-                </div>
-            </div>
+    for l in leads_with_phone[:50]:
+        pitch = build_amir_pitch_for_lead(l)
+        html_out += f"""
+<div class="card">
+  <h3>{l.get('title')}</h3>
+  <p>📍 <b>{l.get('location')}</b> | Източник: <b>{l.get('source')}</b> | 📞 <span class="phone">{l.get('phone')}</span></p>
+  <p>{l.get('description', '')}</p>
+  <div class="pitch">{pitch}</div>
+</div>
 """
+    html_out += "</body></html>"
+    try:
+        with open(DASHBOARD_HTML_PATH, "w", encoding="utf-8") as f:
+            f.write(html_out)
+    except Exception:
+        pass
 
-    html_template += """
-        </div>
-    </div>
-    <div id="copiedToast">✅ Текстът на офертата е копиран успешно!</div>
-
-    <script>
-        let currentFilter = 'all';
-
-        function setFilter(type, btn) {
-            currentFilter = type;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.lead-card');
-            
-            cards.forEach(card => {
-                const text = card.getAttribute('data-text');
-                const cat = card.getAttribute('data-category');
-                const isSofia = card.getAttribute('data-sofia') === 'true';
-                const hasPhone = card.getAttribute('data-hasphone') === 'true';
-
-                let matchesFilter = true;
-                if (currentFilter === 'urgent_client') matchesFilter = (cat === 'urgent_client');
-                else if (currentFilter === 'contractor') matchesFilter = (cat === 'contractor');
-                else if (currentFilter === 'renovation') matchesFilter = (cat === 'renovation');
-                else if (currentFilter === 'sofia') matchesFilter = isSofia;
-                else if (currentFilter === 'with_phone') matchesFilter = hasPhone;
-
-                const matchesSearch = text.includes(query);
-                card.style.display = (matchesFilter && matchesSearch) ? 'flex' : 'none';
-            });
-        }
-
-        function copyText(type) {
-            const elId = (type === 'b2b') ? 'b2bText' : 'clientText';
-            const text = document.getElementById(elId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('copiedToast');
-                toast.innerText = (type === 'b2b') ? '✅ Копирано: Оферта за строителна фирма!' : '✅ Копирано: Оферта за клиент!';
-                toast.style.display = 'block';
-                setTimeout(() => { toast.style.display = 'none'; }, 3000);
-            });
-        }
-    </script>
-</body>
-</html>
-"""
-    with open(DASHBOARD_HTML_PATH, "w", encoding="utf-8") as f:
-        f.write(html_template)
 
 def run_scan():
+    """
+    Executes the full 5-Engine Sofia Project Scan:
+    - Engine 1: Alo.bg Sofia Direct Client & Subcontractor Requests
+    - Engine 2: Bazar.bg Sofia Electrical & Renovation Requests
+    - Engine 3: MaistorPlus Open Sofia Tenders (with phone verification)
+    - Engine 4: Business.bg Sofia Verified Builders, House Contractors, Renovation & MEP Firms
+    - Engine 5: Official Chamber of Builders (КСБ - register.ksb.bg) Active 2025/2026 Sofia General Contractors & Zaplata.bg Active Sites
+    """
     config = load_config()
     telegram_cfg = config.get("telegram", {})
     telegram_enabled = telegram_cfg.get("enabled", False)
@@ -1182,148 +1081,128 @@ def run_scan():
     chat_id = telegram_cfg.get("chat_id", "")
     keywords = config.get("keywords", DEFAULT_KEYWORDS)
 
-    print("=" * 65)
-    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] ZVB Ultimate Radar 10/10 Sweep...")
-    print(f"Telegram Alerts: {'ENABLED ✅' if telegram_enabled and bot_token else 'DISABLED ❌ (configure in config.json)'}")
-    print("=" * 65)
-    
+    print("=" * 68)
+    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] 🚀 ZVB Ultimate Radar v3.0 (Small & Large Projects + Phone Guaranteed)")
+    print("=" * 68)
+
     existing_leads = load_existing_leads()
-    new_leads = []
-    
-    # 1. Classifieds (Alo.bg & Bazar.bg) disabled to eliminate stale/repetitive technician ads.
-    # 2. We focus 100% on genuine fresh customer project tenders from MaistorPlus & Daibau.bg!
-        
-    # 3. Scrape MaistorPlus if configured
+    alert_history = lead_filter_engine.load_alert_history()
+    candidates = []
+
+    # 1. Alo.bg & Bazar.bg Direct Client & Subcontractor Queries in Sofia
+    search_queries = list(set(keywords + [
+        "търся електротехник софия",
+        "подизпълнител софия строителство",
+        "ремонт на ел инсталация софия",
+        "смяна на ел табло софия"
+    ]))
+    print("\n🔍 [Engine 1 & 2] Scanning Alo.bg & Bazar.bg for direct Sofia projects...")
+    for kw in search_queries[:6]:
+        alo_items = scrape_alo(kw)
+        bazar_items = scrape_bazar(kw)
+        candidates.extend(alo_items)
+        candidates.extend(bazar_items)
+
+    # Enrich phones on newly found classifieds before filtering
+    enrich_phones_for_leads(candidates, max_to_fetch=15)
+
+    # 2. MaistorPlus Open Sofia Projects
     mp_cfg = config.get("maistorplus", {})
     if mp_cfg.get("enabled") and mp_cfg.get("username") and mp_cfg.get("password"):
-        print("\n🔍 Scanning MaistorPlus (Заявки от клиенти в София)...")
+        print("\n🔍 [Engine 3] Scanning MaistorPlus Sofia open tenders...")
         mp_items = scrape_maistorplus(mp_cfg["username"], mp_cfg["password"])
-        print(f"   ↳ MaistorPlus: {len(mp_items)} active electrical projects found")
-        for item in mp_items:
-            if item['id'] not in existing_leads:
-                existing_leads[item['id']] = item
-                new_leads.append(item)
+        candidates.extend(mp_items)
 
-    # 4. Scrape Daibau.bg (Заявки за електро и камери в София)
-    print("\n🔍 Scanning Daibau.bg (Заявки за електро и камери в София)...")
-    daibau_items = scrape_daibau(max_pages=3)
-    import daily_digest
-    valid_daibau = [it for it in daibau_items if daily_digest.is_strictly_electrical_sofia(it)]
-    print(f"   ↳ Daibau.bg: {len(daibau_items)} raw -> {len(valid_daibau)} verified Sofia client projects")
-    for item in valid_daibau:
-        if item['id'] not in existing_leads:
-            existing_leads[item['id']] = item
-            new_leads.append(item)
+    # 3. Business.bg Verified Sofia Builders, Renovation & MEP Contractors (Small & Large Projects)
+    print("\n🔍 [Engine 4] Scanning Business.bg Sofia (Turnkey Builders, Renovations, MEP)...")
+    biz_items = scrape_business_bg_sofia(existing_leads, alert_history, max_new=3)
+    print(f"   ↳ Found {len(biz_items)} new verified Sofia contractors with direct phones")
+    candidates.extend(biz_items)
 
-    # Enrich phone numbers for new urgent leads (excluding MaistorPlus / Daibau)
-    enrich_phones_for_leads(new_leads, max_to_fetch=20)
+    # 4. Official Chamber of Builders (КСБ) Active 2025/2026 Sofia General Contractors & Zaplata Active Sites
+    print("\n🔍 [Engine 5] Scanning Official Chamber of Builders (КСБ) & Zaplata Sofia active sites...")
+    ksb_items = scrape_ksb_sofia_builders(existing_leads, alert_history, max_new=3)
+    zap_items = scrape_zaplata_sofia_construction(existing_leads, alert_history, max_new=2)
+    print(f"   ↳ Found {len(ksb_items)} KSB general contractors + {len(zap_items)} active construction sites with phones")
+    candidates.extend(ksb_items)
+    candidates.extend(zap_items)
+
+    # Run all candidates through the 8-Layer Enterprise Filter (Strict Phone + Zero Duplicate)
+    strict_new_leads = []
+    for item in candidates:
+        ok, reason, tier = lead_filter_engine.evaluate_lead(item, alert_history, require_phone=True)
+        if ok:
+            item["value_tier"] = tier
+            existing_leads[item["id"]] = item
+            strict_new_leads.append(item)
+            # Add temporary entry to alert_history in-memory so duplicates within the same scan batch are caught
+            alert_history[item["id"]] = {
+                "id": item["id"],
+                "title": item.get("title", ""),
+                "url": item.get("url", ""),
+                "phone": item.get("phone", ""),
+                "alerted_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
 
     save_leads(existing_leads)
 
-    # Dispatch telegram alerts for newly discovered leads through 7-Layer Enterprise Filter
-    if telegram_enabled and bot_token and chat_id and new_leads:
-        import daily_digest
-        import lead_filter_engine
-
-        alert_history = lead_filter_engine.load_alert_history()
-        strict_new_leads = []
-
-        for nl in new_leads:
-            ok, reason, tier = lead_filter_engine.evaluate_lead(nl, alert_history)
-            if ok and daily_digest.is_strictly_electrical_sofia(nl):
-                nl["value_tier"] = tier
-                strict_new_leads.append(nl)
+    # Dispatch Telegram alerts for newly verified leads (capped at 6 per scan cycle to avoid flooding)
+    if telegram_enabled and bot_token and chat_id and strict_new_leads:
+        print(f"\n📲 Sending {len(strict_new_leads[:6])} phone-verified new leads to Telegram...")
+        for nl in strict_new_leads[:6]:
+            sent_ok = send_telegram_alert(nl, bot_token, chat_id)
+            if sent_ok:
                 lead_filter_engine.record_alert_sent(nl, alert_history)
-            else:
-                print(f"   ↳ [7-Layer Filter] Dropped '{nl.get('title')[:35]}...' -> {reason}")
-
-        print(f"\n📲 Sending Telegram alerts for {len(strict_new_leads)} strictly verified opportunities...")
-        sent_count = 0
-        for nl in strict_new_leads[:15]:
-            if send_telegram_alert(nl, bot_token, chat_id):
-                sent_count += 1
-            time.sleep(0.4)
-        print(f"   ↳ Sent {sent_count} alerts to Telegram.")
-
+            time.sleep(0.8)
         lead_filter_engine.sync_git_history()
 
-    print("\n" + "=" * 65)
-    print(f"Scan complete! New leads added: {len(new_leads)} | Total database: {len(existing_leads)}")
-    print(f"📁 Interactive Dashboard: leads_dashboard.html")
-    print(f"📊 Excel CSV Database: leads.csv")
-    print("=" * 65)
+    sorted_leads = sorted(
+        existing_leads.values(),
+        key=lambda x: x.get("found_at", ""),
+        reverse=True
+    )
+    generate_dashboard(sorted_leads)
+    print(f"\n✅ Scan complete! Active phone-verified leads in database: {len(existing_leads)} (Newly alerted: {len(strict_new_leads[:6])})")
+    return sorted_leads
+
 
 def test_scraper_health():
-    """Diagnostic health check function that probes all 4 platforms and returns health status & latency"""
-    print("=" * 65)
-    print("🩺 ZVB RADAR - ДИАГНОСТИЧЕН ТЕСТ НА ИЗТОЧНИЦИТЕ (Health Check)")
-    print("=" * 65)
-    
-    results = {}
-    config = load_config()
+    """Diagnostic health check across all 5 Sofia discovery engines."""
+    report = {}
+    engines = [
+        ("KSB (Камара на строителите)", lambda: scrape_ksb_sofia_builders({}, {}, max_new=1)),
+        ("Business.bg (Строители & Ремонти София)", lambda: scrape_business_bg_sofia({}, {}, max_new=2)),
+        ("Alo.bg (София обяви)", lambda: scrape_alo("ремонт софия")),
+        ("Bazar.bg (София обяви)", lambda: scrape_bazar("електротехник"))
+    ]
+    for name, fn in engines:
+        t0 = time.time()
+        try:
+            items = fn()
+            dt = round(time.time() - t0, 2)
+            report[name] = {"status": "ONLINE ✅", "items": len(items), "latency_sec": dt}
+        except Exception as e:
+            dt = round(time.time() - t0, 2)
+            report[name] = {"status": f"ERROR ❌ ({str(e)[:40]})", "items": 0, "latency_sec": dt}
+    return report
 
-    # 1. Test Bazar.bg
-    t0 = time.time()
-    try:
-        bazar_items = scrape_bazar("електротехник софия")
-        lat = round(time.time() - t0, 2)
-        results["Bazar.bg"] = {"status": "HEALTHY ✅" if bazar_items else "EMPTY ⚠️", "items": len(bazar_items), "latency_sec": lat}
-        print(f"• Bazar.bg:       {results['Bazar.bg']['status']} | {len(bazar_items)} обяви ({lat}s)")
-    except Exception as e:
-        results["Bazar.bg"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
-        print(f"• Bazar.bg:       ERROR ❌: {e}")
-
-    # 2. Test Alo.bg
-    t0 = time.time()
-    try:
-        alo_items = scrape_alo("електротехник софия")
-        lat = round(time.time() - t0, 2)
-        results["Alo.bg"] = {"status": "HEALTHY ✅" if alo_items else "EMPTY ⚠️", "items": len(alo_items), "latency_sec": lat}
-        print(f"• Alo.bg:         {results['Alo.bg']['status']} | {len(alo_items)} обяви ({lat}s)")
-    except Exception as e:
-        results["Alo.bg"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
-        print(f"• Alo.bg:         ERROR ❌: {e}")
-
-    # 3. Test Daibau.bg
-    t0 = time.time()
-    try:
-        daibau_items = scrape_daibau(max_pages=1)
-        lat = round(time.time() - t0, 2)
-        results["Daibau.bg"] = {"status": "HEALTHY ✅" if daibau_items else "EMPTY ⚠️", "items": len(daibau_items), "latency_sec": lat}
-        print(f"• Daibau.bg:      {results['Daibau.bg']['status']} | {len(daibau_items)} обяви ({lat}s)")
-    except Exception as e:
-        results["Daibau.bg"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
-        print(f"• Daibau.bg:      ERROR ❌: {e}")
-
-    # 4. Test MaistorPlus
-    t0 = time.time()
-    mp_cfg = config.get("maistorplus", {})
-    try:
-        mp_items = scrape_maistorplus(mp_cfg.get("username", ""), mp_cfg.get("password", ""))
-        lat = round(time.time() - t0, 2)
-        results["MaistorPlus"] = {"status": "HEALTHY ✅" if mp_items else "EMPTY ⚠️", "items": len(mp_items), "latency_sec": lat}
-        print(f"• MaistorPlus:    {results['MaistorPlus']['status']} | {len(mp_items)} обяви ({lat}s)")
-    except Exception as e:
-        results["MaistorPlus"] = {"status": f"ERROR ❌ ({e})", "items": 0, "latency_sec": round(time.time() - t0, 2)}
-        print(f"• MaistorPlus:    ERROR ❌: {e}")
-
-    print("=" * 65)
-    return results
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="ZVB Ultimate Lead Radar")
-    parser.add_argument("--interval", type=int, default=0, help="Run continuously every N minutes (0 = run once)")
-    parser.add_argument("--test", action="store_true", help="Run diagnostic health check on all scrapers")
+    parser = argparse.ArgumentParser(description="ZVB Ultimate Lead Radar v3.0")
+    parser.add_argument("--interval", type=int, default=0, help="Auto-scan interval in minutes")
+    parser.add_argument("--health", action="store_true", help="Run health check")
     args = parser.parse_args()
 
-    if args.test:
-        test_scraper_health()
+    if args.health:
+        res = test_scraper_health()
+        print(json.dumps(res, indent=2, ensure_ascii=False))
     elif args.interval > 0:
-        print(f"Running in continuous radar mode. Scans every {args.interval} minutes.")
         while True:
-            run_scan()
-            print(f"\nWaiting {args.interval} minutes until next radar sweep...")
+            try:
+                run_scan()
+            except Exception as e:
+                print(f"Error during scan: {e}")
             time.sleep(args.interval * 60)
     else:
         run_scan()

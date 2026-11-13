@@ -1,6 +1,14 @@
+# -*- coding: utf-8 -*-
 """
-ZVB Daily Digest & Scheduler (Twice a Day Publisher)
-Generates and sends strictly filtered electrical, CCTV, and smart home leads in Sofia.
+ZVB Executive Daily Digest & Zero-Duplicate Publisher v3.0
+Representative: Амир (Amir) | Company: „Загрос Витоша България“ ЕООД (ZVB)
+
+Strictly enforces:
+1. 100% Phone-Verified Projects Only (No Phone = Never Sent)
+2. Zero Duplicate Guarantee (Tracks digest_sent in alert_history.json so no project is ever repeated)
+3. Dual-Tier Breakdown:
+   - Small & Medium Projects (Renovations, Apartments, Switchboards, CCTV, Fast Repairs)
+   - Large & Turnkey Construction Projects (General Contractors, KSB Builders, Residential Complexes & Villas)
 """
 
 import os
@@ -8,140 +16,41 @@ import sys
 import json
 import time
 import datetime
-import urllib.parse
 import requests
+
 import lead_scraper
+import lead_filter_engine
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
-LEADS_JSON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "leads.json")
+DATA_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
+LEADS_JSON_PATH = os.path.join(DATA_DIR, "leads.json")
 
-# Strict Filters for Real Client Demand in Sofia
-EXCLUDE_WORDS = [
-    # 1. Competitor electrician service ads (خدمات‌دهندگان و همکاران)
-    'електроуслуги', 'електро услуги', 'ел. услуги', 'ел услуги', 'електромонтажни',
-    'предлагам', 'предлагаме', 'извършвам', 'извършваме', 'услуги по',
-    'електротехник предлага', 'ел техник предлага', 'майстор предлага', 'бригада предлага', 'фирма предлага',
-    'професионален електротехник', 'квалифициран електротехник', 'опитен електротехник', 'майстор електротехник',
-    'направа и ремонт на ел', 'ремонт и направа на ел', 'изграждане и ремонт на ел',
-    'денонощен', 'денонощни', 'авариен', 'аварийни', '24/7',
-    'цени по договаряне', 'ниски цени', 'конкурентни цени', 'гарантирано качество',
-    'всички видове ел', 'всякакви ел', 'всички видове електро',
-    
-    # 2. Hardware / E-commerce sales (فروش کالا، دوربین و وسایل دست‌دوم)
-    'продавам', 'продава се', 'продава', 'чисто нов', 'чисто нови', 'не монтирани',
-    'неразпечатан', 'комплект за видеонаблюдение', 'в кутия', 'доставка с',
-    'еконт', 'спиди', 'на склад', 'гаранция 24', 'гаранция 12', 'конектор', 'тестер', 'вакуум', 'стойка за камера',
-    
-    # 3. Job seekers / Salaried employment (کارجویان و آگهی‌های استخدام شرکتی)
-    'търся работа', 'търси работа', 'търсим работа', 'търси служител',
-    'търси електротехник, промишлен', 'търси електротехник, строителен',
-    'набира персонал', 'набира работници', 'желана длъжност',
-    'автобиография', 'cv', 'за германия', 'чужбина', 'холандия', 'англия',
-    'курс', 'курсове', 'обучение', 'училище', 'книга', 'учебник', 'дистанционно',
-    
-    # 4. General non-electrical exclusions
-    'покрив', 'покриви', 'керемиди', 'улуци', 'хидроизолация',
-    'до ключ', 'от основи до ключ', 'парапет', 'решетка', 'ограда', 'заваряване',
-    'парцел', 'парцели', 'под наем', 'дава под наем', 'наем',
-    'плочки', 'лепене на плочки', 'отпушване', 'дограма', 'кърти чисти',
-    'хладилник', 'фризер', 'готварска печка', 'пералня',
-    'бушонно табло опел', 'части', 'ремарке', 'трабант', 'кемпер', 'мултиметър', 'микрометър',
-    'honda', 'opel', 'bmw', 'mercedes', 'toyota', 'audi', 'лампа за кола', 'протектор', 'фолио', 'ит експерт',
-    'хладилни камери', 'задно виждане', 'авто камери', 'екшън камери', 'gopro',
-    'имот', 'имоти', 'двор', 'кв.м', 'рзп', 'табела',
-    
-    # 5. Stale date indicators in classified titles
-    '2024', '2025', ' януари', ' февруари', ' март', ' април', ' май', ' юни', ' юли'
-]
-
-SOFIA_AREAS = [
-    'софия', 'sofia', 'младост', 'люлин', 'лозенец', 'витоша', 'бояна', 'драгалевци',
-    'надежда', 'център', 'манастирски ливади', 'овча купеل', 'гео милев', 'изток',
-    'дианабад', 'белите брези', 'стрелбище', 'красно село', 'хиподрума', 'симеоново',
-    'банишора', 'хаджи димитър', 'дружба', 'редута', 'илинден', 'красна поляна', 'павлово',
-    'банкя', 'обеля', 'света троица', 'разсадника', 'борово', 'гоце делчев', 'слатина', 'славия', 'връбница'
-]
-
-OTHER_CITIES = [
-    'бургас', 'варна', 'пловдив', 'русе', 'стара загора', 'плевен', 'търговище', 
-    'видин', 'разград', 'свищов', 'пазарджик', 'кърджали', 'велико търново',
-    'перник', 'благоевград', 'шумен', 'сливен', 'хасково', 'враца', 'габрово',
-    'пещера', 'дупница', 'сандански', 'асеновград', 'казанлък', 'червен бряг',
-    'несебър', 'слънчев бряг', 'кюстендил', 'елин пелин', 'сливница', 'ботевград', 'мездра', 'разлог', 'банско'
-]
-
-ELECTRICAL_MUST_HAVE = [
-    'ел.', 'ел ', 'електро', 'инсталация', 'инсталации', 'ел табло', 'ел. табло', 'табла', 'окабеляване', 'кабели',
-    'контакт', 'контакти', 'ел ключ', 'ел. ключ', 'ключове и контакти', 'осветление', 'led', 'лунички',
-    'видеонаблюдение', 'охранителни камери', 'камери за видеонаблюдение', 'cctv', 'умен дом', 'smart home',
-    'домофон', 'соларни панели', 'фотоволтаиц', 'слаботоков', 'вентилатор', 'бойлер'
-]
-
-# Blacklisted phone numbers (e.g. platform customer support lines, NOT clients!)
-BLACKLISTED_PHONES = ['0879590810', '359879590810', '+359879590810']
-
-def is_strictly_electrical_sofia(l):
-    title = l.get('title', '').lower()
-    loc = l.get('location', '').lower()
-    source = l.get('source', '')
-    full = f"{title} {loc}".lower()
-    
-    # 0. Clean support phone numbers
-    phone = l.get('phone', '')
-    if any(bp in phone for bp in BLACKLISTED_PHONES):
-        l['phone'] = ''
-        phone = ''
-        
-    # 1. Reject competitor ads, sellers, job seekers
-    if any(ex in title or ex in full for ex in EXCLUDE_WORDS):
-        return False
-        
-    # 2. Exclude other cities
-    if any(city in full for city in OTHER_CITIES) and 'софия' not in title:
-        return False
-
-    # 3. Check Sofia location strictly
-    if not any(area in full for area in SOFIA_AREAS):
-        return False
-        
-    # 0. Reject Classifieds entirely (Alo.bg & Bazar.bg) to eliminate stale/repetitive technician ads
-    if source in ['Alo.bg', 'Bazar.bg']:
-        return False
-
-    # 4. Source specific intent verification:
-    if source in ['MaistorPlus', 'Daibau']:
-        # In MaistorPlus and Daibau, all jobs are real clients! Must have electrical relevance
-        mp_electrical = ['контакт', 'вентилатор', 'ел', 'електро', 'осветление', 'табло', 'табла', 'бойлер', 'кабеل', 'ключ', 'камер', 'умен дом', 'ток', 'захранване']
-        return any(w in title for w in mp_electrical)
-
-    return False
-
-def is_fresh_lead(l, max_days=2):
-    """Checks if lead was found within the last N days (defaults to 2 days = 48 hours)"""
-    found_at = l.get('found_at', '')
-    if not found_at:
-        return True
-    try:
-        lead_time = datetime.datetime.strptime(found_at, "%Y-%m-%d %H:%M")
-        now = datetime.datetime.now()
-        diff_days = (now - lead_time).total_seconds() / 86400
-        return diff_days <= max_days
-    except Exception:
-        return True
 
 def load_config():
-    if os.path.exists(CONFIG_PATH):
-        try:
-            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return {}
+    return lead_scraper.load_config()
 
-def send_telegram(text, bot_token, chat_id):
-    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+
+def is_strictly_electrical_sofia(lead):
+    """
+    Validates that a lead is in Sofia, has a valid Bulgarian phone number,
+    and is not closed/expired or irrelevant.
+    """
+    if not isinstance(lead, dict):
+        return False
+    has_p, _ = lead_filter_engine.has_valid_bg_phone(lead)
+    if not has_p:
+        return False
+    closed, _ = lead_filter_engine.is_project_closed_or_expired(lead)
+    if closed:
+        return False
+    in_sofia, _ = lead_filter_engine.is_valid_sofia_region(lead)
+    return in_sofia
+
+
+def send_telegram(text, token, chat_id):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {
         "chat_id": chat_id,
         "text": text,
@@ -149,213 +58,174 @@ def send_telegram(text, bot_token, chat_id):
         "disable_web_page_preview": True
     }
     try:
-        r = requests.post(api_url, json=payload, timeout=12)
+        r = requests.post(url, json=payload, timeout=15)
         return r.status_code == 200
     except Exception as e:
-        print(f"Telegram error: {e}")
+        print(f"Telegram send error: {e}")
         return False
 
-def build_daily_digest(period_name="Дневен бюлетин"):
-    if not os.path.exists(LEADS_JSON_PATH):
+
+def build_daily_digest(period_title="Електро и Строителен Бюлетин — София"):
+    """
+    Builds a non-repetitive, 100% phone-verified digest of new Small & Large Sofia projects.
+    Marks every included lead as digest_sent in alert_history.json so it is NEVER repeated!
+    """
+    alert_history = lead_filter_engine.load_alert_history()
+    existing_leads = lead_scraper.load_existing_leads()
+
+    # Discover fresh leads if we don't have un-digested leads ready
+    un_digested = []
+    for lid, l in existing_leads.items():
+        if not is_strictly_electrical_sofia(l):
+            continue
+        hist_entry = alert_history.get(lid, {})
+        if not hist_entry.get("digest_sent"):
+            un_digested.append(l)
+
+    if len(un_digested) < 4:
+        # Pull fresh verified Sofia leads from Business.bg & KSB & classifieds
+        new_biz = lead_scraper.scrape_business_bg_sofia(existing_leads, alert_history, max_new=3)
+        new_ksb = lead_scraper.scrape_ksb_sofia_builders(existing_leads, alert_history, max_new=3)
+        new_zap = lead_scraper.scrape_zaplata_sofia_construction(existing_leads, alert_history, max_new=2)
+        for item in (new_biz + new_ksb + new_zap):
+            existing_leads[item["id"]] = item
+            un_digested.append(item)
+        lead_scraper.save_leads(existing_leads)
+
+    if not un_digested:
         return None
-    
-    with open(LEADS_JSON_PATH, "r", encoding="utf-8") as f:
-        leads = json.load(f)
-    
-    leads_list = list(leads.values())
-    
-    # Apply strict electrical Sofia filtering & freshness check (last 3 days)
-    valid_leads = [l for l in leads_list if is_strictly_electrical_sofia(l) and is_fresh_lead(l, max_days=4)]
-    
-    # Sort strictly by newest first
-    valid_leads.sort(key=lambda x: (1 if x.get('phone') else 0, x.get('found_at', '')), reverse=True)
 
-    now_str = datetime.datetime.now().strftime("%d.%m.%Y | %H:%M") + " ч."
-    header_icon = "🌅" if "сутрин" in period_name.lower() or "утрин" in period_name.lower() else "🌆"
+    # Separate into Small/Medium vs Large/Turnkey B2B
+    small_medium = []
+    large_turnkey = []
 
-    msg = f"{header_icon} <b>ZVB Електро Радар: {period_name}</b>\n"
-    msg += f"📅 <i>{now_str} (Само гр. София)</i>\n"
-    msg += f"━━━━━━━━━━━━━━━━━━━━\n\n"
+    for l in un_digested:
+        tier, _ = lead_filter_engine.calculate_project_value_tier(l)
+        if tier == "LARGE_TURNKEY_B2B" or l.get("category") == "contractor":
+            large_turnkey.append(l)
+        else:
+            small_medium.append(l)
 
-    if not valid_leads:
-        msg += "✅ <b>Няма нови необработени клиентски заявки в София за последните 48 часа.</b>\n"
-        msg += "Всички актуални обекти са прегледани. Радарът сканира денонощно на всеки 15 минути за нови запитвания!\n\n"
-        msg += "━━━━━━━━━━━━━━━━━━━━\n"
-        msg += "🌐 <b>ZVB Sofia</b> | <a href='https://zvb.bg'>zvb.bg</a>"
-        return msg
+    selected_small = small_medium[:4]
+    selected_large = large_turnkey[:5]
+    all_selected = selected_small + selected_large
 
-    # Group into Categories
-    urgent_leads = [l for l in valid_leads if l.get('source') in ['MaistorPlus', 'Daibau'] or any(w in l.get('title', '').lower() for w in ['търся', 'търси', 'търсим', 'спешно', 'вентилатор', 'монтаж', 'смяна', 'контакт', 'бойлер'])]
-    cctv_smart_leads = [l for l in valid_leads if l not in urgent_leads and any(w in l.get('title', '').lower() for w in ['камери', 'видеонаблюдение', 'умен дом', 'смарт', 'домофон'])]
-    contractor_leads = [l for l in valid_leads if l not in urgent_leads and l not in cctv_smart_leads]
+    if not all_selected:
+        return None
 
-    # 1. Urgent direct requests (Clients looking for electrician)
-    if urgent_leads:
-        msg += "⚡ <b>ДИРЕКТНИ ЗАПИТВАНИЯ ЗА ЕЛЕКТРОТЕХНИК:</b>\n"
-        for idx, l in enumerate(urgent_leads[:5], 1):
-            phone = l.get('phone')
-            local_phone, intl_phone = lead_scraper.normalize_bg_phone(phone)
-            phone_part = ""
-            action_links = []
-            if local_phone:
-                phone_part = f"\n   📞 Телефон: <b>{local_phone}</b>"
-                wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Електроуслуги, София) относно Вашия проект. https://zvb.bg")
-                action_links.append(f"<a href='tel:+{intl_phone}'>📞 Обади се</a>")
-                action_links.append(f"<a href='viber://chat?number=%2B{intl_phone}'>🟣 Viber</a>")
-                action_links.append(f"<a href='https://wa.me/{intl_phone}?text={wa_txt}'>💬 WhatsApp</a>")
-            
-            if l.get('source') == 'MaistorPlus':
-                link_label = "📋 Кандидатствай в MaistorPlus"
-            elif l.get('source') == 'Daibau':
-                link_label = "📋 Кандидатствай в Daibau.bg"
-            else:
-                link_label = "🔗 Виж обявата"
-            action_links.append(f"<a href='{l.get('url')}'>{link_label}</a>")
-            actions_str = " | ".join(action_links)
-            msg += f"{idx}. <b>{l.get('title')[:65]}</b>{phone_part}\n   👉 {actions_str}\n\n"
+    now_str = datetime.datetime.now().strftime("%d.%m.%Y | %H:%M")
+    msg = (
+        f"⚡🏗 <b>{period_title} (ZVB София)</b>\n"
+        f"📅 <i>Дата: {now_str} | Представител: <b>Амир (Amir)</b></i>\n"
+        f"✅ <i>100% проверени нови обекти с директен телефон (Без дубликати)</i>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n\n"
+    )
 
-    # 2. CCTV & Smart home
-    if cctv_smart_leads:
-        msg += "📹 <b>ВИДЕОНАБЛЮДЕНИЕ И УМЕН ДОМ:</b>\n"
-        for idx, l in enumerate(cctv_smart_leads[:3], 1):
-            phone = l.get('phone')
-            local_phone, intl_phone = lead_scraper.normalize_bg_phone(phone)
-            phone_part = ""
-            action_links = []
-            if local_phone:
-                phone_part = f"\n   📞 Телефон: <b>{local_phone}</b>"
-                wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Видеонаблюдение & Умен дом, София). https://zvb.bg")
-                action_links.append(f"<a href='tel:+{intl_phone}'>📞 Обади се</a>")
-                action_links.append(f"<a href='viber://chat?number=%2B{intl_phone}'>🟣 Viber</a>")
-                action_links.append(f"<a href='https://wa.me/{intl_phone}?text={wa_txt}'>💬 WhatsApp</a>")
-            action_links.append(f"<a href='{l.get('url')}'>🔗 Виж проекта</a>")
-            actions_str = " | ".join(action_links)
-            msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
+    if selected_small:
+        msg += "🔧⚡ <b>МАЛКИ И СРЕДНИ ПРОЕКТИ / РЕМОНТИ (پروژه‌های کوچک، بازسازی و نصب):</b>\n\n"
+        for idx, l in enumerate(selected_small, 1):
+            lp, ip = lead_scraper.normalize_bg_phone(l.get("phone", ""))
+            disp_p = l.get("phone") or lp
+            budget = lead_filter_engine.estimate_project_budget(l)
+            call_links = f"<a href='tel:+{ip}'>📞 Обади се</a> | <a href='viber://chat?number=%2B{ip}'>🟣 Viber</a> | <a href='https://wa.me/{ip}'>💬 WhatsApp</a>" if ip else ""
+            msg += (
+                f"{idx}. <b>{l.get('title')[:70]}</b>\n"
+                f"   📍 {l.get('location')} | 💰 Обем: <b>{budget}</b>\n"
+                f"   📞 Телефон: <code>{disp_p}</code>\n"
+                f"   👉 {call_links} | <a href='{l.get('url')}'>🔗 Източник</a>\n\n"
+            )
 
-    # 3. Electrical installations & Building Subcontracting
-    if contractor_leads:
-        msg += "🏗️ <b>ЕЛ. ИНСТАЛАЦИИ И ОБЕКТИ В СОФИЯ:</b>\n"
-        for idx, l in enumerate(contractor_leads[:3], 1):
-            phone = l.get('phone')
-            local_phone, intl_phone = lead_scraper.normalize_bg_phone(phone)
-            phone_part = ""
-            action_links = []
-            if local_phone:
-                phone_part = f"\n   📞 Телефон: <b>{local_phone}</b>"
-                wa_txt = urllib.parse.quote("Здравейте! Пиша Ви от ZVB (Ел. инсталации подизпълнител, София). https://zvb.bg")
-                action_links.append(f"<a href='tel:+{intl_phone}'>📞 Обади се</a>")
-                action_links.append(f"<a href='viber://chat?number=%2B{intl_phone}'>🟣 Viber</a>")
-                action_links.append(f"<a href='https://wa.me/{intl_phone}?text={wa_txt}'>💬 WhatsApp</a>")
-            action_links.append(f"<a href='{l.get('url')}'>🔗 Виж офертата</a>")
-            actions_str = " | ".join(action_links)
-            msg += f"• <b>{l.get('title')[:60]}</b>{phone_part}\n  👉 {actions_str}\n\n"
+    if selected_large:
+        msg += "🏗🏢 <b>ГОЛЕМИ ПРОЕКТИ И СТРОИТЕЛИ ДО КЛЮЧ (پروژه‌های بزرگ و سازندگان صفر تا صد):</b>\n\n"
+        for idx, l in enumerate(selected_large, 1):
+            lp, ip = lead_scraper.normalize_bg_phone(l.get("phone", ""))
+            disp_p = l.get("phone") or lp
+            mgr = f" | 👤 <b>{l.get('manager')}</b>" if l.get("manager") else ""
+            call_links = f"<a href='tel:+{ip}'>📞 Обади се</a> | <a href='viber://chat?number=%2B{ip}'>🟣 Viber</a> | <a href='https://wa.me/{ip}'>💬 WhatsApp</a>" if ip else ""
+            msg += (
+                f"{idx}. <b>{l.get('title')[:75]}</b>\n"
+                f"   📍 {l.get('location')}{mgr}\n"
+                f"   📞 Директен телефон: <code>{disp_p}</code>\n"
+                f"   👉 {call_links} | <a href='{l.get('url')}'>🔗 Досие</a>\n\n"
+            )
 
-    # 4. Due Reminders for Today (Custom Reminders & CRM Leads)
-    try:
-        import db_manager
-        custom_reminders = db_manager.get_today_reminders()
-        due_reminders = db_manager.get_due_reminders()
-        if custom_reminders or due_reminders:
-            msg += "⏰ <b>ДНЕВНИ ЗАДАЧИ И НАПОМНЯНИЯ ЗА ОБАЖДАНЕ:</b>\n"
-            r_count = 1
-            for cr in custom_reminders[:5]:
-                r_phone = cr.get('phone') or ''
-                phone_act = ""
-                if r_phone:
-                    lp, ip = lead_scraper.normalize_bg_phone(r_phone)
-                    if lp:
-                        phone_act = f"\n   👉 <a href='tel:+{ip}'>📞 Обади се</a> | <a href='viber://chat?number=%2B{ip}'>🟣 Viber</a>"
-                    else:
-                        phone_act = f" (📞 {r_phone})"
-                msg += f"{r_count}. 🔔 <b>{cr.get('title')}</b>\n   Час: <i>{cr.get('remind_at')}</i>{phone_act}\n\n"
-                r_count += 1
-                
-            for rem in due_reminders[:4]:
-                r_phone = rem.get('phone') or 'В обявата'
-                phone_act = ""
-                lp, ip = lead_scraper.normalize_bg_phone(r_phone)
-                if lp:
-                    phone_act = f"\n   👉 <a href='tel:+{ip}'>📞 Обади се</a> | <a href='viber://chat?number=%2B{ip}'>🟣 Viber</a>"
-                msg += f"{r_count}. 📋 <b>{rem.get('title')[:55]}</b>\n   📞 Телефон: <code>{r_phone}</code> | Статус: <i>{rem.get('status')}</i>{phone_act}\n\n"
-                r_count += 1
-    except Exception as e:
-        print(f"CRM reminder digest error: {e}")
+    # Mark all selected leads as alerted AND digest_sent so they are never repeated!
+    for l in all_selected:
+        lead_filter_engine.record_alert_sent(l, alert_history)
+        if l["id"] in alert_history:
+            alert_history[l["id"]]["digest_sent"] = True
+    lead_filter_engine.save_alert_history(alert_history)
+    lead_filter_engine.sync_git_history()
 
-    msg += "━━━━━━━━━━━━━━━━━━━━\n"
-    msg += "💡 <i>Прецизно филтрирано за ZVB: Само електроуслуги, камери и умен дом в София.</i>\n"
-    msg += "🌐 <b>ZVB Sofia</b> | <a href='https://zvb.bg'>zvb.bg</a>"
-
+    # Add ready-to-copy pitch in Amir's name
+    msg += (
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        "💬 <b>Готов текст за контакт от името на Амир (Кликни за копиране):</b>\n"
+        "<code>Здравейте! Казвам се Амир от фирма „Загрос Витоша България“ ЕООД (гр. София). "
+        "Изпълняваме силнотокови и слаботокови ел. инсталации, монтаж на ел. табла, камери и соларно осветление за сгради и обекти в София. "
+        "Ще се радваме да съдействаме като надежден подизпълнител по Ваши текущи проекти. Поздрави, Амир.</code>"
+    )
     return msg
 
-def send_digest_now(period="Бюлетин за нови обекти"):
+
+def send_digest_now(period="Бюлетин за нови обекти с директен телефон"):
     cfg = load_config()
     telegram_cfg = cfg.get("telegram", {})
     token = telegram_cfg.get("bot_token")
     chat_id = telegram_cfg.get("chat_id")
-    
+
     if not token or not chat_id:
         print("❌ Telegram credentials not configured in config.json")
         return False
-    
-    print(f"Generating and sending {period}...")
+
     digest_text = build_daily_digest(period)
     if digest_text:
         ok = send_telegram(digest_text, token, chat_id)
         if ok:
-            print("✅ Digest successfully sent to Telegram group!")
+            print("✅ Phone-verified, zero-duplicate digest sent to Telegram!")
             return True
-        else:
-            print("❌ Failed to send digest.")
-            return False
+    else:
+        print("ℹ️ No new un-sent leads with phone numbers to broadcast right now (Zero-Duplicate protection active).")
     return False
 
+
 def run_schedule():
-    print("=" * 60)
-    print("      ZVB Daily Digest Scheduler (Strict Electrical & Sofia)")
-    print("=" * 60)
+    print("=" * 65)
+    print("   ZVB Daily Digest Scheduler v3.0 (Phone-Guaranteed & Zero-Dup)")
+    print("=" * 65)
 
-    # First run a fresh scan
-    import lead_scraper
     lead_scraper.run_scan()
-    send_digest_now("Първоначален електро преглед")
-
     sent_today = set()
 
     while True:
         now = datetime.datetime.now()
         current_date_str = now.strftime("%Y-%m-%d")
-        current_time_str = now.strftime("%H:%M")
 
-        # Morning Digest at 09:00
         morning_key = f"{current_date_str}_morning"
         if now.hour == 9 and morning_key not in sent_today:
-            print(f"[{current_time_str}] Стартиране на сутрешен радар...")
             lead_scraper.run_scan()
-            send_digest_now("Сутрешен електро бюлетин")
+            send_digest_now("Сутрешен бюлетин — Нови обекти в София")
             sent_today.add(morning_key)
 
-        # Evening Digest at 18:00
         evening_key = f"{current_date_str}_evening"
         if now.hour == 18 and evening_key not in sent_today:
-            print(f"[{current_time_str}] Стартиране на вечерен радар...")
             lead_scraper.run_scan()
-            send_digest_now("Вечерен електро бюлетин")
+            send_digest_now("Вечерен бюлетин — Нови обекти в София")
             sent_today.add(evening_key)
 
-        # Every 15 minutes, run background scan
-        if now.minute % 15 == 0 and now.second < 30:
-            print(f"[{current_time_str}] Автоматичен радар (на всеки 15 минути)...")
+        if now.minute % 20 == 0 and now.second < 30:
             lead_scraper.run_scan()
 
         time.sleep(30)
 
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--now", action="store_true", help="Send digest immediately to test")
+    parser.add_argument("--now", action="store_true", help="Run scan and send digest if new phone-verified leads exist")
     args = parser.parse_args()
 
     if args.now:
-        send_digest_now("Електро бюлетин (Прецизно филтриран)")
+        lead_scraper.run_scan()
     else:
         run_schedule()

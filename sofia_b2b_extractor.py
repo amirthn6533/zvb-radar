@@ -129,45 +129,77 @@ TOP_INTERIOR_STUDIOS = [
     }
 ]
 
-def fetch_ksb_builders(max_count=60):
-    """Fetches officially registered construction firms in Sofia from KSB"""
+def fetch_ksb_builders(max_count=10):
+    """Fetches officially registered construction firms in Sofia from KSB with direct Manager & Phone"""
     builders = []
     print("📡 Извличане на регистрирани строителни фирми в София от Камарата на строителите (KSB)...")
     try:
+        import random
+        import lead_filter_engine
+        group_code = random.choice(['11', '13', '14'])
         post_data = {
             'Pod': '22',
             'Podphp': '22',
-            'GroupType': '11',
-            'GroupTypephp': '11',
+            'GroupType': group_code,
+            'GroupTypephp': group_code,
             'filter': 'Покажи строителите'
         }
         r = requests.post('https://register.ksb.bg/listFirms.php', data=post_data, headers=HEADERS, timeout=15)
         soup = BeautifulSoup(r.text, 'html.parser')
         rows = soup.select('table tr')
-        
-        count = 0
+        candidate_rows = []
         for tr in rows:
             tds = [td.get_text(' ', strip=True) for td in tr.find_all('td')]
             link = tr.find('a', href=True)
             if len(tds) >= 3 and link and 'pub_view.php' in link['href']:
-                eik = tds[1]
-                company_name = tds[2]
-                profile_url = f"https://register.ksb.bg/{link['href']}"
-                
+                candidate_rows.append((tds[1], tds[2], f"https://register.ksb.bg/{link['href']}"))
+
+        random.shuffle(candidate_rows)
+        count = 0
+        for eik, company_name, profile_url in candidate_rows:
+            if count >= max_count:
+                break
+            try:
+                rp = requests.get(profile_url, headers=HEADERS, timeout=8)
+                if rp.status_code != 200:
+                    continue
+                psoup = BeautifulSoup(rp.text, 'html.parser')
+                ptext = psoup.get_text(' | ', strip=True)
+                m_phone = re.search(
+                    r'Телефони\s*\|\s*([0-9\s,;/+\-]+?)(?:\|\s*(?:Факс|E-mail|Уеб|Адрес)|$)',
+                    ptext
+                )
+                raw_phone = m_phone.group(1).strip() if m_phone else ""
+                lp, ip = lead_filter_engine.normalize_bg_phone(raw_phone)
+                if not lp:
+                    continue
+                m_mgr = re.search(
+                    r'Управител\s*\(и\)\s*\|\s*([^|]+?)(?:\|\s*(?:Технически|Контролен|Общ брой|Раздел)|$)',
+                    ptext
+                )
+                manager = m_mgr.group(1).strip().rstrip(',') if m_mgr else "Управител"
+                m_addr = re.search(
+                    r'Адрес по регистрация\s*\|\s*([^|]+?)(?:\|\s*Адрес за кореспонденция|$)',
+                    ptext
+                )
+                address = m_addr.group(1).strip() if m_addr else "гр. София"
+                m_mail = re.search(r'E-mail\s*\|\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', ptext)
+                email = m_mail.group(1).strip() if m_mail else ""
                 builders.append({
                     "name": company_name,
                     "type": "Строителна фирма (Регистриран строител - КСБ)",
-                    "location": "София",
-                    "manager": "Управител (в регистъра)",
-                    "phone": "Виж профила в КСБ",
-                    "email": "Официален контакт в КСБ",
+                    "location": address[:80],
+                    "manager": manager[:70],
+                    "phone": lp,
+                    "intl_phone": ip,
+                    "email": email,
                     "website": profile_url,
-                    "specialty": f"ЕИК: {eik} | Строежи от високо строителство и инфраструктура"
+                    "specialty": f"ЕИК: {eik} | Активен строител (ЦПРС София)"
                 })
                 count += 1
-                if count >= max_count:
-                    break
-        print(f"   ↳ Извлечени {len(builders)} водещи строителни компании от София.")
+            except Exception:
+                continue
+        print(f"   ↳ Извлечени {len(builders)} водещи строителни компании от София с директен телефон.")
     except Exception as e:
         print(f"Грешка при извличане от КСБ: {e}")
     return builders

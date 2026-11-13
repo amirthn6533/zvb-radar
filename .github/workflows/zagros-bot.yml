@@ -48,6 +48,8 @@ jobs:
       - name: "🔐 Create config.json from Secret"
         run: |
           echo "$CONFIG_JSON" > config.json
+          git config user.name "ZVB Radar Bot"
+          git config user.email "bot@zvb.bg"
         env:
           CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
 
