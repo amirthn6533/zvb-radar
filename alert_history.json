@@ -8,5 +8,72 @@
     "source": "Alo.bg",
     "location": "гр. София, Лозенец",
     "alerted_at": "2026-11-13 18:21:23"
+  },
+  "bazar_50092030": {
+    "id": "bazar_50092030",
+    "title": "Маг-Ясновидка  БЪДИ С ЛЮБИМ ЧОВЕК СЛЕД 3-ДНИ  Резултат 1000% ! Маг ЕЛЕНА",
+    "url": "https://bazar.bg/obiava-50092030/mag-iasnovidka-badi-s-lyubim-chovek-sled-3-dni-rezultat-1000-mag-elena",
+    "url_hash": "171381e8e34813c96f642e00c5d39186",
+    "phone": "0894822169",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:07:12"
+  },
+  "bizbg_5a389a7dbd": {
+    "id": "bizbg_5a389a7dbd",
+    "title": "Стандарт Строй 2003 ЕООД — Стандарт Строй 2003 ЕООД притежава богат опит в строителната инду...",
+    "url": "https://www.business.bg/f-173437/standart-stroj-2003-eood.html",
+    "url_hash": "59f85379f82ba5bba8dec5a58eff053c",
+    "phone": "0894515042",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:07:14"
+  },
+  "bizbg_3a0a43d8e0": {
+    "id": "bizbg_3a0a43d8e0",
+    "title": "Вердес Билд — Вердес Билд  е иновативна  строителна  компания. Основната дейнос...",
+    "url": "https://www.business.bg/f-56664/verdes-bild.html",
+    "url_hash": "cbb34fa0106050dd69a3cb7f3e7e7fe6",
+    "phone": "029569520",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:07:15"
+  },
+  "bizbg_c8cfbcd401": {
+    "id": "bizbg_c8cfbcd401",
+    "title": "Диамант Експрес 2015 — Строителна фирма Диамант Експрес 2015, ще ви помогне в изграждане...",
+    "url": "https://www.business.bg/f-34735/diamant-ekspres-2015.html",
+    "url_hash": "a40fee4286fc7de3e83f3e541c51a1c3",
+    "phone": "0887423585",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:07:17"
+  },
+  "ksb_17744": {
+    "id": "ksb_17744",
+    "title": "[Голям Строител София] УФФ ЕООД — Жилищно и обществено строителство до ключ в гр. София (Група I ЦП",
+    "url": "https://register.ksb.bg/pub_view.php",
+    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "phone": "0887523185",
+    "source": "KSB",
+    "location": "София, ж.к. Красна поляна II част, 42, вх А, ет 3, ап 6",
+    "alerted_at": "2026-11-13 21:07:18"
+  },
+  "zap_704403": {
+    "id": "zap_704403",
+    "title": "[ЙОВ ЕООД] Активен обект: Монтажник на Отоплителни и Климатични системи",
+    "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/704403/montazhnik-na-otoplitelni-i-klimatichni-sistemi/",
+    "url_hash": "8d2d223d34b75f1081f6cc2cf6a13fc0",
+    "phone": "0899124336",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:07:19"
+  },
+  "zap_704014": {
+    "id": "zap_704014",
+    "title": "[РИ-ЕЛ ООД] Активен обект: Електромонтажник",
+    "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/704014/elektromontazhnik/",
+    "phone": "0886 699 710",
+    "alerted_at": "2026-11-13 21:07:12"
   }
 }
