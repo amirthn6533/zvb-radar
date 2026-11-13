@@ -942,9 +942,8 @@ def send_telegram_alert(lead, bot_token, chat_id):
     inline_kb = []
     if intl_phone:
         inline_kb.append([
-            {"text": f"📞 Обади се ({local_phone})", "url": f"tel:+{intl_phone}"},
-            {"text": "🟣 Viber", "url": f"viber://chat?number=%2B{intl_phone}"},
-            {"text": "💬 WhatsApp", "url": f"https://wa.me/{intl_phone}"}
+            {"text": "💬 WhatsApp (с готов текст)", "url": f"https://wa.me/{intl_phone}?text={urllib.parse.quote(amir_pitch)}"},
+            {"text": "🟣 Viber", "url": f"https://msng.link/o/?{intl_phone}=vi"}
         ])
     inline_kb.append([
         {"text": "🔗 Отвори източника", "url": lead.get("url", "https://zvb.bg")},
