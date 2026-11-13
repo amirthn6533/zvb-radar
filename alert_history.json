@@ -75,5 +75,55 @@
     "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/704014/elektromontazhnik/",
     "phone": "0886 699 710",
     "alerted_at": "2026-11-13 21:07:12"
+  },
+  "bizbg_03d13c2465": {
+    "id": "bizbg_03d13c2465",
+    "title": "Тени 1 ООД — Фирма Тени-1 ООД предлага и извършва следните дейности: Ниско стр...",
+    "url": "https://www.business.bg/f-54395/teni-1-ood.html",
+    "url_hash": "155689d19523de05f6ea0f66151e6271",
+    "phone": "0888304533",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:26:46"
+  },
+  "bizbg_3524eb82b7": {
+    "id": "bizbg_3524eb82b7",
+    "title": "РЕМОНТИ ЕМ — Ние от РЕМОНТИ ЕМ сме млад организиран колектив с дългогодишен оп...",
+    "url": "https://www.business.bg/f-162759/remonti-em.html",
+    "url_hash": "39f555bd49ca40197dc968aa9ca9ae3e",
+    "phone": "0896436244",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:26:47"
+  },
+  "bizbg_dc6e4303e8": {
+    "id": "bizbg_dc6e4303e8",
+    "title": "Каро Трейдинг — Фирма КАРО ТРЕЙДИНГ се занимава със следните дейности: - промишле...",
+    "url": "https://www.business.bg/f-11094/karo-trejding.html",
+    "url_hash": "af9686ecd7530292de12b04814b58123",
+    "phone": "029516178",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:26:48"
+  },
+  "zap_704913": {
+    "id": "zap_704913",
+    "title": "[ОКОЛ ЕАД] Активен обект: ОРГАНИЗАТОР СТРОИТЕЛНА МЕХАНИЗАЦИЯ И ЛОГИСТИКА",
+    "url": "https://www.zaplata.bg/arhitektura-stroitelstvo-i-gradoustroystvo/sofia/704913/organizator-stroitelna-mehanizatsiia-i-logistika/",
+    "url_hash": "2da344d6ef71375a92538b8d69b7704e",
+    "phone": "0878404047",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:26:50"
+  },
+  "zap_702252": {
+    "id": "zap_702252",
+    "title": "[ДОГУШ ЕООД] Активен обект: Работник, поддръжка",
+    "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/702252/rabotnik-poddrazhka/",
+    "url_hash": "1cf6faa89ba3567b9ada05514ee692f7",
+    "phone": "0884676203",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:26:51"
   }
 }
