@@ -125,5 +125,55 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-13 21:26:51"
+  },
+  "bizbg_5be1b0e560": {
+    "id": "bizbg_5be1b0e560",
+    "title": "Anri Estate — Агенция за недвижими имоти Anri Estate  е основана през 2001г. и ...",
+    "url": "https://www.business.bg/f-50004/anri-estate.html",
+    "url_hash": "c71ea9694c317f211dced12a21e2c7fd",
+    "phone": "028518838",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:46:23"
+  },
+  "bizbg_3a9f5994e6": {
+    "id": "bizbg_3a9f5994e6",
+    "title": "Ен Пи Ен Кънстракшън ЕООД — “Ен Пи Ен Кънстракшън” ЕООД е специализирана в областта на жилищн...",
+    "url": "https://www.business.bg/f-172551/en-pi-en-kynstrakshyn-eood.html",
+    "url_hash": "c7aee15db6cdbcbf2ee36ce8865465df",
+    "phone": "0882522244",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:46:24"
+  },
+  "bizbg_4bcea32afa": {
+    "id": "bizbg_4bcea32afa",
+    "title": "Викредо — Викредо е фирма, призната както от български така и от чуждестран...",
+    "url": "https://www.business.bg/f-6062/vikredo.html",
+    "url_hash": "7054196dcf0e2001fb199424d9105ae9",
+    "phone": "029522878",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:46:26"
+  },
+  "zap_704673": {
+    "id": "zap_704673",
+    "title": "[Строителна Компания София] Активен обект: Технически ръководител (техник) - монтаж на фасади и дограма",
+    "url": "https://www.zaplata.bg/arhitektura-stroitelstvo-i-gradoustroystvo/sofia/704673/tehnicheski-rakovoditel-tehnik-montazh-na-fasadi-i-dograma/",
+    "url_hash": "da0d3e82f5d3fdbdca0d5f878c54a807",
+    "phone": "0888889492",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:46:27"
+  },
+  "zap_704894": {
+    "id": "zap_704894",
+    "title": "[ДЖОБ ДЖЪНГЪЛ ЕООД] Активен обект: ТЪРГОВЕЦ В ШОУРУМ ЗА ПОДАРЪЧНИ ОПАКОВКИ гр.София, 16:58  часа на",
+    "url": "https://www.zaplata.bg/prodavachi-i-pomoshten-personal/sofia/704894/targovets-v-shourum-za-podarachni-opakovki/",
+    "url_hash": "4652eb4eb5bb4c1e600ef7cd9b074db5",
+    "phone": "0890449904",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 21:46:28"
   }
 }
