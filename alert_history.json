@@ -583,5 +583,14 @@
     "source": "MaistorPlus",
     "location": "София",
     "alerted_at": "2026-11-10 09:00:09"
+  },
+  "mp_97840": {
+    "id": "mp_97840",
+    "title": "[MaistorPlus] Монтаж на акустични панели, демонтаж и монтаж на климатик, издърпване на контакти Снимки (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/97840",
+    "url_hash": "72f5b9b53763b734d5fcb36f717cac20",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-11-13 12:45:11"
   }
 }
