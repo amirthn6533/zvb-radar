@@ -205,5 +205,55 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-13 22:05:58"
+  },
+  "bazar_52617762": {
+    "id": "bazar_52617762",
+    "title": "Електротехник, електро-услуги ел. инсталации аварии, ремонт",
+    "url": "https://bazar.bg/obiava-52617762/elektrotehnik-elektro-uslugi-el-instalatsii-awarii-remont",
+    "url_hash": "49549086229cfc0195b18e006ec0f489",
+    "phone": "0879423059",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:13:29"
+  },
+  "bazar_41850456": {
+    "id": "bazar_41850456",
+    "title": "Ремонт на мебели в София Конструкт ❗ Дърводелец София",
+    "url": "https://bazar.bg/obiava-41850456/remont-na-mebeli-w-sofiia-konstrukt-darwodelets-sofiia",
+    "url_hash": "d8c92962f3baf2dd267ce12a75cdeb4a",
+    "phone": "0883398199",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:13:30"
+  },
+  "bizbg_a3e9f7415b": {
+    "id": "bizbg_a3e9f7415b",
+    "title": "Концепта ООД — Ние сме студио за интериорен дизайн. Индивидуални проекти на жили...",
+    "url": "https://www.business.bg/f-13639/koncepta-ood.html",
+    "url_hash": "02722adad4583dddba73e79835e57487",
+    "phone": "0897809305",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:13:31"
+  },
+  "bizbg_847d982526": {
+    "id": "bizbg_847d982526",
+    "title": "RemontPros - Ремонт на покриви в цяла България — RemontPros предлага ремонт на покриви, полагане на хидроизолация,...",
+    "url": "https://www.business.bg/f-176753/remontpros-remont-na-pokrivi-v-ciala-bylgaria.html",
+    "url_hash": "e7f618305850ea7f1beaf30f55a25cf0",
+    "phone": "0894287800",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:13:32"
+  },
+  "bizbg_f654f8e2fe": {
+    "id": "bizbg_f654f8e2fe",
+    "title": "Беър Билдърс ООД — Беър Билдърс ООД е специализирана строително-ремонтна компания с ...",
+    "url": "https://www.business.bg/f-176702/beyr-bildyrs-ood.html",
+    "url_hash": "46b85a88ade94d9f18697353fdc66e28",
+    "phone": "0883461344",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:13:34"
   }
 }
