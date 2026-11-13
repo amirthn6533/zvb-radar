@@ -175,5 +175,35 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-13 21:46:28"
+  },
+  "bizbg_82ae2a8d3c": {
+    "id": "bizbg_82ae2a8d3c",
+    "title": "Кордеел България ЕАД — Фирма \"Кордеел България\" е активна на българския пазар като главе...",
+    "url": "https://www.business.bg/f-61623/kordeel-bylgaria-ead.html",
+    "url_hash": "ffd0b3a771b31d0dd5bdf63ebb38e3c0",
+    "phone": "024896757",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:05:55"
+  },
+  "bizbg_21572a2f4c": {
+    "id": "bizbg_21572a2f4c",
+    "title": "Декосистем ЕООД — Системи за сухо строителство. Ремонт, преустройство и реконструкц...",
+    "url": "https://www.business.bg/f-13474/dekosistem-eood.html",
+    "url_hash": "f143574e4ac936ad626f52a31e39f01d",
+    "phone": "024840394",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:05:57"
+  },
+  "bizbg_8d499c2bd7": {
+    "id": "bizbg_8d499c2bd7",
+    "title": "ФИЛТО - С ООД — Може да се каже, че сме едни от първите, които през 1992г. започн...",
+    "url": "https://www.business.bg/f-316/filto-s-ood.html",
+    "url_hash": "4359f518b2d2e62e7e51544c879249e9",
+    "phone": "028586019",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-13 22:05:58"
   }
 }
