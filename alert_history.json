@@ -255,5 +255,65 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-13 22:13:34"
+  },
+  "bazar_55539729": {
+    "id": "bazar_55539729",
+    "title": "Продава КЪЩА, гр. София, гр. Банкя",
+    "url": "https://bazar.bg/obiava-55539729/prodava-kashta-gr-sofiia-gr-bankia",
+    "url_hash": "ec31e2453fa941453b89e6fc8cf2de53",
+    "phone": "0898735792",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 02:33:46"
+  },
+  "bazar_55977729": {
+    "id": "bazar_55977729",
+    "title": "Строителство! Груб строеж, покриви, външна топлоизолация.",
+    "url": "https://bazar.bg/obiava-55977729/stroitelstvo-grub-stroezh-pokrivi-vanshna-toploizolatsiia",
+    "url_hash": "37277a00726721d9b835dbbb46c4e8b0",
+    "phone": "0887907959",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 02:33:47"
+  },
+  "bazar_53621975": {
+    "id": "bazar_53621975",
+    "title": "Грубо строителство и бетонни конструкции в София | B1group – 10+ години опит",
+    "url": "https://bazar.bg/obiava-53621975/grubo-stroitelstwo-i-betonni-konstruktsii-w-sofiia-b1group-10-godini-opit",
+    "url_hash": "f53520a734777e8e609c2f196b4e076b",
+    "phone": "0896188288",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 02:33:49"
+  },
+  "bizbg_851fbad9b5": {
+    "id": "bizbg_851fbad9b5",
+    "title": "Бенто — Фирма \"БЕНТО\" ЕООД е основана през май 2004 г. със седалище в гр....",
+    "url": "https://www.business.bg/f-3278/bento.html",
+    "url_hash": "37d4dcf35bd0e6b1c9efb5485605d3f8",
+    "phone": "0887102555",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 02:33:50"
+  },
+  "bizbg_cb3b5808e9": {
+    "id": "bizbg_cb3b5808e9",
+    "title": "Строителна Фирма Бобър — Строителна фирма БОБЪР е създадена през 1992г. от инж. Цеко Манас...",
+    "url": "https://www.business.bg/f-167626/stroitelna-firma-bobyr.html",
+    "url_hash": "c131be26d5effdc3c14430cc68739c09",
+    "phone": "0898946387",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 02:33:51"
+  },
+  "bizbg_139333c3f5": {
+    "id": "bizbg_139333c3f5",
+    "title": "Софстройремонт — В началото, Софстройремонт се състои от няколко човека, като пост...",
+    "url": "https://www.business.bg/f-171409/sofstrojremont.html",
+    "url_hash": "753d24dd26eff49a5a7510a783393d93",
+    "phone": "0878214781",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 02:33:53"
   }
 }
