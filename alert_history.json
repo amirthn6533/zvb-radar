@@ -17,7 +17,8 @@
     "phone": "0894822169",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:07:12"
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   },
   "bizbg_5a389a7dbd": {
     "id": "bizbg_5a389a7dbd",
@@ -214,7 +215,8 @@
     "phone": "0879423059",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 22:13:29"
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   },
   "bazar_41850456": {
     "id": "bazar_41850456",
@@ -224,7 +226,8 @@
     "phone": "0883398199",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 22:13:30"
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   },
   "bizbg_a3e9f7415b": {
     "id": "bizbg_a3e9f7415b",
@@ -264,7 +267,8 @@
     "phone": "0898735792",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 02:33:46"
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   },
   "bazar_55977729": {
     "id": "bazar_55977729",
@@ -274,7 +278,8 @@
     "phone": "0887907959",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 02:33:47"
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   },
   "bazar_53621975": {
     "id": "bazar_53621975",
@@ -284,7 +289,8 @@
     "phone": "0896188288",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 02:33:49"
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   },
   "bizbg_851fbad9b5": {
     "id": "bizbg_851fbad9b5",
@@ -375,5 +381,38 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 04:37:40"
+  },
+  "bazar_56898269": {
+    "id": "bazar_56898269",
+    "title": "Техник - Грубо строителство",
+    "url": "https://bazar.bg/obiava-56898269/tehnik-grubo-stroitelstvo",
+    "url_hash": "3dd56139815ccb407e4723915dc87f58",
+    "phone": "0892921983",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
+  },
+  "bizbg_8bfba39d31": {
+    "id": "bizbg_8bfba39d31",
+    "title": "АЙ БИ БИ ЕС ЕООД — Термографско обследване и превантивен контрол на жилищни, промишл...",
+    "url": "https://www.business.bg/f-163690/aj-bi-bi-es-eood.html",
+    "url_hash": "4d1b3c97f35e8941a6a03ab87c5897f9",
+    "phone": "0888365366",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
+  },
+  "bizbg_ba7847f6d4": {
+    "id": "bizbg_ba7847f6d4",
+    "title": "Барбали ЕООД — Барбали ЕООД е с дългогодишен опит в областта на устойчивото стро...",
+    "url": "https://www.business.bg/f-177378/barbali-eood.html",
+    "url_hash": "a51445d2d5e3dd3a9ceadcac29b82162",
+    "phone": "0889245916",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 09:00:20",
+    "digest_sent": true
   }
 }
