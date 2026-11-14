@@ -444,5 +444,65 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 09:27:43"
+  },
+  "bazar_6292361": {
+    "id": "bazar_6292361",
+    "title": "Изкупувам / Купувам електронна скрап",
+    "url": "https://bazar.bg/obiava-6292361/izkupuwam-kupuwam-elektronna-skrap",
+    "url_hash": "576bf8c32ca0c2150e8fb73bb48112a0",
+    "phone": "0887726735",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 11:56:39"
+  },
+  "bazar_35565502": {
+    "id": "bazar_35565502",
+    "title": "Подмяна на апартаментно ел.табло",
+    "url": "https://bazar.bg/obiava-35565502/podmiana-na-apartamentno-el-tablo",
+    "url_hash": "2fed3a7d9ac0d6e3a361fcec2e2c12a3",
+    "phone": "0878674567",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 11:56:40"
+  },
+  "bazar_32081907": {
+    "id": "bazar_32081907",
+    "title": "Направа и ремонт на ел. инсталации. Монтаж на ел. табла",
+    "url": "https://bazar.bg/obiava-32081907/naprava-i-remont-na-el-instalatsii-montazh-na-el-tabla",
+    "url_hash": "a720b1545c3b3463d362234ef23f62d1",
+    "phone": "0885843221",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 11:56:41"
+  },
+  "bizbg_93e7c69a43": {
+    "id": "bizbg_93e7c69a43",
+    "title": "ГЕСКОМ ООД — ГЕСКОМ ООД е частна компания, специализирана в търговия на дребно...",
+    "url": "https://www.business.bg/f-30785/geskom-ood.html",
+    "url_hash": "47a533b4f940cc8badac0e88060b2d68",
+    "phone": "029486888",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 11:56:42"
+  },
+  "bizbg_808d476f18": {
+    "id": "bizbg_808d476f18",
+    "title": "ТОПЛОИЗОЛАЦИЯ — Извършваме саниране и топлоизолация на сгради от алпинисти и със ...",
+    "url": "https://www.business.bg/f-8380/toploizolacia.html",
+    "url_hash": "3141d455a4a8f642d2e02a2197c9125e",
+    "phone": "0888576227",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 11:56:43"
+  },
+  "bizbg_eb08e72ca6": {
+    "id": "bizbg_eb08e72ca6",
+    "title": "К2 Сервиз — Искате да си закупите климатик, но не знаете към кого да се обърн...",
+    "url": "https://www.business.bg/f-15921/k2-serviz-.html",
+    "url_hash": "49521556041b99682f529c96407000b5",
+    "phone": "029201330",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 11:56:45"
   }
 }
