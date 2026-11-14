@@ -631,5 +631,50 @@
     "phone": "0899 823 825",
     "found_at": "2026-11-14 04:33",
     "value_tier": "LARGE_TURNKEY_B2B"
+  },
+  "bizbg_ec6ae50d59": {
+    "id": "bizbg_ec6ae50d59",
+    "title": "HDG Air Ltd — HDG Air Ltd предлага доставка,монтиране и монтаж на ефективни вен...",
+    "description": "HDG Air Ltd предлага доставка,монтиране и монтаж на ефективни вентилационни системи. HDG Air Ltd ЕООД е основен вносител на AERECO - Франция от 2006 г. Ефективно решение за вентилация на жилищни и обществени сгради на достъпна цена. Решава проблемите с влагата и мухъла.",
+    "email": "aereco@klapite.com",
+    "url": "https://www.business.bg/f-165290/hdg-air-ltd.html",
+    "source": "Business.bg",
+    "keyword": "⚙️ Инженеринг и СМР София (پیمانکار مهندسی و تاسیسات)",
+    "category": "contractor",
+    "category_label": "⚙️ Инженеринг и СМР София (پیمانکار مهندسی و تاسیسات)",
+    "location": "гр. София",
+    "phone": "0889 571 951",
+    "found_at": "2026-11-14 09:24",
+    "value_tier": "LARGE_TURNKEY_B2B"
+  },
+  "bizbg_e66512208e": {
+    "id": "bizbg_e66512208e",
+    "title": "Термодизайнтотал ООД — Изключителен представител за България на FERROLI, HENCO - Белгия,...",
+    "description": "Изключителен представител за България на FERROLI, HENCO - Белгия, BIASI - Италия, CALEFFI - Италия\r\n* Проектиране и изграждане на вътрешни и външни газови системи * Инженеринг на отоплителни и климатични инсталации, термопомпи и др.",
+    "email": "office@thermodesigntotal.com",
+    "url": "https://www.business.bg/f-10475/termodizajntotal-ood.html",
+    "source": "Business.bg",
+    "keyword": "❄️ ОВК и Климатични системи София (نیازمند برق‌رسانی و تابلو)",
+    "category": "contractor",
+    "category_label": "❄️ ОВК и Климатични системи София (نیازمند برق‌رسانی و تابلو)",
+    "location": "гр. София",
+    "phone": "02 962 12 56",
+    "found_at": "2026-11-14 09:24",
+    "value_tier": "LARGE_TURNKEY_B2B"
+  },
+  "bizbg_09923a6ed8": {
+    "id": "bizbg_09923a6ed8",
+    "title": "Фреш Клима София — Онлайн и физически магазин за климатици Фреш клима София. Фирмата...",
+    "description": "Онлайн и физически магазин за климатици Фреш клима София. Фирмата предлага продажба, доставка, монтаж, профилактика и ремонт на климатици.",
+    "email": "office@freshclima.bg",
+    "url": "https://www.business.bg/f-176129/fresh-klima-sofia.html",
+    "source": "Business.bg",
+    "keyword": "❄️ ОВК и Климатични системи София (نیازمند برق‌رسانی و تابلو)",
+    "category": "contractor",
+    "category_label": "❄️ ОВК и Климатични системи София (نیازمند برق‌رسانی و تابلو)",
+    "location": "гр. София",
+    "phone": "0895 158 406",
+    "found_at": "2026-11-14 09:24",
+    "value_tier": "LARGE_TURNKEY_B2B"
   }
 }

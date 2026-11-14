@@ -414,5 +414,35 @@
     "location": "гр. София",
     "alerted_at": "2026-11-14 09:00:20",
     "digest_sent": true
+  },
+  "bizbg_ec6ae50d59": {
+    "id": "bizbg_ec6ae50d59",
+    "title": "HDG Air Ltd — HDG Air Ltd предлага доставка,монтиране и монтаж на ефективни вен...",
+    "url": "https://www.business.bg/f-165290/hdg-air-ltd.html",
+    "url_hash": "91ba0bc63bb9eacaba0583e8bf4ad025",
+    "phone": "0889571951",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 09:27:40"
+  },
+  "bizbg_e66512208e": {
+    "id": "bizbg_e66512208e",
+    "title": "Термодизайнтотал ООД — Изключителен представител за България на FERROLI, HENCO - Белгия,...",
+    "url": "https://www.business.bg/f-10475/termodizajntotal-ood.html",
+    "url_hash": "e097736a718845c3e168c5a2b3db93e1",
+    "phone": "029621256",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 09:27:42"
+  },
+  "bizbg_09923a6ed8": {
+    "id": "bizbg_09923a6ed8",
+    "title": "Фреш Клима София — Онлайн и физически магазин за климатици Фреш клима София. Фирмата...",
+    "url": "https://www.business.bg/f-176129/fresh-klima-sofia.html",
+    "url_hash": "4c2b251af0a73f2d30f62fbd93866d94",
+    "phone": "0895158406",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 09:27:43"
   }
 }
