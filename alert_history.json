@@ -345,5 +345,35 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 04:18:14"
+  },
+  "bizbg_f3f8f2105f": {
+    "id": "bizbg_f3f8f2105f",
+    "title": "ВЕЛАМ ГЕО АЛЕКСАНДЪР ВЛЪЧКОВ — ЕТ Велам-Гео – Александър Влъчков е с предмет на дейност сондиран...",
+    "url": "https://www.business.bg/f-50116/velam-geo-aleksandyr-vlychkov.html",
+    "url_hash": "effb33c1d42c266603e3f69996423c0d",
+    "phone": "029456403",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 04:37:37"
+  },
+  "bizbg_6c3229292f": {
+    "id": "bizbg_6c3229292f",
+    "title": "Мира 1989 — Мира 1989 предлага на своите клиенти следните услуги: Проектиране...",
+    "url": "https://www.business.bg/f-56239/mira-1989.html",
+    "url_hash": "83b9c2cc1daf03cd8f7a92aa20cd988c",
+    "phone": "029444697",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 04:37:38"
+  },
+  "bizbg_5fe885db37": {
+    "id": "bizbg_5fe885db37",
+    "title": "РДП ИНЖЕНЕРИНГ ООД — РДП Инженеринг ООД предлага инженеринг, проектиране и консултантс...",
+    "url": "https://www.business.bg/f-47230/rdp-inzhenering-ood.html",
+    "url_hash": "490fed8c27699293499793e91a8714f5",
+    "phone": "0899823825",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 04:37:40"
   }
 }
