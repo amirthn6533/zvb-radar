@@ -564,5 +564,35 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 12:36:41"
+  },
+  "bizbg_f2c6f155f1": {
+    "id": "bizbg_f2c6f155f1",
+    "title": "УЛЯНОВ АРХИТЕКТИ — УЛЯНОВ АРХИТЕKТИ е архитектурно студио с фокус върху модерния и п...",
+    "url": "https://www.business.bg/f-176210/ulianov-arhitekti.html",
+    "url_hash": "1a029add8d45c5268c42b36247fdeb20",
+    "phone": "0889233722",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:55:38"
+  },
+  "bizbg_bca6c7b869": {
+    "id": "bizbg_bca6c7b869",
+    "title": "НО НЕЙМ АРХ — Архитектурно студио НО НЕЙМ АРХ се занимава с проектиране и автор...",
+    "url": "https://www.business.bg/f-163557/no-nejm-arh.html",
+    "url_hash": "fd241690465f3fd8248f1efa08ed2de8",
+    "phone": "0889250156",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:55:39"
+  },
+  "bizbg_caa6861830": {
+    "id": "bizbg_caa6861830",
+    "title": "Архитектурно Бюро АМГ — Архитектурно Бюро Амг развива дейността си в град София. В бюрото...",
+    "url": "https://www.business.bg/f-171037/arhitekturno-biuro-amg.html",
+    "url_hash": "a8b177f87d4a55e727330039be3c59a3",
+    "phone": "0887057416",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:55:40"
   }
 }
