@@ -504,5 +504,35 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 11:56:45"
+  },
+  "bizbg_c813fe6dec": {
+    "id": "bizbg_c813fe6dec",
+    "title": "Про Клима М ЕООД — Про клима M ЕООД е фирмa занимаващa се с проектиране, продажба, м...",
+    "url": "https://www.business.bg/f-21051/pro-klima-m-eood.html",
+    "url_hash": "00230faf0259fa71fdce17e9816f1ac9",
+    "phone": "028620339",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:17:43"
+  },
+  "bizbg_2a28844dae": {
+    "id": "bizbg_2a28844dae",
+    "title": "А1 Енерджи ЕООД — А1 енерджи ЕООД е ориентирана в комплексното обслужване по изграж...",
+    "url": "https://www.business.bg/f-4632/a1-enerdzhi-eood.html",
+    "url_hash": "e25a98354a67b7ac19a0cab3c7b023bc",
+    "phone": "029813314",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:17:45"
+  },
+  "bizbg_7bb43438e3": {
+    "id": "bizbg_7bb43438e3",
+    "title": "Неотайм — НЕОТАЙМ ЕООД е фирма с няколкогодишен опит в областта на климатиз...",
+    "url": "https://www.business.bg/f-12196/neotajm.html",
+    "url_hash": "58d59a2c051d6d88b41feb4583edcb1c",
+    "phone": "029786855",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:17:46"
   }
 }
