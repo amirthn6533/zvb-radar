@@ -534,5 +534,35 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 12:17:46"
+  },
+  "bizbg_ac8132f017": {
+    "id": "bizbg_ac8132f017",
+    "title": "Арка Консулт — Арка Консулт ЕООД предлага пълна гама услуги в областта на строит...",
+    "url": "https://www.business.bg/f-39442/arka-konsult-.html",
+    "url_hash": "2ab05df141899911ee65bbbb6011f0cd",
+    "phone": "0887920808",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:36:38"
+  },
+  "bizbg_075a117242": {
+    "id": "bizbg_075a117242",
+    "title": "Мапкад ЕООД — Фирма МАПКАД ЕООД е създадена с основен предмет на дейност извърш...",
+    "url": "https://www.business.bg/f-21674/mapkad-eood.html",
+    "url_hash": "78548aa51f7e86986bfca5792aeac247",
+    "phone": "029430186",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:36:40"
+  },
+  "bizbg_0e599b0361": {
+    "id": "bizbg_0e599b0361",
+    "title": "Випарх ЕООД — Архитектурно и лицензирано проектантско бюро Випарх, изработва ка...",
+    "url": "https://www.business.bg/f-176488/viparh-eood.html",
+    "url_hash": "a428df19f6e2949bf08154c9cc7114b6",
+    "phone": "0888252305",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 12:36:41"
   }
 }
