@@ -895,5 +895,18 @@
     "phone": "0887 057 416",
     "found_at": "2026-11-14 12:52",
     "value_tier": "LARGE_TURNKEY_B2B"
+  },
+  "bazar_52249057": {
+    "id": "bazar_52249057",
+    "title": "Продава ЕТАЖ ОТ КЪЩА, гр. София, с. Владая",
+    "url": "https://bazar.bg/obiava-52249057/prodava-etazh-ot-kashta-gr-sofiia-s-vladaia",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ?????????????????????????? ??????????",
+    "category": "renovation",
+    "category_label": "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)",
+    "location": "гр. София",
+    "phone": "0885 069 133",
+    "found_at": "2026-11-14 14:26",
+    "value_tier": "VIP_COMMERCIAL_VILLA"
   }
 }

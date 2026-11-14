@@ -594,5 +594,15 @@
     "source": "Business.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 12:55:40"
+  },
+  "bazar_52249057": {
+    "id": "bazar_52249057",
+    "title": "Продава ЕТАЖ ОТ КЪЩА, гр. София, с. Владая",
+    "url": "https://bazar.bg/obiava-52249057/prodava-etazh-ot-kashta-gr-sofiia-s-vladaia",
+    "url_hash": "0020abefad309c1c09d08012e2b09ba9",
+    "phone": "0885069133",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 14:30:18"
   }
 }
