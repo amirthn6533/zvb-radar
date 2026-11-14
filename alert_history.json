@@ -604,5 +604,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 14:30:18"
+  },
+  "bazar_53624112": {
+    "id": "bazar_53624112",
+    "title": "Kia Sportage GT-Line/Plug In Hybrid 4WD/Virtual/Камера/",
+    "url": "https://bazar.bg/obiava-53624112/kia-sportage-gt-line-plug-in-hybrid-4wd-virtual-kamera",
+    "url_hash": "21ea4c40d275550892ad34ea31909a3c",
+    "phone": "0882111021",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-14 23:36:14"
   }
 }
