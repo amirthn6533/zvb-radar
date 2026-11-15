@@ -921,5 +921,18 @@
     "phone": "0882 111 021",
     "found_at": "2026-11-14 23:32",
     "value_tier": "STANDARD"
+  },
+  "bazar_56939167": {
+    "id": "bazar_56939167",
+    "title": "Строителство на къщи – груб строеж, основи, покриви | София",
+    "url": "https://bazar.bg/obiava-56939167/stroitelstvo-na-kashti-grub-stroezh-osnovi-pokrivi-sofiia",
+    "source": "Bazar.bg",
+    "keyword": "подизпълнител софия строителство",
+    "category": "contractor",
+    "category_label": "🏗 Голям обект / Строител и Главен изпълнител (پروژه بزرگ ساختمانی)",
+    "location": "гр. София",
+    "phone": "0894 641 964",
+    "found_at": "2026-11-15 12:23",
+    "value_tier": "LARGE_TURNKEY_B2B"
   }
 }

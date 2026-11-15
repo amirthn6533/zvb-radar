@@ -614,5 +614,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-14 23:36:14"
+  },
+  "bazar_56939167": {
+    "id": "bazar_56939167",
+    "title": "Строителство на къщи – груб строеж, основи, покриви | София",
+    "url": "https://bazar.bg/obiava-56939167/stroitelstvo-na-kashti-grub-stroezh-osnovi-pokrivi-sofiia",
+    "url_hash": "37b97f2c9bedf8941ed6d748295db13b",
+    "phone": "0894641964",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-15 12:28:14"
   }
 }
