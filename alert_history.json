@@ -664,5 +664,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-16 06:12:54"
+  },
+  "zap_704978": {
+    "id": "zap_704978",
+    "title": "[Строителна Компания София] Активен обект: Електротехник, поддръжка на сгради",
+    "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/704978/elektrotehnik-poddrazhka-na-sgradi/",
+    "url_hash": "a625e44cd8b181437423f9e0101c14a7",
+    "phone": "028198374",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-16 13:58:06"
   }
 }
