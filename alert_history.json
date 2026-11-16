@@ -28,7 +28,8 @@
     "phone": "0894515042",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:07:14"
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   },
   "bizbg_3a0a43d8e0": {
     "id": "bizbg_3a0a43d8e0",
@@ -38,7 +39,8 @@
     "phone": "029569520",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:07:15"
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   },
   "bizbg_c8cfbcd401": {
     "id": "bizbg_c8cfbcd401",
@@ -453,7 +455,8 @@
     "phone": "0887726735",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 11:56:39"
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   },
   "bazar_35565502": {
     "id": "bazar_35565502",
@@ -463,7 +466,8 @@
     "phone": "0878674567",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 11:56:40"
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   },
   "bazar_32081907": {
     "id": "bazar_32081907",
@@ -473,7 +477,8 @@
     "phone": "0885843221",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 11:56:41"
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   },
   "bizbg_93e7c69a43": {
     "id": "bizbg_93e7c69a43",
@@ -603,7 +608,8 @@
     "phone": "0885069133",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 14:30:18"
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   },
   "bazar_53624112": {
     "id": "bazar_53624112",
@@ -694,5 +700,38 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-16 14:36:34"
+  },
+  "ksb_2463": {
+    "id": "ksb_2463",
+    "title": "[Голям Строител София] Инфинити Пропърти ООД — Жилищна сграда с ателиета за индивидуална творческа дейност, мага",
+    "url": "https://register.ksb.bg/pub_view.php",
+    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "phone": "029710000",
+    "source": "KSB",
+    "location": "София, ж.к Надежда I част бл. 137, вх. А, ет. 6, ап. 21",
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
+  },
+  "zap_498280": {
+    "id": "zap_498280",
+    "title": "[Агенция Донев Уърк ЕООД] Активен обект: Монтажници на климатични системи",
+    "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/498280/montazhnitsi-na-klimatichni-sistemi/",
+    "url_hash": "8a234d69e30dd153312358d125a9ac60",
+    "phone": "0877166019",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
+  },
+  "zap_704742": {
+    "id": "zap_704742",
+    "title": "[ФИМ БИЛД 2016 ЕООД] Активен обект: Изграждане и ремонт на покриви и конструкции",
+    "url": "https://www.zaplata.bg/arhitektura-stroitelstvo-i-gradoustroystvo/sofia/704742/obsht-rabotnik/",
+    "url_hash": "51dbc7a1d48ad3e36e9496d700f9b217",
+    "phone": "0878378202",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-16 18:04:26",
+    "digest_sent": true
   }
 }
