@@ -684,5 +684,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-16 14:17:18"
+  },
+  "zap_704959": {
+    "id": "zap_704959",
+    "title": "[\"ДАКС-96\" ООД] Активен обект: Машинен оператор",
+    "url": "https://www.zaplata.bg/arhitektura-stroitelstvo-i-gradoustroystvo/sofia/704959/mashinen-operator/",
+    "url_hash": "e50d69b45919e26239d57ca2bd86623d",
+    "phone": "0887258737",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-16 14:36:34"
   }
 }
