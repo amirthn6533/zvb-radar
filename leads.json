@@ -947,5 +947,44 @@
     "phone": "0898 631 299",
     "found_at": "2026-11-16 05:55",
     "value_tier": "STANDARD"
+  },
+  "bazar_18108904": {
+    "id": "bazar_18108904",
+    "title": "Ремонт на 4X4, виско муфа, ел. муфи, раздатъчни кутии и диференциали",
+    "url": "https://bazar.bg/obiava-18108904/remont-na-4x4-wisko-mufa-el-mufi-razdatachni-kutii-i-diferentsiali",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ???? ??????????",
+    "category": "renovation",
+    "category_label": "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)",
+    "location": "гр. София",
+    "phone": "0892 757 619",
+    "found_at": "2026-11-16 06:08",
+    "value_tier": "STANDARD"
+  },
+  "bazar_43369582": {
+    "id": "bazar_43369582",
+    "title": "Фирма предлага работа в София за квалифицирани електротехници",
+    "url": "https://bazar.bg/obiava-43369582/firma-predlaga-rabota-v-sofiia-za-kvalifitsirani-elektrotehnitsi",
+    "source": "Bazar.bg",
+    "keyword": "търся електротехник софия",
+    "category": "urgent_client",
+    "category_label": "🎯 Директен клиент / Спешна заявка (کارفرمای مستقیم)",
+    "location": "гр. София",
+    "phone": "0878 157 690",
+    "found_at": "2026-11-16 06:08",
+    "value_tier": "STANDARD"
+  },
+  "bazar_55362657": {
+    "id": "bazar_55362657",
+    "title": "Електро услуги за гр. София и околностите",
+    "url": "https://bazar.bg/obiava-55362657/elektro-uslugi-za-gr-sofiia-i-okolnostite",
+    "source": "Bazar.bg",
+    "keyword": "търся електротехник софия",
+    "category": "urgent_client",
+    "category_label": "🎯 Директен клиент / Спешна заявка (کارفرمای مستقیم)",
+    "location": "гр. София",
+    "phone": "0988 985 776",
+    "found_at": "2026-11-16 06:08",
+    "value_tier": "STANDARD"
   }
 }
