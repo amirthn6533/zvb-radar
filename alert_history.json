@@ -624,5 +624,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-15 12:28:14"
+  },
+  "bazar_53519680": {
+    "id": "bazar_53519680",
+    "title": "Ремонт на лаптопи и компютри | София | Вземане от адрес",
+    "url": "https://bazar.bg/obiava-53519680/remont-na-laptopi-i-kompyutri-sofiia-wzemane-ot-adres",
+    "url_hash": "e019dbd91accc424cabc6e117ef6e49b",
+    "phone": "0898631299",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-16 06:00:36"
   }
 }
