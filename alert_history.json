@@ -733,5 +733,15 @@
     "location": "гр. София",
     "alerted_at": "2026-11-16 18:04:26",
     "digest_sent": true
+  },
+  "bazar_54967578": {
+    "id": "bazar_54967578",
+    "title": "Toyota Land cruiser J150/3.0D-4D/Камера/Подгрев/Sport",
+    "url": "https://bazar.bg/obiava-54967578/toyota-land-cruiser-j150-3-0d-4d-kamera-podgrev-sport",
+    "url_hash": "f07045e1c634c6f66df47e6385a0be7f",
+    "phone": "0882111022",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-16 23:39:53"
   }
 }
