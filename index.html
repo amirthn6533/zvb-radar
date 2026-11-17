@@ -3,1082 +3,921 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🌸 دعوت‌نامه اختصاصی ماه‌گل و امیر 🌸</title>
+  <title>🌸 پیانوی اختصاصی ماه‌گل • از طرف امیر 🎹</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #faf6f0;
-      --black: #121214;
-      --pink: #ff5d9e;
-      --pink-light: #ffd4e5;
-      --yellow: #ffc83b;
-      --yellow-light: #fff3c4;
-      --purple: #d8b4fe;
-      --purple-light: #f3e8ff;
-      --mint: #6ee7b7;
-      --mint-light: #d1fae5;
-      --blue: #38bdf8;
-      --blue-light: #e0f2fe;
-      --shadow: 4px 4px 0px var(--black);
-      --shadow-lg: 6px 6px 0px var(--black);
-      --shadow-sm: 2px 2px 0px var(--black);
+      --bg: #0f1016;
+      --card-bg: rgba(26, 27, 38, 0.85);
+      --gold: #f6d365;
+      --gold-dark: #fda085;
+      --pink: #ff758c;
+      --pink-glow: rgba(255, 117, 140, 0.4);
+      --key-white: #ffffff;
+      --key-white-press: #ffebf0;
+      --key-black: #181920;
+      --key-black-press: #3a2230;
+      --accent: #ff758c;
+      --wood-dark: #1e1115;
+      --wood-border: #4a2530;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Vazirmatn', -apple-system, sans-serif;
+      touch-action: manipulation;
     }
 
     body {
-      background-color: var(--bg);
-      background-image: 
-        radial-gradient(#cbd5e1 1.4px, transparent 1.4px),
-        linear-gradient(to right, rgba(255, 93, 158, 0.04) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
-      background-size: 20px 20px, 40px 40px, 40px 40px;
-      color: var(--black);
+      background: radial-gradient(circle at 50% 20%, #25162b 0%, #0d0e15 100%);
+      color: #fff;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      padding: 12px;
+      justify-content: flex-start;
+      padding: 16px 10px 40px;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Floating retro doodle stickers */
-    .doodle {
+    /* Ambient floating stars/petals */
+    .particle {
       position: fixed;
-      font-size: 22px;
       pointer-events: none;
-      z-index: 0;
-      opacity: 0.45;
-      animation: floatSlow 7s infinite ease-in-out alternate;
+      opacity: 0.35;
+      animation: floatUp 12s infinite linear;
+      z-index: 1;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
     }
 
-    @keyframes floatSlow {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(-22px) rotate(30deg); }
-    }
-
-    /* Neo-Brutalist Frame */
-    .genz-card {
-      position: relative;
+    /* Header Container */
+    .header-card {
       width: 100%;
-      max-width: 430px;
-      background: #ffffff;
-      border: 3px solid var(--black);
-      border-radius: 30px;
-      box-shadow: var(--shadow-lg);
-      padding: 20px 16px;
+      max-width: 720px;
+      background: linear-gradient(135deg, rgba(45, 23, 40, 0.85), rgba(20, 21, 33, 0.95));
+      border: 1px solid rgba(255, 117, 140, 0.3);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 25px var(--pink-glow);
+      border-radius: 24px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      position: relative;
       z-index: 10;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.1s;
-      user-select: none;
-      -webkit-user-select: none;
     }
 
-    /* Prevent inner tags from blocking clicks on mobile */
-    .btn *, .spam-button *, .neo-key *, .polaroid * {
-      pointer-events: none;
-    }
-
-    /* Screen Shake Animation on Spam Tapper */
-    .shake-screen {
-      animation: shake 0.12s ease-in-out 3;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(-3px, 2px); }
-      75% { transform: translate(3px, -2px); }
-    }
-
-    /* Top Ticker Bar */
-    .ticker-bar {
-      background: var(--yellow);
-      border: 2px solid var(--black);
-      border-radius: 12px;
-      padding: 6px 12px;
-      font-size: 11px;
-      font-weight: 900;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .badge-pill {
+    .badge-amir {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--pink-light);
-      border: 2px solid var(--black);
-      color: var(--black);
-      padding: 4px 12px;
+      background: linear-gradient(90deg, #ff758c, #ff7eb3);
+      color: #fff;
+      padding: 4px 14px;
       border-radius: 50px;
-      font-size: 11px;
-      font-weight: 900;
-      box-shadow: var(--shadow-sm);
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(255, 117, 140, 0.4);
       margin-bottom: 8px;
-      transform: rotate(-1.5deg);
+      letter-spacing: 0.3px;
     }
 
-    /* Typography */
-    h1, h2 {
-      font-size: 21px;
+    .header-title {
+      font-size: 26px;
       font-weight: 900;
-      line-height: 1.35;
-      color: var(--black);
-      margin-bottom: 4px;
+      background: linear-gradient(90deg, #fff, #ffe3ec, #fcd34d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
     }
 
-    h1 span, h2 span {
-      background: var(--pink);
-      color: white;
-      padding: 1px 7px;
-      border-radius: 8px;
-      border: 1.5px solid var(--black);
-      display: inline-block;
-      box-shadow: 2px 2px 0px var(--black);
-    }
-
-    p.subtitle {
+    .header-sub {
       font-size: 13px;
-      font-weight: 600;
-      color: #52525b;
+      color: #d1d5db;
       line-height: 1.6;
-      margin-bottom: 14px;
     }
 
-    /* Neo-Brutalist Chunky Buttons */
-    .btn {
-      width: 100%;
-      padding: 14px 18px;
-      border: 2.5px solid var(--black);
-      border-radius: 16px;
-      font-size: 15px;
-      font-weight: 900;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.12s ease;
-      box-shadow: var(--shadow);
-      text-decoration: none;
-      touch-action: manipulation;
-      pointer-events: auto;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .btn:hover {
-        transform: translate(-2px, -2px);
-        box-shadow: 6px 6px 0px var(--black);
-      }
-    }
-
-    .btn:active {
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px var(--black);
-    }
-
-    .btn-pink { background: var(--pink); color: white; }
-    .btn-yellow { background: var(--yellow); color: var(--black); }
-    .btn-blue { background: var(--blue); color: var(--black); }
-    .btn-mint { background: var(--mint); color: var(--black); }
-    .btn-purple { background: var(--purple); color: var(--black); }
-
-    /* Screens */
-    .screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      width: 100%;
-      animation: fadeIn 0.22s ease forwards;
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ================= SCREEN 1: VIBE CHECK ================= */
-    .vibe-box {
-      width: 100%;
-      background: #fdf4ff;
-      border: 2.5px solid var(--black);
-      border-radius: 18px;
-      padding: 14px;
-      margin: 6px 0 14px;
-      box-shadow: var(--shadow);
+    .dedication-quote {
+      font-size: 13px;
+      font-style: italic;
+      color: #fbcfe8;
+      background: rgba(255, 117, 140, 0.1);
+      border-right: 3px solid var(--pink);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
       text-align: right;
     }
 
-    .vibe-row {
+    /* Piano Body & Grand Shell */
+    .piano-case {
+      width: 100%;
+      max-width: 720px;
+      background: linear-gradient(180deg, #2b1118 0%, #15090d 60%, #0d0608 100%);
+      border: 3px solid #5a2836;
+      border-radius: 20px 20px 14px 14px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.15), 0 0 20px rgba(255, 117, 140, 0.2);
+      padding: 16px 14px 20px;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 16px;
+    }
+
+    /* Gold plate logo */
+    .brass-plate {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 7px 0;
-      border-bottom: 1.5px dashed #cbd5e1;
-      font-size: 12.5px;
-      font-weight: 700;
+      background: linear-gradient(90deg, #3d2314, #c9933b, #fff099, #c9933b, #3d2314);
+      padding: 2px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
     }
-
-    .vibe-row:last-child { border-bottom: none; }
-
-    .tag-flag {
-      padding: 2px 8px;
-      border-radius: 20px;
-      border: 1.5px solid var(--black);
-      font-size: 10.5px;
-      font-weight: 800;
-    }
-
-    /* ================= SCREEN 2: 5-SEC SPAM TAPPER ================= */
-    .tapper-box {
+    .brass-inner {
       width: 100%;
-      background: var(--yellow-light);
-      border: 2.5px solid var(--black);
-      border-radius: 22px;
-      padding: 16px 14px;
-      margin: 6px 0 14px;
-      box-shadow: var(--shadow);
+      background: #1a0f12;
+      padding: 6px 14px;
+      border-radius: 4px;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
+    }
+    .brass-brand {
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffd875;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .brass-edition {
+      font-size: 11px;
+      color: #fbcfe8;
+      font-weight: 600;
     }
 
-    .timer-badge {
-      font-size: 12px;
-      font-weight: 900;
-      background: var(--black);
+    /* Controls Bar above keys */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .ctrl-btn {
+      background: rgba(45, 23, 33, 0.9);
+      border: 1px solid rgba(255, 117, 140, 0.3);
       color: #fff;
-      padding: 4px 12px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .spam-button {
-      width: 125px;
-      height: 125px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--pink), #f43f5e);
-      border: 3.5px solid var(--black);
-      box-shadow: 0 8px 0px var(--black);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      color: white;
-      font-weight: 900;
-      font-size: 14px;
-      touch-action: manipulation;
-      transition: all 0.06s;
-      pointer-events: auto;
-    }
-
-    .spam-button:active {
-      transform: translateY(6px);
-      box-shadow: 0 2px 0px var(--black);
-    }
-
-    .tap-counter-display {
-      font-size: 38px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      color: var(--black);
-      margin-top: 2px;
-    }
-
-    .unhinged-verdict {
+      padding: 8px 10px;
+      border-radius: 10px;
       font-size: 12px;
-      font-weight: 800;
-      color: #991b1b;
-      background: #fee2e2;
-      border: 1.5px solid var(--black);
-      border-radius: 12px;
-      padding: 6px 10px;
-      min-height: 32px;
-      width: 100%;
-    }
-
-    /* ================= SCREEN 3: PASTEL MINI PIANO ================= */
-    .piano-container {
-      width: 100%;
-      background: var(--purple-light);
-      border: 2.5px solid var(--black);
-      border-radius: 22px;
-      padding: 14px 12px;
-      margin: 6px 0 14px;
-      box-shadow: var(--shadow);
-    }
-
-    .piano-keys-row {
+      font-weight: 700;
+      cursor: pointer;
       display: flex;
-      gap: 6px;
+      align-items: center;
       justify-content: center;
-      height: 120px;
-      margin: 10px 0;
+      gap: 6px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .ctrl-btn:active, .ctrl-btn.active {
+      background: var(--pink);
+      color: #fff;
+      transform: translateY(1px);
+      box-shadow: 0 0 12px var(--pink);
     }
 
-    .neo-key {
-      flex: 1;
-      border: 2.5px solid var(--black);
-      border-radius: 0 0 14px 14px;
+    /* Note display bar */
+    .current-note-bar {
+      height: 38px;
+      background: #0d0608;
+      border: 1px solid #4a202a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffd875;
+      text-shadow: 0 0 8px rgba(255, 216, 117, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .current-note-bar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ff758c, #ffd875, transparent);
+    }
+
+    /* ================= PIANO KEYBOARD ================= */
+    .keys-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 12px;
+      direction: ltr !important;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #ff758c #15090d;
+    }
+
+    .keyboard {
+      position: relative;
+      display: inline-flex;
+      direction: ltr !important;
+      height: 195px;
+      padding: 0 4px;
+      margin: 0 auto;
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* White Keys */
+    .key-white {
+      position: relative;
+      width: 44px;
+      height: 190px;
+      background: linear-gradient(180deg, #f7f7f7 0%, #ffffff 82%, #e5e5e5 100%);
+      border: 1px solid #111;
+      border-radius: 0 0 6px 6px;
+      box-shadow: inset 0 1px 0 #fff, inset 0 -4px 0 #bbb, 0 3px 5px rgba(0,0,0,0.5);
+      z-index: 2;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
       padding-bottom: 8px;
-      font-size: 11px;
-      font-weight: 900;
       cursor: pointer;
-      box-shadow: 3px 3px 0px var(--black);
-      transition: all 0.08s;
-      touch-action: manipulation;
-      pointer-events: auto;
+      transition: background 0.08s, transform 0.06s;
     }
 
-    .neo-key:active {
-      transform: translate(2px, 3px);
-      box-shadow: 1px 1px 0px var(--black);
-    }
-
-    .key-c { background: #fed7aa; }
-    .key-d { background: #fef08a; }
-    .key-e { background: #bbf7d0; }
-    .key-f { background: #bae6fd; }
-    .key-g { background: #fbcfe8; }
-
-    .troll-toggle-pill {
-      background: white;
-      border: 2px solid var(--black);
-      border-radius: 50px;
-      padding: 6px 14px;
-      font-size: 11.5px;
+    .key-white .note-name {
+      font-size: 11px;
       font-weight: 800;
+      color: #555;
+      direction: ltr !important;
+      unicode-bidi: isolate;
+      pointer-events: none;
+    }
+    .key-white .solfege {
+      font-size: 9px;
+      color: #888;
+      pointer-events: none;
+      margin-top: 2px;
+    }
+
+    .key-white.pressed {
+      background: linear-gradient(180deg, #ffd6e0 0%, #fff0f3 80%, #ffb3c6 100%) !important;
+      box-shadow: inset 0 2px 2px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.3) !important;
+      transform: translateY(2px);
+    }
+
+    .key-white.highlight {
+      background: linear-gradient(180deg, #ffeaa7 0%, #fdcb6e 100%) !important;
+      box-shadow: 0 0 14px #fdcb6e !important;
+    }
+
+    /* Black Keys */
+    .key-black {
+      position: absolute;
+      width: 28px;
+      height: 118px;
+      background: linear-gradient(180deg, #222 0%, #111 75%, #050505 100%);
+      border: 1px solid #000;
+      border-radius: 0 0 4px 4px;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.25), inset 0 -2px 0 #222, 0 4px 6px rgba(0,0,0,0.7);
+      z-index: 5;
+      cursor: pointer;
+      direction: ltr !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 6px;
+      transition: background 0.08s, transform 0.06s;
+    }
+
+    .key-black .note-name {
+      font-size: 9px;
+      font-weight: 700;
+      color: #aaa;
+      direction: ltr !important;
+      unicode-bidi: isolate;
+      pointer-events: none;
+    }
+
+    .key-black.pressed {
+      background: linear-gradient(180deg, #4a1525 0%, #6d1b32 80%, #ff4d6d 100%) !important;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.5) !important;
+      transform: translateY(2px);
+    }
+
+    .key-black.highlight {
+      background: linear-gradient(180deg, #e17055 0%, #d63031 100%) !important;
+      box-shadow: 0 0 14px #e17055 !important;
+    }
+
+    /* Song Melodies Picker */
+    .songs-shelf {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(20, 21, 33, 0.9);
+      border: 1px solid rgba(255, 117, 140, 0.25);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    .shelf-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fbcfe8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .songs-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .song-pill {
+      background: rgba(45, 23, 33, 0.7);
+      border: 1px solid rgba(255, 117, 140, 0.3);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: var(--shadow-sm);
-      touch-action: manipulation;
-      pointer-events: auto;
+      transition: all 0.2s;
+    }
+    .song-pill:hover, .song-pill:active {
+      background: linear-gradient(90deg, #ff758c, #fda085);
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(255, 117, 140, 0.4);
     }
 
-    .troll-toggle-pill.active {
-      background: #f43f5e;
-      color: white;
-      animation: pulseAlert 0.8s infinite alternate;
-    }
-
-    @keyframes pulseAlert {
-      from { transform: scale(1); }
-      to { transform: scale(1.04); }
-    }
-
-    .piano-speech {
-      font-size: 11px;
-      font-weight: 800;
-      color: #6b21a8;
-      min-height: 22px;
-      margin-top: 6px;
-    }
-
-    /* ================= SCREEN 4: DELTANGI SLIDER ================= */
-    .slider-box {
+    /* Amir Surprise / Troll Mode */
+    .amir-fun-card {
       width: 100%;
-      background: #fffbeb;
-      border: 2.5px solid var(--black);
-      border-radius: 20px;
-      padding: 16px 12px;
-      margin: 8px 0 14px;
-      box-shadow: var(--shadow);
-    }
-
-    .slider-score {
-      font-size: 48px;
-      font-weight: 900;
-      line-height: 1;
-      margin: 4px 0 8px;
-    }
-
-    .slider-unhinged {
-      width: 100%;
-      -webkit-appearance: none;
-      height: 16px;
-      border-radius: 10px;
-      background: #e4e4e7;
-      border: 2px solid var(--black);
-      outline: none;
-      touch-action: manipulation;
-    }
-
-    .slider-unhinged::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--pink);
-      border: 2px solid var(--black);
-      box-shadow: 2px 2px 0px var(--black);
-      cursor: pointer;
-    }
-
-    /* ================= SCREEN 5: RUNAWAY "NO" ================= */
-    .arena {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 8px 0;
-    }
-
-    .btn-yes-huge {
-      background: var(--mint);
-      color: var(--black);
-      z-index: 10;
-    }
-
-    .btn-no-runaway {
-      position: absolute;
-      background: #f4f4f5;
-      color: #71717a;
-      border: 2px solid var(--black);
-      box-shadow: var(--shadow-sm);
-      padding: 10px 20px;
-      border-radius: 50px;
-      font-size: 13.5px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.16s ease-out;
-      z-index: 20;
-      touch-action: manipulation;
-      pointer-events: auto;
-    }
-
-    /* ================= SCREEN 6: POLAROID CARDS ================= */
-    .polaroid-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      width: 100%;
-      margin: 8px 0 14px;
-    }
-
-    .polaroid {
-      background: white;
-      border: 2.5px solid var(--black);
-      border-radius: 16px;
-      padding: 10px 8px;
-      box-shadow: var(--shadow-sm);
-      cursor: pointer;
+      max-width: 720px;
+      background: linear-gradient(135deg, #1f1124 0%, #2f101d 100%);
+      border: 2px dashed #ff758c;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.2s ease;
-      position: relative;
-      touch-action: manipulation;
-      pointer-events: auto;
-    }
-
-    .polaroid:nth-child(1) { transform: rotate(-1.5deg); }
-    .polaroid:nth-child(2) { transform: rotate(1.5deg); }
-    .polaroid:nth-child(3) { transform: rotate(1deg); }
-    .polaroid:nth-child(4) { transform: rotate(-1deg); }
-
-    .polaroid.active {
-      background: var(--yellow-light);
-      box-shadow: 5px 5px 0px var(--black);
-      transform: scale(1.04) rotate(0deg) !important;
-    }
-
-    .tape-strip {
-      position: absolute;
-      top: -8px;
-      width: 45px;
-      height: 14px;
-      background: rgba(255, 209, 102, 0.7);
-      border: 1px dashed var(--black);
-      transform: rotate(-3deg);
-    }
-
-    /* ================= SCREEN 7: THERMAL RECEIPT ================= */
-    .receipt {
-      width: 100%;
-      background: #fafafa;
-      border: 2px dashed var(--black);
-      border-radius: 18px;
-      padding: 16px 14px;
-      margin: 8px 0 14px;
-      box-shadow: var(--shadow);
-      text-align: right;
-    }
-
-    .receipt-header {
-      text-align: center;
-      border-bottom: 2px dashed #a1a1aa;
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-    }
-
-    .receipt-title {
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-    }
-
-    .receipt-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11.5px;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
-    .receipt-total {
-      border-top: 2px solid var(--black);
-      padding-top: 6px;
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      font-weight: 900;
-    }
-
-    .share-row {
-      display: flex;
       gap: 10px;
-      width: 100%;
+      z-index: 10;
+      text-align: center;
+    }
+    .amir-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .amir-toggle-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ff9ebb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #3b222f;
+      transition: .3s;
+      border-radius: 34px;
+      border: 1px solid #ff758c;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #ff758c; }
+    input:checked + .slider:before { transform: translateX(24px); }
+
+    .amir-speech {
+      font-size: 12px;
+      color: #ffe4e6;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 10px;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Footer dedication */
+    .footer-dedication {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #9ca3af;
+      text-align: center;
+      z-index: 10;
+    }
+    .footer-dedication span {
+      color: #ff758c;
+      font-weight: 800;
     }
   </style>
 </head>
 <body>
 
-  <!-- Retro background doodles -->
-  <div class="doodle" style="top: 6%; left: 8%;">✦</div>
-  <div class="doodle" style="top: 18%; right: 6%; font-size: 26px;">★</div>
-  <div class="doodle" style="bottom: 10%; left: 10%;">✧</div>
-  <div class="doodle" style="bottom: 16%; right: 10%; font-size: 24px;">✦</div>
+  <!-- Floating aesthetic particles -->
+  <div class="particle" style="left: 10%; animation-delay: 0s;">🌸</div>
+  <div class="particle" style="left: 28%; animation-delay: 3s;">🎼</div>
+  <div class="particle" style="left: 65%; animation-delay: 6s;">✨</div>
+  <div class="particle" style="left: 82%; animation-delay: 1.5s;">🎹</div>
+  <div class="particle" style="left: 45%; animation-delay: 8s;">❤️</div>
 
-  <div class="genz-card" id="mainFrame">
+  <!-- Header Card with Amir Dedication -->
+  <div class="header-card">
+    <div class="badge-amir">
+      <span>✨ هدیه اختصاصی امیر برای ماه‌گل ✨</span>
+    </div>
+    <h1 class="header-title">پیانوی رؤیایی ماه‌گل ✨🌸</h1>
+    <p class="header-sub">طراحی شده با عشق، کوک شده روی فرکانس آرامش دست‌های هنرمند تو</p>
+    
+    <div class="dedication-quote">
+      «ماه‌گل عزیزم؛ هیچ پیانویی در دنیا به زیبایی و لطافت پنجه‌های تو نواخته نمیشه... بنواز که جهان به این ملودی نیاز داره. — از طرف امیر ❤️»
+    </div>
+  </div>
 
-    <!-- Top Ticker Bar -->
-    <div class="ticker-bar">
-      <span>★ ماه‌گل & امیر • فوق‌محرمانه</span>
-      <span style="font-size: 10px; background: var(--black); color: white; padding: 2px 8px; border-radius: 6px;">VIP 🌸</span>
+  <!-- Piano Case -->
+  <div class="piano-case">
+    <!-- Golden Brass Edition Plate -->
+    <div class="brass-plate">
+      <div class="brass-inner">
+        <span class="brass-brand">MAHGOL CONCERT GRAND</span>
+        <span class="brass-edition">EDITION NO. 1 • HANDCRAFTED BY AMIR</span>
+      </div>
     </div>
 
-    <!-- ================= SCREEN 1: VIBE CHECK ================= -->
-    <div class="screen active" id="s1">
-      <div class="badge-pill">💅 VIBE CHECK INCOMING</div>
-      <h1>سلام <span>ماه‌گل</span> خانوم! ✨</h1>
-      <p class="subtitle">سیستم وایب‌چک وضعیت روحی و سطح دلتنگی شما رو آنالیز کرده:</p>
-
-      <div class="vibe-box">
-        <div class="vibe-row">
-          <span>گرین فلگ: مهارت پیانو زدن</span>
-          <span class="tag-flag" style="background: var(--mint);">خفن و استادانه 🎹✨</span>
-        </div>
-        <div class="vibe-row">
-          <span>رد فلگ: صدای آواز امیر</span>
-          <span class="tag-flag" style="background: #fecdd3;">سلاح صوتی خطرناک 💀🚩</span>
-        </div>
-        <div class="vibe-row">
-          <span>مود کلافگی از دست امیر</span>
-          <span class="tag-flag" style="background: var(--yellow);">۱۰۰ از ۱۰ (اورژانسی) 🤯</span>
-        </div>
-      </div>
-
-      <button class="btn btn-pink" onclick="goTo(2)">
-        <span>ورود به چالش تپ‌تپ کلافگی ۵ ثانیه‌ای</span> ⏱️💥
+    <!-- Quick Control Bar -->
+    <div class="controls-grid">
+      <button class="ctrl-btn" id="sustainBtn" onclick="toggleSustain()">
+        <span id="sustainIcon">⚪</span> پدال سستین: <b id="sustainStatus">روشن</b>
+      </button>
+      <button class="ctrl-btn" onclick="octaveShift(-1)">
+        <span>🔉</span> اکتاو پایین‌تر
+      </button>
+      <button class="ctrl-btn" onclick="octaveShift(1)">
+        <span>🔊</span> اکتاو بالاتر
+      </button>
+      <button class="ctrl-btn" onclick="stopAutoPlay()">
+        <span>⏹️</span> توقف ملودی
       </button>
     </div>
 
-    <!-- ================= SCREEN 2: 5-SEC SPAM TAPPER ================= -->
-    <div class="screen" id="s2">
-      <div class="badge-pill">⏱️ چالش سرعتی تیک‌تاکی</div>
-      <h2>کنتور <span>کلافگی ماه‌گل</span>!</h2>
-      <p class="subtitle">در ۵ ثانیه هرچقدر می‌تونی سریع بکوب روی دکمه تا ثابت کنی چقدر از دست امیر کلافه‌ای! 😂</p>
+    <!-- Active Note Screen -->
+    <div class="current-note-bar" id="noteDisplay">
+      🎵 کلیدی را لمس کن تا طنین آن آغاز شود...
+    </div>
 
-      <div class="tapper-box">
-        <div class="timer-badge">
-          ⏳ زمان باقی‌مانده: <span id="tapTimer" style="color:var(--yellow); font-size:14px;">5.0s</span>
-        </div>
-
-        <button class="spam-button" id="spamBtn" onclick="handleSpamTap()">
-          <span>بکوب اینجا!</span>
-          <span style="font-size: 22px;">💥</span>
-        </button>
-
-        <div class="tap-counter-display" id="tapCountDisplay">0 تپ</div>
-
-        <div class="unhinged-verdict" id="tapVerdict">
-          👈 روی دکمه بزن تا مسابقه شروع شه!
-        </div>
+    <!-- Keyboard Scrollable Container -->
+    <div class="keys-wrapper" id="keysScroll">
+      <div class="keyboard" id="pianoKeys">
+        <!-- Generated dynamically via JS for 100% precision -->
       </div>
+    </div>
+  </div>
 
-      <button class="btn btn-yellow" id="s2NextBtn" style="display: none;" onclick="goTo(3)">
-        <span>رفتن به مینی پیانوی ماه‌گل</span> 🎹👇
+  <!-- Famous Songs / Guide Melodies -->
+  <div class="songs-shelf">
+    <div class="shelf-title">
+      <span>🎶 آهنگ‌های پیشنهادی امیر برای نواختن ماه‌گل:</span>
+    </div>
+    <div class="songs-btns">
+      <button class="song-pill" onclick="playSong('gole_sangam')">
+        <span>🌹</span> گل سنگم (نواختن خودکار)
+      </button>
+      <button class="song-pill" onclick="playSong('fur_elise')">
+        <span>🎼</span> Für Elise (بتهوون)
+      </button>
+      <button class="song-pill" onclick="playSong('jane_maryam')">
+        <span>🌸</span> جان مریم
+      </button>
+      <button class="song-pill" onclick="playSong('tavalod')">
+        <span>🎂</span> تولدت مبارک
       </button>
     </div>
+  </div>
 
-    <!-- ================= SCREEN 3: PASTEL MINI PIANO ================= -->
-    <div class="screen" id="s3">
-      <div class="badge-pill">🎹 ویژه پیانیست هنرمندمون</div>
-      <h2>مینی پیانوی <span>پاستلی</span></h2>
-      <p class="subtitle">چند تا کلید بنواز... بعد دکمه سمّی امیر رو فعال کن تا ببینی چطور رو اعصاب میره! 🤣</p>
-
-      <div class="piano-container">
-        <div style="margin-bottom: 8px;">
-          <button class="troll-toggle-pill" id="trollToggle" onclick="toggleTrollMode()">
-            🎤 <span id="trollBtnText">فعال‌سازی تحریر سمّی امیر</span>
-          </button>
-        </div>
-
-        <div class="piano-keys-row">
-          <div class="neo-key key-c" onclick="playKey(261.63, 'دو', this)">دو<br>C</div>
-          <div class="neo-key key-d" onclick="playKey(293.66, 'ر', this)">ر<br>D</div>
-          <div class="neo-key key-e" onclick="playKey(329.63, 'می', this)">می<br>E</div>
-          <div class="neo-key key-f" onclick="playKey(349.23, 'فا', this)">فا<br>F</div>
-          <div class="neo-key key-g" onclick="playKey(392.00, 'سل', this)">سل<br>G</div>
-        </div>
-
-        <div class="piano-speech" id="pianoSpeech">
-          روی کلاویه‌ها بزن تا صدای ساز دربیاد 🎶✨
-        </div>
+  <!-- Amir's Fun Singing / Troll Mode -->
+  <div class="amir-fun-card">
+    <div class="amir-toggle-row">
+      <div class="amir-toggle-label">
+        <span>🎤</span> حالت «آوازخوانی امیر روی پیانو!»
       </div>
-
-      <button class="btn btn-purple" onclick="goTo(4)">
-        <span>بسه دیگه گوشم خون اومد! مرحله بعد ☕😂</span>
-      </button>
+      <label class="switch">
+        <input type="checkbox" id="amirVoiceToggle" onchange="toggleAmirMode(this)">
+        <span class="slider"></span>
+      </label>
     </div>
-
-    <!-- ================= SCREEN 4: DELTANGI SLIDER ================= -->
-    <div class="screen" id="s4">
-      <div class="badge-pill">🥺 کنتور رسمی دلتنگی</div>
-      <h2>چقدر دلت برای <span>امیر</span> تنگ شده؟</h2>
-      <p class="subtitle">اسلایدر رو بکش تا درصد واقعی احساساتت معلوم شه:</p>
-
-      <div class="slider-box">
-        <div class="slider-score" id="scoreNum">100%</div>
-        <div style="font-size: 13px; font-weight: 800; color: #b45309; margin-bottom: 10px;" id="scoreText">
-          دارم از دلتنگی تلف میشم! پاشو بیا دیگههه 😭❤️
-        </div>
-
-        <input type="range" min="0" max="100" value="100" class="slider-unhinged" id="slider" oninput="onSlide(this.value)" onchange="snapBack(this)">
-
-        <div id="snapToast" style="display:none; font-size:11.5px; font-weight:800; color:#b91c1c; margin-top:8px;">
-          ⚠️ ارور ۴۰۴: طبق قانون رفاقت، دلتنگی کمتر از ۱۰۰٪ برای ماه‌گل غیرمجازه! 😂
-        </div>
-      </div>
-
-      <button class="btn btn-pink" onclick="goTo(5)">
-        <span>تأیید دلتنگی ۱۰۰٪ و ادامه</span> 🚀
-      </button>
+    <div class="amir-speech" id="amirVoiceText">
+      🤫 در حال حاضر امیر ساکت است و فقط صدای مخملی پیانوی ماه‌گل شنیده می‌شود!
     </div>
+  </div>
 
-    <!-- ================= SCREEN 5: RUNAWAY "NO" ================= -->
-    <div class="screen" id="s5">
-      <div class="badge-pill">🛵 بزن بریم بیرون؟!</div>
-      <h2>پایه‌ای بریم <span>یه جای خفن</span>؟</h2>
-      <p class="subtitle">امیر میاد دنبالت، بریم بگیم و بخندیم؟</p>
-
-      <div class="arena" id="arena">
-        <button class="btn btn-yes-huge" id="yesBtn" onclick="goTo(6)">
-          آره حتماً! بریم 🥳💅
-        </button>
-        <button class="btn-no-runaway" id="noBtn" onmouseover="dodge(event)" onclick="dodge(event)" ontouchstart="dodge(event)">
-          عمراً نمیام 🙄
-        </button>
-      </div>
-
-      <div style="font-size:12px; font-weight:800; color:#b91c1c; background:#fee2e2; border:1.5px solid var(--black); border-radius:10px; padding:6px; width:100%;" id="tauntMsg">
-        👈 دکمه نه رو نزن که عاقبت نداره!
-      </div>
-    </div>
-
-    <!-- ================= SCREEN 6: POLAROID CARDS ================= -->
-    <div class="screen" id="s6">
-      <div class="badge-pill">📍 کجا بیشتر بهت حال میده؟!</div>
-      <h2>انتخاب لوکیشن <span>به سلیقه ماه‌گل</span></h2>
-      <p class="subtitle">انتخاب با تو، رانندگی و تمام سفارش‌ها به حساب امیر 🌸</p>
-
-      <div class="polaroid-grid">
-        <div class="polaroid active" onclick="pick(this, 'کافه پیانو و دنج (هات‌چاکلت داغ و کیک شکلاتی) ☕🎹')">
-          <div class="tape-strip"></div>
-          <div style="font-size: 32px;">☕</div>
-          <div style="font-size: 12.5px; font-weight: 900;">کافه پیانو</div>
-          <div style="font-size: 10px; color:#71717a;">دنج، لایت، هات‌چاکلت داغ</div>
-        </div>
-
-        <div class="polaroid" onclick="pick(this, 'پیتزا و شکم‌گردی (پیتزا با پنیر کش‌دار و سیب‌زمینی پنیری) 🍕😋')">
-          <div class="tape-strip"></div>
-          <div style="font-size: 32px;">🍕</div>
-          <div style="font-size: 12.5px; font-weight: 900;">پیتزا پارتی</div>
-          <div style="font-size: 10px; color:#71717a;">داغ، ترد، کلی غیبت و خنده</div>
-        </div>
-
-        <div class="polaroid" onclick="pick(this, 'دور دور شبانه با ماشین و آهنگ‌های پاپ 🚗🎵')">
-          <div class="tape-strip"></div>
-          <div style="font-size: 32px;">🚗</div>
-          <div style="font-size: 12.5px; font-weight: 900;">دور دور شبانه</div>
-          <div style="font-size: 10px; color:#71717a;">باد خنک، پلی‌لیست پاپ</div>
-        </div>
-
-        <div class="polaroid" onclick="pick(this, 'سورپرایز ویژه با سلیقه امیر 🎁🔥')">
-          <div class="tape-strip"></div>
-          <div style="font-size: 32px;">✨</div>
-          <div style="font-size: 12.5px; font-weight: 900;">سورپرایز امیر</div>
-          <div style="font-size: 10px; color:#71717a;">بسپار به من، تضمینی!</div>
-        </div>
-      </div>
-
-      <button class="btn btn-mint" onclick="goTo(7)">
-        <span>تأیید و دریافت فاکتور رسمی VIP</span> 🧾👇
-      </button>
-    </div>
-
-    <!-- ================= SCREEN 7: THERMAL RECEIPT ================= -->
-    <div class="screen" id="s7">
-      <div class="badge-pill">🧾 فاکتور نهایی قرار VIP</div>
-      <h2>فیش رسمی <span>صادر شد</span>! ✨</h2>
-
-      <div class="receipt">
-        <div class="receipt-header">
-          <div class="receipt-title">✦ AMIR & MAHGOL OFFICIAL RECEIPT ✦</div>
-          <div style="font-size: 10px; color: #71717a; margin-top: 2px;">شماره سفارش: MG-2026-VIP</div>
-        </div>
-
-        <div class="receipt-row">
-          <span>مهمان VIP:</span>
-          <b>ماه‌گل خانوم 🌸</b>
-        </div>
-        <div class="receipt-row">
-          <span>مقصد انتخابی:</span>
-          <b id="finalPlace" style="color: #e11d48;">کافه پیانو و دنج</b>
-        </div>
-        <div class="receipt-row">
-          <span>ترانسفر اختصاصی:</span>
-          <b>امیر (دربست رفت و برگشت) 🚗</b>
-        </div>
-        <div class="receipt-row">
-          <span>حق خواندن شعر توسط امیر:</span>
-          <b style="color: #16a34a;">لغو شده (سکوت مطلق) 🔇</b>
-        </div>
-        <div class="receipt-row">
-          <span>جریمه تخلف صوتی امیر:</span>
-          <b>خرید ۲ تا بستنی اضافه! 🍦</b>
-        </div>
-
-        <div class="receipt-total">
-          <span>کل هزینه برای ماه‌گل:</span>
-          <span style="color: #16a34a;">۰ تومان (تماماً با امیر!) 💳</span>
-        </div>
-
-        <div style="text-align: center; margin-top: 8px;">
-          <span style="font-size: 10.5px; font-weight: 800; background: var(--pink-light); border: 1.5px solid var(--black); border-radius: 50px; padding: 3px 10px;">✓ مهر رسمی و تایید شده توسط ماه‌گل</span>
-        </div>
-      </div>
-
-      <p class="subtitle" style="font-size: 12px; margin-bottom: 10px;">
-        برای ارسال این فاکتور به امیر و هماهنگی ساعت قرار، دکمه زیر رو بزن:
-      </p>
-
-      <div class="share-row">
-        <button class="btn btn-blue" onclick="sendTg()">
-          <span>ارسال در تلگرام</span> 💌
-        </button>
-        <button class="btn btn-mint" onclick="sendWa()">
-          <span>ارسال در واتساپ</span> 💬
-        </button>
-      </div>
-    </div>
-
+  <!-- Footer -->
+  <div class="footer-dedication">
+    طراحی شده با نهایت ظرافت توسط <span>امیر</span> برای <span>ماه‌گل</span> 🌸
   </div>
 
   <script>
-    // Web Audio Synthesizer (Safe & Non-blocking)
+    // ================= REAL ACOUSTIC PIANO SYNTHESIZER =================
     let audioCtx = null;
-    function getCtx() {
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        return audioCtx;
-      } catch(e) {
-        return null;
+    let sustain = true;
+    let baseOctave = 4; // C4
+    let isAmirMode = false;
+    let autoPlayTimeout = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
     }
 
-    function beep(freq, type = 'sine', duration = 0.2, gain = 0.15) {
-      try {
-        const ctx = getCtx();
-        if (!ctx) return;
+    // High quality acoustic piano simulation using multiple harmonics & mallet percussion
+    function playPianoNote(frequency, noteName, noteSolfege) {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      const duration = sustain ? 2.4 : 0.65;
+
+      // Master gain
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.7, now);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      master.connect(ctx.destination);
+
+      // Harmonics array: [multiplier, relative-gain, type]
+      const harmonics = [
+        [1.0, 0.65, 'sine'],       // Fundamental
+        [2.0, 0.25, 'sine'],       // 2nd harmonic (octave)
+        [3.0, 0.12, 'triangle'],   // 3rd harmonic
+        [4.0, 0.05, 'sine'],       // 4th harmonic
+        [1.002, 0.08, 'triangle']  // Detuned string resonance
+      ];
+
+      harmonics.forEach(([mult, gainVal, type]) => {
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        g.gain.setValueAtTime(gain, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.frequency.setValueAtTime(frequency * mult, now);
+        
+        g.gain.setValueAtTime(gainVal, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + (duration * 0.9));
+
         osc.connect(g);
-        g.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
-      } catch(e) {}
+        g.connect(master);
+        osc.start(now);
+        osc.stop(now + duration);
+      });
+
+      // Hammer Strike Transient (felt attack click)
+      const hammer = ctx.createOscillator();
+      const hGain = ctx.createGain();
+      hammer.type = 'triangle';
+      hammer.frequency.setValueAtTime(frequency * 5, now);
+      hammer.frequency.exponentialRampToValueAtTime(100, now + 0.04);
+      hGain.gain.setValueAtTime(0.18, now);
+      hGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+      hammer.connect(hGain);
+      hGain.connect(master);
+      hammer.start(now);
+      hammer.stop(now + 0.05);
+
+      // Display Note
+      document.getElementById('noteDisplay').innerHTML = `✨ نت نواخته شده: <b>${noteName}</b> (${noteSolfege}) • ${Math.round(frequency)}Hz`;
+
+      // Amir Voice Mode if enabled
+      if (isAmirMode) {
+        triggerAmirVocals(noteName);
+      }
     }
 
-    function playAmirDiscord() {
+    // Amir Troll Vocals on Note Hit
+    const amirPhrases = [
+      'امیر: «آااامان از این دل...!» 🎤😫',
+      'امیر: «تحریر سنتی تقدیم به ماه‌گل!» 🎶😂',
+      'امیر: «ماه‌گل فالش نزن داداش! شوخی کردم عالیه!» 💀✨',
+      'امیر: «چه نتی! بتهوون لنگ میندازه جلوت!» 👑🎹',
+      'امیر: «منم همرات بخونم یا بسه؟! باشه ساکت شدم!» 🤐🤣'
+    ];
+    function triggerAmirVocals(noteName) {
+      const speech = document.getElementById('amirVoiceText');
+      const phrase = amirPhrases[Math.floor(Math.random() * amirPhrases.length)];
+      speech.innerText = phrase;
+
+      // Play fun discord vibrato tone
       try {
-        const ctx = getCtx();
-        if (!ctx) return;
-        const o1 = ctx.createOscillator();
-        const o2 = ctx.createOscillator();
+        const ctx = getAudioCtx();
+        const o = ctx.createOscillator();
         const g = ctx.createGain();
-
-        o1.type = 'sawtooth';
-        o2.type = 'triangle';
-        o1.frequency.setValueAtTime(220, ctx.currentTime);
-        o1.frequency.exponentialRampToValueAtTime(490, ctx.currentTime + 0.35);
-        o2.frequency.setValueAtTime(245, ctx.currentTime);
-
-        g.gain.setValueAtTime(0.2, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
-
-        o1.connect(g);
-        o2.connect(g);
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(220, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.25);
+        g.gain.setValueAtTime(0.1, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        o.connect(g);
         g.connect(ctx.destination);
-
-        o1.start();
-        o2.start();
-        o1.stop(ctx.currentTime + 0.55);
-        o2.stop(ctx.currentTime + 0.55);
+        o.start();
+        o.stop(ctx.currentTime + 0.35);
       } catch(e) {}
     }
 
-    // Step navigation (Guaranteed Instant Screen Switch)
-    function goTo(step) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById('s' + step);
-      if (target) {
-        target.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    function toggleAmirMode(checkbox) {
+      isAmirMode = checkbox.checked;
+      const speech = document.getElementById('amirVoiceText');
+      if (isAmirMode) {
+        speech.innerHTML = '🚨 <b>حالت آوازخوانی امیر فعال شد!</b> حالا هر کلیدی بزنی، امیر هم تحریر میده! 😂';
+      } else {
+        speech.innerText = '🤫 امیر ساکت شد! دوباره فقط پیانوی ملایم خودت نواخته میشه.';
       }
-      beep(380 + (step * 45), 'sine', 0.15, 0.1);
     }
 
-    // ================= SPAM TAPPER =================
-    let tapCount = 0;
-    let tapTimeLeft = 5.0;
-    let tapInterval = null;
-    let tapStarted = false;
-    let tapFinished = false;
+    function toggleSustain() {
+      sustain = !sustain;
+      document.getElementById('sustainStatus').innerText = sustain ? 'روشن' : 'خاموش';
+      document.getElementById('sustainIcon').innerText = sustain ? '🟢' : '⚪';
+      document.getElementById('sustainBtn').classList.toggle('active', sustain);
+    }
 
-    function handleSpamTap() {
-      if (tapFinished) return;
+    function octaveShift(delta) {
+      baseOctave += delta;
+      if (baseOctave < 2) baseOctave = 2;
+      if (baseOctave > 6) baseOctave = 6;
+      renderKeyboard();
+      document.getElementById('noteDisplay').innerText = `🎼 اکتاو تغییر کرد: C${baseOctave} تا B${baseOctave + 1}`;
+    }
 
-      const mainFrame = document.getElementById('mainFrame');
-      mainFrame.classList.add('shake-screen');
-      setTimeout(() => mainFrame.classList.remove('shake-screen'), 120);
+    // ================= KEYBOARD RENDERING =================
+    // 2 full octaves (14 white keys, 10 black keys)
+    const noteData = [
+      { name: 'C', sol: 'دو', isBlack: false },
+      { name: 'C#', sol: 'دو دیز', isBlack: true },
+      { name: 'D', sol: 'رِ', isBlack: false },
+      { name: 'D#', sol: 'رِ دیز', isBlack: true },
+      { name: 'E', sol: 'می', isBlack: false },
+      { name: 'F', sol: 'فا', isBlack: false },
+      { name: 'F#', sol: 'فا دیز', isBlack: true },
+      { name: 'G', sol: 'سُل', isBlack: false },
+      { name: 'G#', sol: 'سُل دیز', isBlack: true },
+      { name: 'A', sol: 'لا', isBlack: false },
+      { name: 'A#', sol: 'لا دیز', isBlack: true },
+      { name: 'B', sol: 'سی', isBlack: false }
+    ];
+
+    function getFrequency(noteIndex, octave) {
+      // A4 = 440Hz, index of A is 9 in octave 4 => MIDI 69
+      const midi = (octave + 1) * 12 + noteIndex;
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    let keyElements = {};
+
+    function renderKeyboard() {
+      const container = document.getElementById('pianoKeys');
+      container.innerHTML = '';
+      keyElements = {};
+
+      let whiteCount = 0;
+      const whiteWidth = 44; // px
+
+      // Generate 2 Octaves: baseOctave and baseOctave + 1
+      for (let oct = 0; oct < 2; oct++) {
+        const curOctave = baseOctave + oct;
+        
+        noteData.forEach((item, idx) => {
+          const freq = getFrequency(idx, curOctave);
+          const fullName = `${item.name}${curOctave}`;
+          const noteKey = `${item.name}_${curOctave}`;
+
+          if (!item.isBlack) {
+            const keyEl = document.createElement('div');
+            keyEl.className = 'key-white';
+            keyEl.dataset.key = noteKey;
+            keyEl.dataset.freq = freq;
+            keyEl.dataset.name = fullName;
+            keyEl.dataset.sol = item.sol;
+
+            keyEl.innerHTML = `
+              <span class="note-name">${fullName}</span>
+              <span class="solfege">${item.sol}</span>
+            `;
+
+            bindKeyEvents(keyEl);
+            container.appendChild(keyEl);
+            keyElements[fullName] = keyEl;
+            whiteCount++;
+          }
+        });
+      }
+
+      // Add final C key to complete 2 octaves neatly
+      const finalFreq = getFrequency(0, baseOctave + 2);
+      const finalName = `C${baseOctave + 2}`;
+      const finalKey = document.createElement('div');
+      finalKey.className = 'key-white';
+      finalKey.dataset.key = finalName;
+      finalKey.dataset.freq = finalFreq;
+      finalKey.dataset.name = finalName;
+      finalKey.dataset.sol = 'دو';
+      finalKey.innerHTML = `
+        <span class="note-name">${finalName}</span>
+        <span class="solfege">دو</span>
+      `;
+      bindKeyEvents(finalKey);
+      container.appendChild(finalKey);
+      keyElements[finalName] = finalKey;
+
+      // Position Black Keys precisely
+      let currentWhiteIndex = 0;
+      for (let oct = 0; oct < 2; oct++) {
+        const curOctave = baseOctave + oct;
+
+        noteData.forEach((item, idx) => {
+          const freq = getFrequency(idx, curOctave);
+          const fullName = `${item.name}${curOctave}`;
+
+          if (item.isBlack) {
+            const keyEl = document.createElement('div');
+            keyEl.className = 'key-black';
+            keyEl.dataset.key = fullName;
+            keyEl.dataset.freq = freq;
+            keyEl.dataset.name = fullName;
+            keyEl.dataset.sol = item.sol;
+
+            keyEl.innerHTML = `<span class="note-name">${item.name}</span>`;
+
+            // Position between white keys
+            const leftOffset = (currentWhiteIndex * whiteWidth) - 14 + 4;
+            keyEl.style.left = `${leftOffset}px`;
+
+            bindKeyEvents(keyEl);
+            container.appendChild(keyEl);
+            keyElements[fullName] = keyEl;
+          } else {
+            currentWhiteIndex++;
+          }
+        });
+      }
+    }
+
+    function triggerKey(el) {
+      if (!el) return;
+      const freq = parseFloat(el.dataset.freq);
+      const name = el.dataset.name;
+      const sol = el.dataset.sol;
+
+      playPianoNote(freq, name, sol);
+
+      el.classList.add('pressed');
+      setTimeout(() => el.classList.remove('pressed'), 180);
 
       try {
-        if (navigator.vibrate) navigator.vibrate(25);
+        if (navigator.vibrate) navigator.vibrate(20);
       } catch(e) {}
-
-      if (!tapStarted) {
-        tapStarted = true;
-        tapInterval = setInterval(() => {
-          tapTimeLeft -= 0.1;
-          if (tapTimeLeft <= 0) {
-            tapTimeLeft = 0;
-            clearInterval(tapInterval);
-            finishSpamTap();
-          }
-          document.getElementById('tapTimer').innerText = tapTimeLeft.toFixed(1) + 's';
-        }, 100);
-      }
-
-      tapCount++;
-      document.getElementById('tapCountDisplay').innerText = tapCount + ' تپ 🔥';
-      beep(300 + (tapCount * 12), 'triangle', 0.06, 0.1);
-
-      const verdict = document.getElementById('tapVerdict');
-      if (tapCount < 10) {
-        verdict.innerText = 'تازه داری گرم میشی! تندتر بکوب! 🏃‍♀️';
-      } else if (tapCount < 25) {
-        verdict.innerText = 'کلافگی به اوج رسیده! دست بردار نیستیا! 🤯💥';
-      } else {
-        verdict.innerText = '🚨 وضعیت قرمز! گوش‌های ماه‌گل ذوب شد! پیتزا لازمی!';
-      }
     }
 
-    function finishSpamTap() {
-      tapFinished = true;
-      document.getElementById('spamBtn').disabled = true;
-      document.getElementById('spamBtn').style.opacity = '0.6';
-      document.getElementById('s2NextBtn').style.display = 'inline-flex';
-      beep(587, 'sine', 0.4, 0.2);
-
-      const verdict = document.getElementById('tapVerdict');
-      verdict.innerHTML = `🏆 رکورد شکسته شد: <b>${tapCount} تپ کلافگی!</b><br>تنها راه جبران امیر: سفارش پیتزا و بستنی دوبل! 🍕🍦`;
-    }
-
-    // ================= MINI PIANO =================
-    let isTrollMode = false;
-    const amirTaunts = [
-      'امیر: «آآآمان از دل مننن!» 🎤😫 دیدم قشنگ زدی گفتم خرابش کنم!',
-      'امیر: «تحریر شماره ۴۲ تقدیم به گوش‌های ماه‌گل!» 💀📢',
-      'سیستم به دلیل فرکانس وحشتناک صدای امیر هشدار داد! 🚨',
-      'امیر: «مگه قرار نبود نخونم؟! نتونستم جلوی خودمو بگیرم!» 🤣'
-    ];
-
-    function toggleTrollMode() {
-      isTrollMode = !isTrollMode;
-      const btn = document.getElementById('trollToggle');
-      const txt = document.getElementById('trollBtnText');
-      const speech = document.getElementById('pianoSpeech');
-
-      if (isTrollMode) {
-        btn.classList.add('active');
-        txt.innerText = '⚠️ حالت سمّی امیر فعاله! (کلید بزن تا ببینی)';
-        speech.innerText = 'اخطار: کلید پیانو بزنی صدای آواز امیر میاد! 😂';
-        playAmirDiscord();
-      } else {
-        btn.classList.remove('active');
-        txt.innerText = 'فعال‌سازی تحریر سمّی امیر';
-        speech.innerText = 'حالت ماه‌گل فعال شد: نت‌های زلال و مخملی 🕊️';
-        beep(523, 'sine', 0.25, 0.15);
-      }
-    }
-
-    function playKey(freq, noteName, el) {
-      const speech = document.getElementById('pianoSpeech');
-      if (isTrollMode) {
-        playAmirDiscord();
-        const randomQuote = amirTaunts[Math.floor(Math.random() * amirTaunts.length)];
-        speech.innerText = randomQuote;
-      } else {
-        beep(freq, 'sine', 0.45, 0.2);
-        speech.innerText = `نت ${noteName} با لطافت نواخته شد 🎼✨`;
-      }
-    }
-
-    // ================= SLIDER =================
-    function onSlide(val) {
-      const num = document.getElementById('scoreNum');
-      const text = document.getElementById('scoreText');
-      num.innerText = val + '%';
-
-      if (val > 80) {
-        text.innerText = 'دارم از دلتنگی تلف میشم! پاشو بیا دیگههه 😭❤️';
-      } else if (val > 40) {
-        text.innerText = 'دروغ چرا... یکم دلم تنگ شده 🥺🤏';
-      } else {
-        text.innerText = 'وانمود می‌کنم اصلاً برام مهم نیست! 🙄💅';
-      }
-      beep(260 + (val * 3.5), 'sine', 0.04, 0.08);
-    }
-
-    function snapBack(el) {
-      if (el.value < 85) {
-        const toast = document.getElementById('snapToast');
-        toast.style.display = 'block';
-        beep(160, 'sawtooth', 0.18, 0.12);
-
-        setTimeout(() => {
-          el.value = 100;
-          onSlide(100);
-          beep(523, 'triangle', 0.25, 0.18);
-        }, 300);
-      }
-    }
-
-    // ================= RUNAWAY "NO" =================
-    let dodgeCount = 0;
-    const dodgeQuotes = [
-      'کجا در میری؟! مگه نمیدونی امیر آماده است برات آواز بخونه؟! 🎤😫',
-      'دکمه «نه» خرابه ماه گل! خودتو خسته نکن! 🏃‍♀️💨',
-      'الان گشت نامحسوس دلتنگی جریمت می‌کنه ها! 🚔😂',
-      'یا با پای خودت میای یا با صدای آواز امیر میای! 🤣',
-      'تسلیم شو دیگه! زنگ تفریح تموم شد، آره رو بزن! ☕🥳'
-    ];
-
-    function dodge(e) {
-      if (e) {
+    function bindKeyEvents(el) {
+      el.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        e.stopPropagation();
+        getAudioCtx(); // initialize audio context immediately on touch
+        triggerKey(el);
+      });
+    }
+
+    // ================= FAMOUS MELODIES AUTO PLAY =================
+    const songs = {
+      gole_sangam: [
+        { note: 'A4', dur: 450 }, { note: 'B4', dur: 450 }, { note: 'C5', dur: 800 },
+        { note: 'B4', dur: 400 }, { note: 'A4', dur: 400 }, { note: 'G#4', dur: 800 },
+        { note: 'A4', dur: 450 }, { note: 'F4', dur: 450 }, { note: 'E4', dur: 1200 }
+      ],
+      fur_elise: [
+        { note: 'E5', dur: 300 }, { note: 'D#5', dur: 300 }, { note: 'E5', dur: 300 },
+        { note: 'D#5', dur: 300 }, { note: 'E5', dur: 300 }, { note: 'B4', dur: 300 },
+        { note: 'D5', dur: 300 }, { note: 'C5', dur: 300 }, { note: 'A4', dur: 700 }
+      ],
+      jane_maryam: [
+        { note: 'E4', dur: 400 }, { note: 'A4', dur: 400 }, { note: 'B4', dur: 400 },
+        { note: 'C5', dur: 800 }, { note: 'B4', dur: 400 }, { note: 'A4', dur: 400 },
+        { note: 'G4', dur: 800 }, { note: 'F4', dur: 400 }, { note: 'E4', dur: 1000 }
+      ],
+      tavalod: [
+        { note: 'C4', dur: 350 }, { note: 'C4', dur: 350 }, { note: 'D4', dur: 600 },
+        { note: 'C4', dur: 600 }, { note: 'F4', dur: 600 }, { note: 'E4', dur: 1000 },
+        { note: 'C4', dur: 350 }, { note: 'C4', dur: 350 }, { note: 'D4', dur: 600 },
+        { note: 'C4', dur: 600 }, { note: 'G4', dur: 600 }, { note: 'F4', dur: 1000 }
+      ]
+    };
+
+    function stopAutoPlay() {
+      if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+        autoPlayTimeout = null;
       }
-      dodgeCount++;
-      beep(420 + Math.random() * 350, 'sawtooth', 0.1, 0.1);
+      document.querySelectorAll('.key-white, .key-black').forEach(k => k.classList.remove('highlight'));
+      document.getElementById('noteDisplay').innerText = '⏹️ پخش متوقف شد. حالا نوبت نواختن ماه‌گل است!';
+    }
 
-      const arena = document.getElementById('arena');
-      const noBtn = document.getElementById('noBtn');
-      const yesBtn = document.getElementById('yesBtn');
-      const taunt = document.getElementById('tauntMsg');
+    function playSong(songKey) {
+      stopAutoPlay();
+      getAudioCtx();
+      baseOctave = 4;
+      renderKeyboard();
 
-      const rect = arena.getBoundingClientRect();
-      const maxX = (rect.width / 2) - 55;
-      const maxY = 55;
+      const melody = songs[songKey];
+      if (!melody) return;
 
-      const randX = (Math.random() * (maxX * 2)) - maxX;
-      const randY = (Math.random() * (maxY * 2)) - maxY;
+      document.getElementById('noteDisplay').innerText = '✨ در حال نواختن ملودی برای ماه‌گل... کلیدها روشن می‌شوند!';
 
-      noBtn.style.transform = `translate(${randX}px, ${randY}px)`;
+      let step = 0;
+      function nextNote() {
+        if (step >= melody.length) {
+          document.getElementById('noteDisplay').innerHTML = '🌸 ملودی تموم شد! حالا خودت دست به ساز شو ماه‌گل جان!';
+          return;
+        }
 
-      const currentScale = 1 + (dodgeCount * 0.12);
-      yesBtn.style.transform = `scale(${currentScale})`;
+        const item = melody[step];
+        const el = keyElements[item.note];
+        if (el) {
+          triggerKey(el);
+          el.classList.add('highlight');
+          setTimeout(() => el.classList.remove('highlight'), item.dur * 0.85);
+        }
 
-      taunt.innerText = dodgeQuotes[dodgeCount % dodgeQuotes.length];
-
-      if (dodgeCount >= 5) {
-        noBtn.style.display = 'none';
-        taunt.innerText = 'دکمه «نه» فرار کرد رفت خونشون! چاره‌ای جز بله نداری! 🤣❤️';
+        step++;
+        autoPlayTimeout = setTimeout(nextNote, item.dur);
       }
+
+      nextNote();
     }
 
-    // ================= POLAROID SELECTION =================
-    let chosen = 'کافه پیانو و دنج (هات‌چاکلت داغ و کیک شکلاتی) ☕🎹';
+    // Keyboard controls for Laptop / Desktop (ASDFGHJKL...)
+    const pcKeyMap = {
+      'a': 'C4', 'w': 'C#4', 's': 'D4', 'e': 'D#4', 'd': 'E4',
+      'f': 'F4', 't': 'F#4', 'g': 'G4', 'y': 'G#4', 'h': 'A4',
+      'u': 'A#4', 'j': 'B4', 'k': 'C5', 'o': 'C#5', 'l': 'D5',
+      'p': 'D#5', ';': 'E5'
+    };
 
-    function pick(el, place) {
-      document.querySelectorAll('.polaroid').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-      chosen = place;
-      document.getElementById('finalPlace').innerText = el.querySelector('div:nth-child(3)').innerText;
-      beep(523, 'triangle', 0.18, 0.18);
-    }
+    window.addEventListener('keydown', (e) => {
+      const targetNote = pcKeyMap[e.key.toLowerCase()];
+      if (targetNote && keyElements[targetNote]) {
+        triggerKey(keyElements[targetNote]);
+      }
+    });
 
-    // ================= DIRECT MESSAGES =================
-    function sendTg() {
-      const text = `سلام امیر! 🌸\nفاکتور رسمی قرار VIP صادر شد (رکورد کلافگی: ${tapCount} تپ!) 🤦‍♀️😂\nبرناممون قطعی شد: ${chosen}\nطبق بند فاکتور، حق نداری حتی یه بیت بخونی! ساعت چند میای دنبالم؟ 🚗✨`;
-      const url = `https://t.me/share/url?url=${encodeURIComponent('قرار_ماه‌گل_و_امیر')}&text=${encodeURIComponent(text)}`;
-      window.open(url, '_blank');
-    }
-
-    function sendWa() {
-      const text = `سلام امیر! 🌸\nفیش نهایی ثبت شد (${tapCount} تپ کلافگی و ۱۰۰٪ دلتنگی ثبت شد)! 😂\nبرناممون: ${chosen}\nتعهد سکوت صوتی هم امضا شد! ساعت قرار رو هماهنگ کن 🛵`;
-      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-      window.open(url, '_blank');
-    }
+    // Initial render
+    window.addEventListener('DOMContentLoaded', () => {
+      renderKeyboard();
+    });
   </script>
 </body>
 </html>
