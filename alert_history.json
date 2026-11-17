@@ -105,7 +105,8 @@
     "phone": "0896436244",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:26:47"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "bizbg_dc6e4303e8": {
     "id": "bizbg_dc6e4303e8",
@@ -115,7 +116,8 @@
     "phone": "029516178",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:26:48"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "zap_704913": {
     "id": "zap_704913",
@@ -125,7 +127,8 @@
     "phone": "0878404047",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:26:50"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "zap_702252": {
     "id": "zap_702252",
@@ -135,7 +138,8 @@
     "phone": "0884676203",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:26:51"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "bizbg_5be1b0e560": {
     "id": "bizbg_5be1b0e560",
@@ -145,7 +149,8 @@
     "phone": "028518838",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:46:23"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "bizbg_3a9f5994e6": {
     "id": "bizbg_3a9f5994e6",
@@ -681,7 +686,8 @@
     "phone": "0988985776",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-16 06:12:54"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "zap_704978": {
     "id": "zap_704978",
@@ -754,7 +760,8 @@
     "phone": "0882111022",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-16 23:39:53"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "bazar_14216493": {
     "id": "bazar_14216493",
@@ -764,7 +771,8 @@
     "phone": "0887577588",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-17 04:29:48"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   },
   "bazar_41957482": {
     "id": "bazar_41957482",
@@ -774,6 +782,7 @@
     "phone": "0884627928",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-17 08:54:17"
+    "alerted_at": "2026-11-17 18:58:26",
+    "digest_sent": true
   }
 }
