@@ -160,7 +160,8 @@
     "phone": "0882522244",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:46:24"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "bizbg_4bcea32afa": {
     "id": "bizbg_4bcea32afa",
@@ -170,7 +171,8 @@
     "phone": "029522878",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:46:26"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "zap_704673": {
     "id": "zap_704673",
@@ -180,7 +182,8 @@
     "phone": "0888889492",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:46:27"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "zap_704894": {
     "id": "zap_704894",
@@ -190,7 +193,8 @@
     "phone": "0890449904",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 21:46:28"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "bizbg_82ae2a8d3c": {
     "id": "bizbg_82ae2a8d3c",
@@ -200,7 +204,8 @@
     "phone": "024896757",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-13 22:05:55"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "bizbg_21572a2f4c": {
     "id": "bizbg_21572a2f4c",
@@ -793,7 +798,8 @@
     "phone": "0889099397",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-18 05:10:32"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "bazar_56831991": {
     "id": "bazar_56831991",
@@ -803,7 +809,8 @@
     "phone": "0888042410",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-18 13:39:01"
+    "alerted_at": "2026-11-18 18:04:22",
+    "digest_sent": true
   },
   "zap_705116": {
     "id": "zap_705116",
