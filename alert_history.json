@@ -824,5 +824,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-18 15:14:24"
+  },
+  "zap_704113": {
+    "id": "zap_704113",
+    "title": "[ХРАНИТЕЛНИ СТОКИ РУПИС 2001 ЕООД] Активен обект: СЛУЖИТЕЛ МАГАЗИН ХРАНИТЕЛНИ СТОКИ гр.София, 17:22  часа на  18.11",
+    "url": "https://www.zaplata.bg/upraviteli-i-eksperti/sofia/704113/sluzhitel-magazin-hranitelni-stoki/",
+    "url_hash": "f2d37bfc9daa8ec0d3fb8d2b9d4c75b4",
+    "phone": "0888945990",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-18 15:33:26"
   }
 }
