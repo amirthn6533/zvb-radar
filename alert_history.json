@@ -784,5 +784,15 @@
     "location": "гр. София",
     "alerted_at": "2026-11-17 18:58:26",
     "digest_sent": true
+  },
+  "bazar_56571456": {
+    "id": "bazar_56571456",
+    "title": "Кемпер HYMER / ERIBA Еrusco A 7300. КЛИМАТИК СОЛАР ИНВЕРТОР",
+    "url": "https://bazar.bg/obiava-56571456/kemper-hymer-eriba-erusco-a-7300-klimatik-solar-invertor",
+    "url_hash": "d501ef047cff900c325277111877848f",
+    "phone": "0889099397",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-18 05:10:32"
   }
 }
