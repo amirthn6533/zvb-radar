@@ -841,5 +841,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-18 15:33:26"
+  },
+  "bazar_36369605": {
+    "id": "bazar_36369605",
+    "title": "Електротехник изграждал ел.инсталациите в София от \"Софстрой\"извършва електроуслуги",
+    "url": "https://bazar.bg/obiava-36369605/elektrotehnik-izgrazhdal-el-instalatsiite-w-sofiia-ot-sofstroy-izwarshwa-elektrouslugi",
+    "url_hash": "0d33f60a0bf9240768bd4e357dbcec2f",
+    "phone": "0888448099",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-18 22:31:10"
   }
 }
