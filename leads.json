@@ -1083,5 +1083,18 @@
     "phone": "0889 099 397",
     "found_at": "2026-11-18 05:06",
     "value_tier": "VIP_CCTV_SECURITY_NET"
+  },
+  "bazar_56831991": {
+    "id": "bazar_56831991",
+    "title": "Сглобяема къща SHELTER M7 – 42 м², 2 спални – 19 900 €",
+    "url": "https://bazar.bg/obiava-56831991/sglobiaema-kashta-shelter-m7-42-m-2-spalni-19-900",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ??????????????????????????????",
+    "category": "renovation",
+    "category_label": "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)",
+    "location": "гр. София",
+    "phone": "0888 042 410",
+    "found_at": "2026-11-18 13:35",
+    "value_tier": "VIP_COMMERCIAL_VILLA"
   }
 }

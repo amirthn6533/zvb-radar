@@ -794,5 +794,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-18 05:10:32"
+  },
+  "bazar_56831991": {
+    "id": "bazar_56831991",
+    "title": "Сглобяема къща SHELTER M7 – 42 м², 2 спални – 19 900 €",
+    "url": "https://bazar.bg/obiava-56831991/sglobiaema-kashta-shelter-m7-42-m-2-spalni-19-900",
+    "url_hash": "a4a70c214bb332d737d6cb1a19800077",
+    "phone": "0888042410",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-18 13:39:01"
   }
 }
