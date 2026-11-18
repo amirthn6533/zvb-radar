@@ -804,5 +804,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-18 13:39:01"
+  },
+  "zap_705116": {
+    "id": "zap_705116",
+    "title": "[Строителна Компания София] Активен обект: ПРИЕМЧИК СТОКИ гр.София, 15:51  часа на  18.11",
+    "url": "https://www.zaplata.bg/logistika-speditsiia/sofia/705116/priemchik-stoki/",
+    "url_hash": "e7c9df6a3dde506cad8471a8f3ba9d3b",
+    "phone": "0878959000",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-18 13:57:58"
   }
 }
