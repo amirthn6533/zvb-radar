@@ -814,5 +814,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-18 13:57:58"
+  },
+  "zap_705123": {
+    "id": "zap_705123",
+    "title": "[Строителна Компания София] Активен обект: ГЛАВЕН ЕКСПЕРТ в отдел „Строителен контрол, търговска дейност и к",
+    "url": "https://www.zaplata.bg/administrativni-deynosti/sofia/705123/glaven-ekspert-v-otdel-stroitelen-kontrol-targovska-deynost-i-kartoteka-v-so-rayon-serdika/",
+    "url_hash": "f2d0ca4048036de9bab8e5b3933832da",
+    "phone": "028317075",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-18 15:14:24"
   }
 }
