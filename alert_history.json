@@ -868,5 +868,15 @@
     "location": "гр. София",
     "alerted_at": "2026-11-19 09:05:14",
     "digest_sent": true
+  },
+  "zap_705127": {
+    "id": "zap_705127",
+    "title": "[Строителна Компания София] Активен обект: Майстор баници и закуски гр.София, 11:17  часа на  19.11",
+    "url": "https://www.zaplata.bg/proizvodstvo/sofia/705127/maystor-banitsi-i-zakuski/",
+    "url_hash": "8e8042823179b93fc6155b098c8f1ccd",
+    "phone": "0898700573",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-19 09:31:52"
   }
 }
