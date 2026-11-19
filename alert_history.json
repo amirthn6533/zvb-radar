@@ -878,5 +878,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-19 09:31:52"
+  },
+  "zap_705155": {
+    "id": "zap_705155",
+    "title": "[Строителна Компания София] Активен обект: ОФИС АСИСТЕНТ ЗА СОФИЯ гр.София, 17:29  часа на  19.11",
+    "url": "https://www.zaplata.bg/administrativni-deynosti/sofia/705155/ofis-asistent-za-sofiia/",
+    "url_hash": "5c84298e5f1f457f0dc843c048d4d87a",
+    "phone": "0887608166",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-19 18:48:55"
   }
 }
