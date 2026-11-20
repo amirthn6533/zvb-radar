@@ -913,5 +913,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-20 06:30:26"
+  },
+  "zap_705214": {
+    "id": "zap_705214",
+    "title": "[Строителна Компания София] Активен обект: Обслужващ бензиноколонки / Форкорт-асистент на бензиностанция...",
+    "url": "https://www.zaplata.bg/prodavachi-i-pomoshten-personal/sofia/705214/obsluzhvasht-benzinokolonki-forkort-asistent-na-benzinostantsiia-petrol-simeonovsko-shose/",
+    "url_hash": "c479d717b3384eaedbc0337212481707",
+    "phone": "0895606263",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-20 14:07:28"
   }
 }

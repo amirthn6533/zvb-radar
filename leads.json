@@ -1223,5 +1223,20 @@
     "phone": "0887 840 641",
     "found_at": "2026-11-20 06:24",
     "value_tier": "VIP_CCTV_SECURITY_NET"
+  },
+  "zap_705214": {
+    "id": "zap_705214",
+    "title": "[Строителна Компания София] Активен обект: Обслужващ бензиноколонки / Форкорт-асистент на бензиностанция... ",
+    "description": "Обслужващ бензиноколонки / Форкорт-асистент на бензиностанция Петрол-Симеоновско шосе гр.София. 705214  - обява за работа в Zaplata.bg Кандидатствай Сподели Добави в Избрани Резултати от търсенето › Търговия, Продажби - (Продавачи и помощен персонал) › Обслужващ бензиноколонки / Форкорт-асистент на бензиностанция Петрол-Симеоновско шосе Добавено в ",
+    "manager": "",
+    "url": "https://www.zaplata.bg/prodavachi-i-pomoshten-personal/sofia/705214/obsluzhvasht-benzinokolonki-forkort-asistent-na-benzinostantsiia-petrol-simeonovsko-shose/",
+    "source": "Zaplata.bg / KSB",
+    "keyword": "Активно строителство и електро в София",
+    "category": "contractor",
+    "category_label": "🏗 Активен строителен обект в София (پروژه فعال ساختمانی)",
+    "location": "гр. София",
+    "phone": "0895 606 263",
+    "found_at": "2026-11-20 14:07",
+    "value_tier": "LARGE_TURNKEY_B2B"
   }
 }
