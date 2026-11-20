@@ -903,5 +903,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-20 04:32:47"
+  },
+  "bazar_38318725": {
+    "id": "bazar_38318725",
+    "title": "РЕМОНТ повредени камери на маратонки-Работя вече 11 години.",
+    "url": "https://bazar.bg/obiava-38318725/remont-povredeni-kameri-na-maratonki-rabotia-veche-11-godini",
+    "url_hash": "514c698a0ffece09722df964a49ac032",
+    "phone": "0887840641",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-20 06:30:26"
   }
 }
