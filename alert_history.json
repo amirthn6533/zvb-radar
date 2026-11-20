@@ -380,7 +380,8 @@
     "phone": "0888200605",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 04:18:14"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "bizbg_f3f8f2105f": {
     "id": "bizbg_f3f8f2105f",
@@ -390,7 +391,8 @@
     "phone": "029456403",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 04:37:37"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "bizbg_6c3229292f": {
     "id": "bizbg_6c3229292f",
@@ -400,7 +402,8 @@
     "phone": "029444697",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 04:37:38"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "bizbg_5fe885db37": {
     "id": "bizbg_5fe885db37",
@@ -410,7 +413,8 @@
     "phone": "0899823825",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 04:37:40"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "bazar_56898269": {
     "id": "bazar_56898269",
@@ -453,7 +457,8 @@
     "phone": "0889571951",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 09:27:40"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "bizbg_e66512208e": {
     "id": "bizbg_e66512208e",
@@ -902,7 +907,8 @@
     "phone": "0878537119",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-20 04:32:47"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "bazar_38318725": {
     "id": "bazar_38318725",
@@ -912,7 +918,8 @@
     "phone": "0887840641",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-20 06:30:26"
+    "alerted_at": "2026-11-20 18:03:57",
+    "digest_sent": true
   },
   "zap_705214": {
     "id": "zap_705214",
