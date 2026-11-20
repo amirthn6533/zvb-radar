@@ -893,5 +893,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-19 18:48:55"
+  },
+  "bazar_54049290": {
+    "id": "bazar_54049290",
+    "title": "Апартамент ДВУСТАЕН",
+    "url": "https://bazar.bg/obiava-54049290/apartament-dvustaen",
+    "url_hash": "633f7513e34ae4e5b8d46f3b62ae9832",
+    "phone": "0878537119",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-20 04:32:47"
   }
 }

@@ -1197,5 +1197,18 @@
     "phone": "0887 608 166",
     "found_at": "2026-11-19 18:48",
     "value_tier": "LARGE_TURNKEY_B2B"
+  },
+  "bazar_54049290": {
+    "id": "bazar_54049290",
+    "title": "Апартамент ДВУСТАЕН",
+    "url": "https://bazar.bg/obiava-54049290/apartament-dvustaen",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ?????????????? ??????????????",
+    "category": "renovation",
+    "category_label": "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)",
+    "location": "гр. София",
+    "phone": "0878 537 119",
+    "found_at": "2026-11-20 04:28",
+    "value_tier": "STANDARD"
   }
 }
