@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌸 پیانوی اختصاصی ماه‌گل • از طرف امیر 🎹</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1016;
+      --card-bg: rgba(26, 27, 38, 0.85);
+      --gold: #f6d365;
+      --gold-dark: #fda085;
+      --pink: #ff758c;
+      --pink-glow: rgba(255, 117, 140, 0.4);
+      --key-white: #ffffff;
+      --key-white-press: #ffebf0;
+      --key-black: #181920;
+      --key-black-press: #3a2230;
+      --accent: #ff758c;
+      --wood-dark: #1e1115;
+      --wood-border: #4a2530;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Vazirmatn', -apple-system, sans-serif;
+      touch-action: manipulation;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #25162b 0%, #0d0e15 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 16px 10px 40px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient floating stars/petals */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.35;
+      animation: floatUp 12s infinite linear;
+      z-index: 1;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Header Container */
+    .header-card {
+      width: 100%;
+      max-width: 720px;
+      background: linear-gradient(135deg, rgba(45, 23, 40, 0.85), rgba(20, 21, 33, 0.95));
+      border: 1px solid rgba(255, 117, 140, 0.3);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 25px var(--pink-glow);
+      border-radius: 24px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 10;
+    }
+
+    .badge-amir {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(90deg, #ff758c, #ff7eb3);
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(255, 117, 140, 0.4);
+      margin-bottom: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .header-title {
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #fff, #ffe3ec, #fcd34d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .header-sub {
+      font-size: 13px;
+      color: #d1d5db;
+      line-height: 1.6;
+    }
+
+    .dedication-quote {
+      font-size: 13px;
+      font-style: italic;
+      color: #fbcfe8;
+      background: rgba(255, 117, 140, 0.1);
+      border-right: 3px solid var(--pink);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    /* Piano Body & Grand Shell */
+    .piano-case {
+      width: 100%;
+      max-width: 720px;
+      background: linear-gradient(180deg, #2b1118 0%, #15090d 60%, #0d0608 100%);
+      border: 3px solid #5a2836;
+      border-radius: 20px 20px 14px 14px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.15), 0 0 20px rgba(255, 117, 140, 0.2);
+      padding: 16px 14px 20px;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 16px;
+    }
+
+    /* Gold plate logo */
+    .brass-plate {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #3d2314, #c9933b, #fff099, #c9933b, #3d2314);
+      padding: 2px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    .brass-inner {
+      width: 100%;
+      background: #1a0f12;
+      padding: 6px 14px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brass-brand {
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffd875;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .brass-edition {
+      font-size: 11px;
+      color: #fbcfe8;
+      font-weight: 600;
+    }
+
+    /* Controls Bar above keys */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .ctrl-btn {
+      background: rgba(45, 23, 33, 0.9);
+      border: 1px solid rgba(255, 117, 140, 0.3);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .ctrl-btn:active, .ctrl-btn.active {
+      background: var(--pink);
+      color: #fff;
+      transform: translateY(1px);
+      box-shadow: 0 0 12px var(--pink);
+    }
+
+    /* Note display bar */
+    .current-note-bar {
+      height: 38px;
+      background: #0d0608;
+      border: 1px solid #4a202a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffd875;
+      text-shadow: 0 0 8px rgba(255, 216, 117, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .current-note-bar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ff758c, #ffd875, transparent);
+    }
+
+    /* ================= PIANO KEYBOARD ================= */
+    .keys-wrapper {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 12px;
+      direction: ltr !important;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #ff758c #15090d;
+    }
+
+    .keyboard {
+      position: relative;
+      display: inline-flex;
+      direction: ltr !important;
+      height: 195px;
+      padding: 0 4px;
+      margin: 0 auto;
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* White Keys */
+    .key-white {
+      position: relative;
+      width: 44px;
+      height: 190px;
+      background: linear-gradient(180deg, #f7f7f7 0%, #ffffff 82%, #e5e5e5 100%);
+      border: 1px solid #111;
+      border-radius: 0 0 6px 6px;
+      box-shadow: inset 0 1px 0 #fff, inset 0 -4px 0 #bbb, 0 3px 5px rgba(0,0,0,0.5);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 8px;
+      cursor: pointer;
+      transition: background 0.08s, transform 0.06s;
+    }
+
+    .key-white .note-name {
+      font-size: 11px;
+      font-weight: 800;
+      color: #555;
+      direction: ltr !important;
+      unicode-bidi: isolate;
+      pointer-events: none;
+    }
+    .key-white .solfege {
+      font-size: 9px;
+      color: #888;
+      pointer-events: none;
+      margin-top: 2px;
+    }
+
+    .key-white.pressed {
+      background: linear-gradient(180deg, #ffd6e0 0%, #fff0f3 80%, #ffb3c6 100%) !important;
+      box-shadow: inset 0 2px 2px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.3) !important;
+      transform: translateY(2px);
+    }
+
+    .key-white.highlight {
+      background: linear-gradient(180deg, #ffeaa7 0%, #fdcb6e 100%) !important;
+      box-shadow: 0 0 14px #fdcb6e !important;
+    }
+
+    /* Black Keys */
+    .key-black {
+      position: absolute;
+      width: 28px;
+      height: 118px;
+      background: linear-gradient(180deg, #222 0%, #111 75%, #050505 100%);
+      border: 1px solid #000;
+      border-radius: 0 0 4px 4px;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.25), inset 0 -2px 0 #222, 0 4px 6px rgba(0,0,0,0.7);
+      z-index: 5;
+      cursor: pointer;
+      direction: ltr !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 6px;
+      transition: background 0.08s, transform 0.06s;
+    }
+
+    .key-black .note-name {
+      font-size: 9px;
+      font-weight: 700;
+      color: #aaa;
+      direction: ltr !important;
+      unicode-bidi: isolate;
+      pointer-events: none;
+    }
+
+    .key-black.pressed {
+      background: linear-gradient(180deg, #4a1525 0%, #6d1b32 80%, #ff4d6d 100%) !important;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.5) !important;
+      transform: translateY(2px);
+    }
+
+    .key-black.highlight {
+      background: linear-gradient(180deg, #e17055 0%, #d63031 100%) !important;
+      box-shadow: 0 0 14px #e17055 !important;
+    }
+
+    /* Song Melodies Picker */
+    .songs-shelf {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(20, 21, 33, 0.9);
+      border: 1px solid rgba(255, 117, 140, 0.25);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    .shelf-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fbcfe8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .songs-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .song-pill {
+      background: rgba(45, 23, 33, 0.7);
+      border: 1px solid rgba(255, 117, 140, 0.3);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .song-pill:hover, .song-pill:active {
+      background: linear-gradient(90deg, #ff758c, #fda085);
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(255, 117, 140, 0.4);
+    }
+
+    /* Amir Surprise / Troll Mode */
+    .amir-fun-card {
+      width: 100%;
+      max-width: 720px;
+      background: linear-gradient(135deg, #1f1124 0%, #2f101d 100%);
+      border: 2px dashed #ff758c;
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+      text-align: center;
+    }
+    .amir-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .amir-toggle-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ff9ebb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #3b222f;
+      transition: .3s;
+      border-radius: 34px;
+      border: 1px solid #ff758c;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #ff758c; }
+    input:checked + .slider:before { transform: translateX(24px); }
+
+    .amir-speech {
+      font-size: 12px;
+      color: #ffe4e6;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 10px;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Footer dedication */
+    .footer-dedication {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #9ca3af;
+      text-align: center;
+      z-index: 10;
+    }
+    .footer-dedication span {
+      color: #ff758c;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating aesthetic particles -->
+  <div class="particle" style="left: 10%; animation-delay: 0s;">🌸</div>
+  <div class="particle" style="left: 28%; animation-delay: 3s;">🎼</div>
+  <div class="particle" style="left: 65%; animation-delay: 6s;">✨</div>
+  <div class="particle" style="left: 82%; animation-delay: 1.5s;">🎹</div>
+  <div class="particle" style="left: 45%; animation-delay: 8s;">❤️</div>
+
+  <!-- Header Card with Amir Dedication -->
+  <div class="header-card">
+    <div class="badge-amir">
+      <span>✨ هدیه اختصاصی امیر برای ماه‌گل ✨</span>
+    </div>
+    <h1 class="header-title">پیانوی رؤیایی ماه‌گل ✨🌸</h1>
+    <p class="header-sub">طراحی شده با عشق، کوک شده روی فرکانس آرامش دست‌های هنرمند تو</p>
+    
+    <div class="dedication-quote">
+      «ماه‌گل عزیزم؛ هیچ پیانویی در دنیا به زیبایی و لطافت پنجه‌های تو نواخته نمیشه... بنواز که جهان به این ملودی نیاز داره. — از طرف امیر ❤️»
+    </div>
+  </div>
+
+  <!-- Piano Case -->
+  <div class="piano-case">
+    <!-- Golden Brass Edition Plate -->
+    <div class="brass-plate">
+      <div class="brass-inner">
+        <span class="brass-brand">MAHGOL CONCERT GRAND</span>
+        <span class="brass-edition">EDITION NO. 1 • HANDCRAFTED BY AMIR</span>
+      </div>
+    </div>
+
+    <!-- Quick Control Bar -->
+    <div class="controls-grid">
+      <button class="ctrl-btn" id="sustainBtn" onclick="toggleSustain()">
+        <span id="sustainIcon">⚪</span> پدال سستین: <b id="sustainStatus">روشن</b>
+      </button>
+      <button class="ctrl-btn" onclick="octaveShift(-1)">
+        <span>🔉</span> اکتاو پایین‌تر
+      </button>
+      <button class="ctrl-btn" onclick="octaveShift(1)">
+        <span>🔊</span> اکتاو بالاتر
+      </button>
+      <button class="ctrl-btn" onclick="stopAutoPlay()">
+        <span>⏹️</span> توقف ملودی
+      </button>
+    </div>
+
+    <!-- Active Note Screen -->
+    <div class="current-note-bar" id="noteDisplay">
+      🎵 کلیدی را لمس کن تا طنین آن آغاز شود...
+    </div>
+
+    <!-- Keyboard Scrollable Container -->
+    <div class="keys-wrapper" id="keysScroll">
+      <div class="keyboard" id="pianoKeys">
+        <!-- Generated dynamically via JS for 100% precision -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Famous Songs / Guide Melodies -->
+  <div class="songs-shelf">
+    <div class="shelf-title">
+      <span>🎶 آهنگ‌های پیشنهادی امیر برای نواختن ماه‌گل:</span>
+    </div>
+    <div class="songs-btns">
+      <button class="song-pill" onclick="playSong('gole_sangam')">
+        <span>🌹</span> گل سنگم (نواختن خودکار)
+      </button>
+      <button class="song-pill" onclick="playSong('fur_elise')">
+        <span>🎼</span> Für Elise (بتهوون)
+      </button>
+      <button class="song-pill" onclick="playSong('jane_maryam')">
+        <span>🌸</span> جان مریم
+      </button>
+      <button class="song-pill" onclick="playSong('tavalod')">
+        <span>🎂</span> تولدت مبارک
+      </button>
+    </div>
+  </div>
+
+  <!-- Amir's Fun Singing / Troll Mode -->
+  <div class="amir-fun-card">
+    <div class="amir-toggle-row">
+      <div class="amir-toggle-label">
+        <span>🎤</span> حالت «آوازخوانی امیر روی پیانو!»
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="amirVoiceToggle" onchange="toggleAmirMode(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="amir-speech" id="amirVoiceText">
+      🤫 در حال حاضر امیر ساکت است و فقط صدای مخملی پیانوی ماه‌گل شنیده می‌شود!
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-dedication">
+    طراحی شده با نهایت ظرافت توسط <span>امیر</span> برای <span>ماه‌گل</span> 🌸
+  </div>
+
+  <script>
+    // ================= REAL ACOUSTIC PIANO SYNTHESIZER =================
+    let audioCtx = null;
+    let sustain = true;
+    let baseOctave = 4; // C4
+    let isAmirMode = false;
+    let autoPlayTimeout = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // High quality acoustic piano simulation using multiple harmonics & mallet percussion
+    function playPianoNote(frequency, noteName, noteSolfege) {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      const duration = sustain ? 2.4 : 0.65;
+
+      // Master gain
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.7, now);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      master.connect(ctx.destination);
+
+      // Harmonics array: [multiplier, relative-gain, type]
+      const harmonics = [
+        [1.0, 0.65, 'sine'],       // Fundamental
+        [2.0, 0.25, 'sine'],       // 2nd harmonic (octave)
+        [3.0, 0.12, 'triangle'],   // 3rd harmonic
+        [4.0, 0.05, 'sine'],       // 4th harmonic
+        [1.002, 0.08, 'triangle']  // Detuned string resonance
+      ];
+
+      harmonics.forEach(([mult, gainVal, type]) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(frequency * mult, now);
+        
+        g.gain.setValueAtTime(gainVal, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + (duration * 0.9));
+
+        osc.connect(g);
+        g.connect(master);
+        osc.start(now);
+        osc.stop(now + duration);
+      });
+
+      // Hammer Strike Transient (felt attack click)
+      const hammer = ctx.createOscillator();
+      const hGain = ctx.createGain();
+      hammer.type = 'triangle';
+      hammer.frequency.setValueAtTime(frequency * 5, now);
+      hammer.frequency.exponentialRampToValueAtTime(100, now + 0.04);
+      hGain.gain.setValueAtTime(0.18, now);
+      hGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+      hammer.connect(hGain);
+      hGain.connect(master);
+      hammer.start(now);
+      hammer.stop(now + 0.05);
+
+      // Display Note
+      document.getElementById('noteDisplay').innerHTML = `✨ نت نواخته شده: <b>${noteName}</b> (${noteSolfege}) • ${Math.round(frequency)}Hz`;
+
+      // Amir Voice Mode if enabled
+      if (isAmirMode) {
+        triggerAmirVocals(noteName);
+      }
+    }
+
+    // Amir Troll Vocals on Note Hit
+    const amirPhrases = [
+      'امیر: «آااامان از این دل...!» 🎤😫',
+      'امیر: «تحریر سنتی تقدیم به ماه‌گل!» 🎶😂',
+      'امیر: «ماه‌گل فالش نزن داداش! شوخی کردم عالیه!» 💀✨',
+      'امیر: «چه نتی! بتهوون لنگ میندازه جلوت!» 👑🎹',
+      'امیر: «منم همرات بخونم یا بسه؟! باشه ساکت شدم!» 🤐🤣'
+    ];
+    function triggerAmirVocals(noteName) {
+      const speech = document.getElementById('amirVoiceText');
+      const phrase = amirPhrases[Math.floor(Math.random() * amirPhrases.length)];
+      speech.innerText = phrase;
+
+      // Play fun discord vibrato tone
+      try {
+        const ctx = getAudioCtx();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(220, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.25);
+        g.gain.setValueAtTime(0.1, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start();
+        o.stop(ctx.currentTime + 0.35);
+      } catch(e) {}
+    }
+
+    function toggleAmirMode(checkbox) {
+      isAmirMode = checkbox.checked;
+      const speech = document.getElementById('amirVoiceText');
+      if (isAmirMode) {
+        speech.innerHTML = '🚨 <b>حالت آوازخوانی امیر فعال شد!</b> حالا هر کلیدی بزنی، امیر هم تحریر میده! 😂';
+      } else {
+        speech.innerText = '🤫 امیر ساکت شد! دوباره فقط پیانوی ملایم خودت نواخته میشه.';
+      }
+    }
+
+    function toggleSustain() {
+      sustain = !sustain;
+      document.getElementById('sustainStatus').innerText = sustain ? 'روشن' : 'خاموش';
+      document.getElementById('sustainIcon').innerText = sustain ? '🟢' : '⚪';
+      document.getElementById('sustainBtn').classList.toggle('active', sustain);
+    }
+
+    function octaveShift(delta) {
+      baseOctave += delta;
+      if (baseOctave < 2) baseOctave = 2;
+      if (baseOctave > 6) baseOctave = 6;
+      renderKeyboard();
+      document.getElementById('noteDisplay').innerText = `🎼 اکتاو تغییر کرد: C${baseOctave} تا B${baseOctave + 1}`;
+    }
+
+    // ================= KEYBOARD RENDERING =================
+    // 2 full octaves (14 white keys, 10 black keys)
+    const noteData = [
+      { name: 'C', sol: 'دو', isBlack: false },
+      { name: 'C#', sol: 'دو دیز', isBlack: true },
+      { name: 'D', sol: 'رِ', isBlack: false },
+      { name: 'D#', sol: 'رِ دیز', isBlack: true },
+      { name: 'E', sol: 'می', isBlack: false },
+      { name: 'F', sol: 'فا', isBlack: false },
+      { name: 'F#', sol: 'فا دیز', isBlack: true },
+      { name: 'G', sol: 'سُل', isBlack: false },
+      { name: 'G#', sol: 'سُل دیز', isBlack: true },
+      { name: 'A', sol: 'لا', isBlack: false },
+      { name: 'A#', sol: 'لا دیز', isBlack: true },
+      { name: 'B', sol: 'سی', isBlack: false }
+    ];
+
+    function getFrequency(noteIndex, octave) {
+      // A4 = 440Hz, index of A is 9 in octave 4 => MIDI 69
+      const midi = (octave + 1) * 12 + noteIndex;
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    let keyElements = {};
+
+    function renderKeyboard() {
+      const container = document.getElementById('pianoKeys');
+      container.innerHTML = '';
+      keyElements = {};
+
+      let whiteCount = 0;
+      const whiteWidth = 44; // px
+
+      // Generate 2 Octaves: baseOctave and baseOctave + 1
+      for (let oct = 0; oct < 2; oct++) {
+        const curOctave = baseOctave + oct;
+        
+        noteData.forEach((item, idx) => {
+          const freq = getFrequency(idx, curOctave);
+          const fullName = `${item.name}${curOctave}`;
+          const noteKey = `${item.name}_${curOctave}`;
+
+          if (!item.isBlack) {
+            const keyEl = document.createElement('div');
+            keyEl.className = 'key-white';
+            keyEl.dataset.key = noteKey;
+            keyEl.dataset.freq = freq;
+            keyEl.dataset.name = fullName;
+            keyEl.dataset.sol = item.sol;
+
+            keyEl.innerHTML = `
+              <span class="note-name">${fullName}</span>
+              <span class="solfege">${item.sol}</span>
+            `;
+
+            bindKeyEvents(keyEl);
+            container.appendChild(keyEl);
+            keyElements[fullName] = keyEl;
+            whiteCount++;
+          }
+        });
+      }
+
+      // Add final C key to complete 2 octaves neatly
+      const finalFreq = getFrequency(0, baseOctave + 2);
+      const finalName = `C${baseOctave + 2}`;
+      const finalKey = document.createElement('div');
+      finalKey.className = 'key-white';
+      finalKey.dataset.key = finalName;
+      finalKey.dataset.freq = finalFreq;
+      finalKey.dataset.name = finalName;
+      finalKey.dataset.sol = 'دو';
+      finalKey.innerHTML = `
+        <span class="note-name">${finalName}</span>
+        <span class="solfege">دو</span>
+      `;
+      bindKeyEvents(finalKey);
+      container.appendChild(finalKey);
+      keyElements[finalName] = finalKey;
+
+      // Position Black Keys precisely
+      let currentWhiteIndex = 0;
+      for (let oct = 0; oct < 2; oct++) {
+        const curOctave = baseOctave + oct;
+
+        noteData.forEach((item, idx) => {
+          const freq = getFrequency(idx, curOctave);
+          const fullName = `${item.name}${curOctave}`;
+
+          if (item.isBlack) {
+            const keyEl = document.createElement('div');
+            keyEl.className = 'key-black';
+            keyEl.dataset.key = fullName;
+            keyEl.dataset.freq = freq;
+            keyEl.dataset.name = fullName;
+            keyEl.dataset.sol = item.sol;
+
+            keyEl.innerHTML = `<span class="note-name">${item.name}</span>`;
+
+            // Position between white keys
+            const leftOffset = (currentWhiteIndex * whiteWidth) - 14 + 4;
+            keyEl.style.left = `${leftOffset}px`;
+
+            bindKeyEvents(keyEl);
+            container.appendChild(keyEl);
+            keyElements[fullName] = keyEl;
+          } else {
+            currentWhiteIndex++;
+          }
+        });
+      }
+    }
+
+    function triggerKey(el) {
+      if (!el) return;
+      const freq = parseFloat(el.dataset.freq);
+      const name = el.dataset.name;
+      const sol = el.dataset.sol;
+
+      playPianoNote(freq, name, sol);
+
+      el.classList.add('pressed');
+      setTimeout(() => el.classList.remove('pressed'), 180);
+
+      try {
+        if (navigator.vibrate) navigator.vibrate(20);
+      } catch(e) {}
+    }
+
+    function bindKeyEvents(el) {
+      el.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        getAudioCtx(); // initialize audio context immediately on touch
+        triggerKey(el);
+      });
+    }
+
+    // ================= FAMOUS MELODIES AUTO PLAY =================
+    const songs = {
+      gole_sangam: [
+        { note: 'A4', dur: 450 }, { note: 'B4', dur: 450 }, { note: 'C5', dur: 800 },
+        { note: 'B4', dur: 400 }, { note: 'A4', dur: 400 }, { note: 'G#4', dur: 800 },
+        { note: 'A4', dur: 450 }, { note: 'F4', dur: 450 }, { note: 'E4', dur: 1200 }
+      ],
+      fur_elise: [
+        { note: 'E5', dur: 300 }, { note: 'D#5', dur: 300 }, { note: 'E5', dur: 300 },
+        { note: 'D#5', dur: 300 }, { note: 'E5', dur: 300 }, { note: 'B4', dur: 300 },
+        { note: 'D5', dur: 300 }, { note: 'C5', dur: 300 }, { note: 'A4', dur: 700 }
+      ],
+      jane_maryam: [
+        { note: 'E4', dur: 400 }, { note: 'A4', dur: 400 }, { note: 'B4', dur: 400 },
+        { note: 'C5', dur: 800 }, { note: 'B4', dur: 400 }, { note: 'A4', dur: 400 },
+        { note: 'G4', dur: 800 }, { note: 'F4', dur: 400 }, { note: 'E4', dur: 1000 }
+      ],
+      tavalod: [
+        { note: 'C4', dur: 350 }, { note: 'C4', dur: 350 }, { note: 'D4', dur: 600 },
+        { note: 'C4', dur: 600 }, { note: 'F4', dur: 600 }, { note: 'E4', dur: 1000 },
+        { note: 'C4', dur: 350 }, { note: 'C4', dur: 350 }, { note: 'D4', dur: 600 },
+        { note: 'C4', dur: 600 }, { note: 'G4', dur: 600 }, { note: 'F4', dur: 1000 }
+      ]
+    };
+
+    function stopAutoPlay() {
+      if (autoPlayTimeout) {
+        clearTimeout(autoPlayTimeout);
+        autoPlayTimeout = null;
+      }
+      document.querySelectorAll('.key-white, .key-black').forEach(k => k.classList.remove('highlight'));
+      document.getElementById('noteDisplay').innerText = '⏹️ پخش متوقف شد. حالا نوبت نواختن ماه‌گل است!';
+    }
+
+    function playSong(songKey) {
+      stopAutoPlay();
+      getAudioCtx();
+      baseOctave = 4;
+      renderKeyboard();
+
+      const melody = songs[songKey];
+      if (!melody) return;
+
+      document.getElementById('noteDisplay').innerText = '✨ در حال نواختن ملودی برای ماه‌گل... کلیدها روشن می‌شوند!';
+
+      let step = 0;
+      function nextNote() {
+        if (step >= melody.length) {
+          document.getElementById('noteDisplay').innerHTML = '🌸 ملودی تموم شد! حالا خودت دست به ساز شو ماه‌گل جان!';
+          return;
+        }
+
+        const item = melody[step];
+        const el = keyElements[item.note];
+        if (el) {
+          triggerKey(el);
+          el.classList.add('highlight');
+          setTimeout(() => el.classList.remove('highlight'), item.dur * 0.85);
+        }
+
+        step++;
+        autoPlayTimeout = setTimeout(nextNote, item.dur);
+      }
+
+      nextNote();
+    }
+
+    // Keyboard controls for Laptop / Desktop (ASDFGHJKL...)
+    const pcKeyMap = {
+      'a': 'C4', 'w': 'C#4', 's': 'D4', 'e': 'D#4', 'd': 'E4',
+      'f': 'F4', 't': 'F#4', 'g': 'G4', 'y': 'G#4', 'h': 'A4',
+      'u': 'A#4', 'j': 'B4', 'k': 'C5', 'o': 'C#5', 'l': 'D5',
+      'p': 'D#5', ';': 'E5'
+    };
+
+    window.addEventListener('keydown', (e) => {
+      const targetNote = pcKeyMap[e.key.toLowerCase()];
+      if (targetNote && keyElements[targetNote]) {
+        triggerKey(keyElements[targetNote]);
+      }
+    });
+
+    // Initial render
+    window.addEventListener('DOMContentLoaded', () => {
+      renderKeyboard();
+    });
+  </script>
+</body>
+</html>
