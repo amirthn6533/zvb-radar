@@ -1,14 +1,4 @@
 {
-  "alo_999111": {
-    "id": "alo_999111",
-    "title": "Търся електротехник за цялостна ел. инсталация в кв. Лозенец, София",
-    "url": "https://www.alo.bg/999111",
-    "url_hash": "c61db8cb3aefedb58f545ba4b931b3d3",
-    "phone": "0889112233",
-    "source": "Alo.bg",
-    "location": "гр. София, Лозенец",
-    "alerted_at": "2026-11-13 18:21:23"
-  },
   "bazar_50092030": {
     "id": "bazar_50092030",
     "title": "Маг-Ясновидка  БЪДИ С ЛЮБИМ ЧОВЕК СЛЕД 3-ДНИ  Резултат 1000% ! Маг ЕЛЕНА",
@@ -56,8 +46,8 @@
   "ksb_17744": {
     "id": "ksb_17744",
     "title": "[Голям Строител София] УФФ ЕООД — Жилищно и обществено строителство до ключ в гр. София (Група I ЦП",
-    "url": "https://register.ksb.bg/pub_view.php",
-    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "url": "https://register.ksb.bg/pub_view.php?id_members=17744",
+    "url_hash": "bdd10fdc8a84b0bf9903879bb86c9318",
     "phone": "0887523185",
     "source": "KSB",
     "location": "София, ж.к. Красна поляна II част, 42, вх А, ет 3, ап 6",
@@ -742,8 +732,8 @@
   "ksb_2463": {
     "id": "ksb_2463",
     "title": "[Голям Строител София] Инфинити Пропърти ООД — Жилищна сграда с ателиета за индивидуална творческа дейност, мага",
-    "url": "https://register.ksb.bg/pub_view.php",
-    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "url": "https://register.ksb.bg/pub_view.php?id_members=2463",
+    "url_hash": "b4d8c25d21754ee4c0440a288fa1b701",
     "phone": "029710000",
     "source": "KSB",
     "location": "София, ж.к Надежда I част бл. 137, вх. А, ет. 6, ап. 21",
@@ -930,5 +920,210 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-20 14:07:28"
+  },
+  "mp_96280": {
+    "id": "mp_96280",
+    "title": "[MaistorPlus] Дребни ремонти Директен телефон (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96280",
+    "url_hash": "8f905e56aa1d04721e78ca2bc644e6d9",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96213": {
+    "id": "mp_96213",
+    "title": "[MaistorPlus] Смяна на изгорял вентилатор (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96213",
+    "url_hash": "addf55eb507515c4a99eca419b280702",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96189": {
+    "id": "mp_96189",
+    "title": "[MaistorPlus] Преместване на два контакта Снимки (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96189",
+    "url_hash": "bc57a8f4cb009cc61862f65a09c865e7",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96270": {
+    "id": "mp_96270",
+    "title": "[MaistorPlus] Металел парапет /решетка/ за балкон Снимки (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96270",
+    "url_hash": "84eb88a2579b45746aa16e99ac55de9b",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96269": {
+    "id": "mp_96269",
+    "title": "[MaistorPlus] Монтаж на бойлер под мивка (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96269",
+    "url_hash": "27c9f735ad10a499af227f7ffabee193",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96264": {
+    "id": "mp_96264",
+    "title": "[MaistorPlus] Монтаж на бойлер (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96264",
+    "url_hash": "8ad9240b1f51890655ae2ea13e588bbf",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96187": {
+    "id": "mp_96187",
+    "title": "[MaistorPlus] Ремонт на ел. инсталация (Пакет Про)",
+    "url": "https://maistorplus.com/craftsman/job/96187",
+    "url_hash": "6905206bac324c4542b7024c7800ac2a",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96036": {
+    "id": "mp_96036",
+    "title": "[MaistorPlus] Монтаж на проточен бойлер (Пакет Старт)",
+    "url": "https://maistorplus.com/craftsman/job/96036",
+    "url_hash": "8f028dfb58f0f229aa4e9ba96dfe589a",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "daibau_62077": {
+    "id": "daibau_62077",
+    "title": "[Daibau] ел . инсталация",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/el_instalatsiya/62077",
+    "url_hash": "9efbfa0f87256dd87ff9dd8183e88dc2",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "daibau_61119": {
+    "id": "daibau_61119",
+    "title": "[Daibau] смяна на двоен контакт... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/smyana_na_dvoen_kontakt/61119",
+    "url_hash": "6dd0ea71d3ada9b872a1daa043c05146",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "daibau_59952": {
+    "id": "daibau_59952",
+    "title": "[Daibau] Прекъсна тока в сутирена... (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/prekasna_toka_v_sutirena/59952",
+    "url_hash": "355e25c197cc894481f129058be613c1",
+    "source": "Daibau",
+    "location": "Огняново, София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "daibau_59602": {
+    "id": "daibau_59602",
+    "title": "[Daibau] Промяна на табла (Веднага)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/promyana_na_tabla/59602",
+    "url_hash": "2985299755e7054d6099d10c2f137f2b",
+    "source": "Daibau",
+    "location": "Самоков, София",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "daibau_54651": {
+    "id": "daibau_54651",
+    "title": "[Daibau] развален/прекъснат кабелен ключ към осве... (от 1 до 3 месецa)",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/razvalen_prekasnat_kabelen_klyuch_kam_osvetlenieto_v_banyata/54651",
+    "url_hash": "6eb65390eeba725afe9eaf8282da3f53",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-06 10:26:11",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "mp_96303": {
+    "id": "mp_96303",
+    "title": "[MaistorPlus] Довършителен ремонт на апартамент ново строителство Снимки (Пакет Про+)",
+    "url": "https://maistorplus.com/craftsman/job/96303",
+    "url_hash": "018caa1b6c5172a1f7c86f74039b769b",
+    "source": "MaistorPlus",
+    "location": "София",
+    "alerted_at": "2026-09-08 09:56:57",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "daibau_62407": {
+    "id": "daibau_62407",
+    "title": "[Daibau] подмяна на старата електрическа инсталац...",
+    "url": "https://www.daibau.bg/proekti/elektrotehnik_elektroinstalatsii/podmyana_na_starata_elektricheska_instalatsiya_na_apartament/62407",
+    "url_hash": "65470ecc71b64cac1ddb86d8ec298654",
+    "source": "Daibau",
+    "location": "София, София-град",
+    "alerted_at": "2026-09-08 09:56:57",
+    "created_at": "2026-09-08 15:06:14"
+  },
+  "ted_723526-2026": {
+    "id": "ted_723526-2026",
+    "title": "[TED Поръчка] Услуги по наблюдение и контрол – „Осигуряване на физическа сигурност, охрана и контрол, осъщест",
+    "url": "https://ted.europa.eu/bg/notice/-/detail/723526-2026",
+    "url_hash": "7ded56b80075db409e8302e3e4893b85",
+    "phone": "",
+    "source": "TED Europa",
+    "location": "гр. София",
+    "quality_score": 96,
+    "alerted_at": "2026-11-20 22:04:48"
+  },
+  "ted_740813-2026": {
+    "id": "ted_740813-2026",
+    "title": "[TED Поръчка] Монтажни работи на оборудване за осветление на пътища, летища и други – “Модернизация и внедряв",
+    "url": "https://ted.europa.eu/bg/notice/-/detail/740813-2026",
+    "url_hash": "b646badd098fc86266c8451b5143729d",
+    "phone": "",
+    "source": "TED Europa",
+    "location": "с.Панчарево",
+    "quality_score": 96,
+    "alerted_at": "2026-11-20 22:04:50"
+  },
+  "ted_743087-2026": {
+    "id": "ted_743087-2026",
+    "title": "[TED Поръчка] Осветителни системи – Изработка, доставка, монтаж, присъединяване към ел. захранващата мрежа, п",
+    "url": "https://ted.europa.eu/bg/notice/-/detail/743087-2026",
+    "url_hash": "bc7ce244f68674763d3817d8834c0306",
+    "phone": "",
+    "source": "TED Europa",
+    "location": "гр.София",
+    "quality_score": 96,
+    "alerted_at": "2026-11-20 22:04:51"
+  },
+  "ted_798571-2026": {
+    "id": "ted_798571-2026",
+    "title": "[TED Поръчка] Електронни табла – „Обезпечаване на сигнализацията за обособяване на нискоемисионни зони на тер",
+    "url": "https://ted.europa.eu/bg/notice/-/detail/798571-2026",
+    "url_hash": "7d66bcacdb73684e81e5919d04aae93f",
+    "phone": "",
+    "source": "TED Europa",
+    "location": "гр.София",
+    "quality_score": 96,
+    "alerted_at": "2026-11-20 22:04:53"
+  },
+  "mp_97903": {
+    "id": "mp_97903",
+    "title": "[MaistorPlus ПОКАНА] Демонтаж на полилей и монтаж на друг, София",
+    "url": "https://maistorplus.com/craftsman/job/97903",
+    "url_hash": "3accb98b5f216d7ead3990bcdbd4a849",
+    "phone": "",
+    "source": "MaistorPlus",
+    "location": "гр. София",
+    "quality_score": 94,
+    "alerted_at": "2026-11-20 22:04:54"
   }
 }
