@@ -591,7 +591,8 @@
     "phone": "0888252305",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 12:36:41"
+    "alerted_at": "2026-11-21 09:04:22",
+    "digest_sent": true
   },
   "bizbg_f2c6f155f1": {
     "id": "bizbg_f2c6f155f1",
@@ -601,7 +602,8 @@
     "phone": "0889233722",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 12:55:38"
+    "alerted_at": "2026-11-21 09:04:22",
+    "digest_sent": true
   },
   "bizbg_bca6c7b869": {
     "id": "bizbg_bca6c7b869",
@@ -611,7 +613,8 @@
     "phone": "0889250156",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 12:55:39"
+    "alerted_at": "2026-11-21 09:04:22",
+    "digest_sent": true
   },
   "bizbg_caa6861830": {
     "id": "bizbg_caa6861830",
@@ -621,7 +624,8 @@
     "phone": "0887057416",
     "source": "Business.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-14 12:55:40"
+    "alerted_at": "2026-11-21 09:04:22",
+    "digest_sent": true
   },
   "bazar_52249057": {
     "id": "bazar_52249057",
@@ -1134,6 +1138,18 @@
     "phone": "0878865056",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-21 05:39:44"
+    "alerted_at": "2026-11-21 09:04:22",
+    "digest_sent": true
+  },
+  "ksb_15856": {
+    "id": "ksb_15856",
+    "title": "[Голям Строител София] БЪЛГАРСКА СТРОИТЕЛНО - ИНВЕСТИЦИОННА КОМПАНИЯ ЕООД — Кабелна линия 20 kV,МКТП Мерене и ТП1Винарна-външно ел.захран.на",
+    "url": "https://register.ksb.bg/pub_view.php",
+    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "phone": "0878024444",
+    "source": "KSB",
+    "location": "София, ул. Тракия №52",
+    "alerted_at": "2026-11-21 09:04:22",
+    "digest_sent": true
   }
 }
