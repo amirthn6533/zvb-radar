@@ -1125,5 +1125,15 @@
     "location": "гр. София",
     "quality_score": 94,
     "alerted_at": "2026-11-20 22:04:54"
+  },
+  "bazar_54731186": {
+    "id": "bazar_54731186",
+    "title": "⚡ Електро услуги и ремонт на електроуреди по домовете – коректно ⚡",
+    "url": "https://bazar.bg/obiava-54731186/elektro-uslugi-i-remont-na-elektrouredi-po-domowete-korektno",
+    "url_hash": "ce2adf84e7207ff330ce1ed93e2a9d1a",
+    "phone": "0878865056",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-21 05:39:44"
   }
 }
