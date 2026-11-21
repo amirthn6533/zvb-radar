@@ -1151,5 +1151,60 @@
     "location": "София, ул. Тракия №52",
     "alerted_at": "2026-11-21 09:04:22",
     "digest_sent": true
+  },
+  "ksb_16328": {
+    "id": "ksb_16328",
+    "title": "[Голям Строител София] БАЙЛОВО ФЕМИЛИ ХАУС ЕООД — Строеж жилищна сграда и подземни гаражи 5 ет.5 с кота корниз до 1",
+    "url": "https://register.ksb.bg/pub_view.php",
+    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "phone": "0899166136",
+    "source": "KSB",
+    "location": "София, ж.к.Васил Левски ул.Княгиня Тамара",
+    "alerted_at": "2026-11-21 18:00:14",
+    "digest_sent": true
+  },
+  "ksb_17173": {
+    "id": "ksb_17173",
+    "title": "[Голям Строител София] РЕСПЕКТ БИЛД ЕООД — многофамилна жилищна сграда с кота корниз до 15,00 м и общ подзем",
+    "url": "https://register.ksb.bg/pub_view.php",
+    "url_hash": "acfae6ff504f9cb846c06b17fdf019e9",
+    "phone": "0888799447",
+    "source": "KSB",
+    "location": "София, жк. Васил Левски, ул. Константин Фотинов, ап.3",
+    "alerted_at": "2026-11-21 18:00:14",
+    "digest_sent": true
+  },
+  "bizbg_b56f67bbb1": {
+    "id": "bizbg_b56f67bbb1",
+    "title": "Билдинг Ремонт Строй ООД — Билдинг Ремонт Строй ООД извършва строителство, ремонти, довършит...",
+    "url": "https://www.business.bg/f-13494/bilding-remont-stroj-ood.html",
+    "url_hash": "f95e5a63071bf8784256bda8ad78a9f3",
+    "phone": "0888262728",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-21 18:00:14",
+    "digest_sent": true
+  },
+  "bizbg_7086dc261a": {
+    "id": "bizbg_7086dc261a",
+    "title": "Тенелия — Ние сме строителна фирма, специализирана в сферата на строителств...",
+    "url": "https://www.business.bg/f-162912/tenelia-.html",
+    "url_hash": "d3b66f8e53ecfee4057efee486cc4f9a",
+    "phone": "0878381638",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-21 18:00:14",
+    "digest_sent": true
+  },
+  "bizbg_7d5122de98": {
+    "id": "bizbg_7d5122de98",
+    "title": "ДЖИ ЕЛ ЕН 2007 — Дейността на Джи Ел Ен 2007 ЕООД е насочена към: Проучване и прое...",
+    "url": "https://www.business.bg/f-50265/dzhi-el-en-2007.html",
+    "url_hash": "b1691c5fde85fe5a09dd4ed5937d22f6",
+    "phone": "0893302666",
+    "source": "Business.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-21 18:00:14",
+    "digest_sent": true
   }
 }
