@@ -1246,5 +1246,25 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-22 20:58:09"
+  },
+  "bazar_56186070": {
+    "id": "bazar_56186070",
+    "title": "Продава КЪЩА, гр. София, Суходол",
+    "url": "https://bazar.bg/obiava-56186070/prodava-kashta-gr-sofiia-suhodol",
+    "url_hash": "6461d1c694465f3d71230a60b1a16aa6",
+    "phone": "0894661627",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-22 21:56:49"
+  },
+  "zap_705197": {
+    "id": "zap_705197",
+    "title": "[ВИ АЙ ПИ БРАНДС ЕООД] Активен обект: Оперативен счетоводител гр.София, 23:46  часа на  22.11",
+    "url": "https://www.zaplata.bg/administrativni-deynosti/sofia/705197/operativen-schetovoditel/",
+    "url_hash": "a01efef5fb119ca80f9a17c6a14d2f5e",
+    "phone": "0899310777",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-22 21:56:50"
   }
 }
