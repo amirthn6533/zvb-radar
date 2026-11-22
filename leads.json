@@ -161,5 +161,31 @@
     "phone": "0878 865 056",
     "found_at": "2026-11-21 05:34",
     "value_tier": "STANDARD"
+  },
+  "bazar_56048296": {
+    "id": "bazar_56048296",
+    "title": "Електрообзавеждане",
+    "url": "https://bazar.bg/obiava-56048296/elektroobzavezhdane",
+    "source": "Bazar.bg",
+    "keyword": "търся електротехник софия",
+    "category": "urgent_client",
+    "category_label": "🎯 Директен клиент / Спешна заявка (کارفرمای مستقیم)",
+    "location": "гр. София",
+    "phone": "0882 223 818",
+    "found_at": "2026-11-22 12:56",
+    "value_tier": "STANDARD"
+  },
+  "bazar_54326948": {
+    "id": "bazar_54326948",
+    "title": "Търся шофьор с категория Ц за работа на контейнеровоз за строителни отпадъци",
+    "url": "https://bazar.bg/obiava-54326948/tarsia-shofor-s-kategoriia-ts-za-rabota-na-konteynerowoz-za-stroitelni-otpadatsi",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ?????????????? ??????????????",
+    "category": "urgent_client",
+    "category_label": "🎯 Директен клиент / Спешна заявка (کارفرمای مستقیم)",
+    "location": "гр. София",
+    "phone": "0888 333 724",
+    "found_at": "2026-11-22 12:56",
+    "value_tier": "STANDARD"
   }
 }

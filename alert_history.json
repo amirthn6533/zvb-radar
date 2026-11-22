@@ -1206,5 +1206,25 @@
     "location": "гр. София",
     "alerted_at": "2026-11-21 18:00:14",
     "digest_sent": true
+  },
+  "bazar_56048296": {
+    "id": "bazar_56048296",
+    "title": "Електрообзавеждане",
+    "url": "https://bazar.bg/obiava-56048296/elektroobzavezhdane",
+    "url_hash": "c5b598529f95e328969e2a3516501f8e",
+    "phone": "0882223818",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-22 13:01:07"
+  },
+  "bazar_54326948": {
+    "id": "bazar_54326948",
+    "title": "Търся шофьор с категория Ц за работа на контейнеровоз за строителни отпадъци",
+    "url": "https://bazar.bg/obiava-54326948/tarsia-shofor-s-kategoriia-ts-za-rabota-na-konteynerowoz-za-stroitelni-otpadatsi",
+    "url_hash": "9d1f6ff4a22cc5a2171514875087e3df",
+    "phone": "0888333724",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-22 13:01:08"
   }
 }
