@@ -187,5 +187,18 @@
     "phone": "0888 333 724",
     "found_at": "2026-11-22 12:56",
     "value_tier": "STANDARD"
+  },
+  "bazar_57010372": {
+    "id": "bazar_57010372",
+    "title": "Продава КЪЩА, гр. София, с. Световрачене",
+    "url": "https://bazar.bg/obiava-57010372/prodava-kashta-gr-sofiia-s-svetovrachene",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ?????????????? ??????????????",
+    "category": "renovation",
+    "category_label": "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)",
+    "location": "гр. София",
+    "phone": "0877 309 550",
+    "found_at": "2026-11-22 14:13",
+    "value_tier": "VIP_COMMERCIAL_VILLA"
   }
 }

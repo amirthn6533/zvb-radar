@@ -1226,5 +1226,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-22 13:01:08"
+  },
+  "bazar_57010372": {
+    "id": "bazar_57010372",
+    "title": "Продава КЪЩА, гр. София, с. Световрачене",
+    "url": "https://bazar.bg/obiava-57010372/prodava-kashta-gr-sofiia-s-svetovrachene",
+    "url_hash": "5e63482247f7590740a1a4c2c3f8391a",
+    "phone": "0877309550",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-22 14:18:03"
   }
 }
