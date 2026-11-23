@@ -1259,7 +1259,8 @@
     "phone": "0894661627",
     "source": "Bazar.bg",
     "location": "гр. София",
-    "alerted_at": "2026-11-22 21:56:49"
+    "alerted_at": "2026-11-23 18:08:33",
+    "digest_sent": true
   },
   "zap_705197": {
     "id": "zap_705197",
