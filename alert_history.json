@@ -1292,6 +1292,7 @@
     "phone": "0889987382",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-24 07:07:05"
+    "alerted_at": "2026-11-24 09:03:37",
+    "digest_sent": true
   }
 }
