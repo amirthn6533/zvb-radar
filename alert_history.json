@@ -1303,6 +1303,7 @@
     "phone": "0888940389",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-24 11:07:58"
+    "alerted_at": "2026-11-24 18:08:10",
+    "digest_sent": true
   }
 }
