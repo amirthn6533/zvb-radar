@@ -1305,5 +1305,15 @@
     "location": "гр. София",
     "alerted_at": "2026-11-24 18:08:10",
     "digest_sent": true
+  },
+  "bazar_36894449": {
+    "id": "bazar_36894449",
+    "title": "Продава 3-СТАЕН, гр. София, Овча купел 1",
+    "url": "https://bazar.bg/obiava-36894449/prodava-3-staen-gr-sofiia-ovcha-kupel-1",
+    "url_hash": "3486d5bab486cd3621fa2cb7ada08397",
+    "phone": "0884998700",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-25 15:16:41"
   }
 }
