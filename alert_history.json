@@ -1326,5 +1326,15 @@
     "source": "Bazar.bg",
     "location": "гр. София",
     "alerted_at": "2026-11-26 07:24:14"
+  },
+  "zap_705457": {
+    "id": "zap_705457",
+    "title": "[Строителна Компания София] Активен обект: Директор на дирекция гр.София, 16:44  часа на  26.11",
+    "url": "https://www.zaplata.bg/administrativni-deynosti/sofia/705457/direktor-na-direktsiia/",
+    "url_hash": "b3c17a9092ac0b5405c78461b068179f",
+    "phone": "029377253",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-26 15:01:46"
   }
 }
