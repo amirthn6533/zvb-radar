@@ -1316,5 +1316,15 @@
     "location": "гр. София",
     "alerted_at": "2026-11-25 18:09:18",
     "digest_sent": true
+  },
+  "bazar_23456949": {
+    "id": "bazar_23456949",
+    "title": "Газов техник София- ремонт на газови печки, котлони, скари, фритюрници и професионални уреди.",
+    "url": "https://bazar.bg/obiava-23456949/gazov-tehnik-sofiia-remont-na-gazovi-pechki-kotloni-skari-frityurnitsi-i-profesionalni-uredi",
+    "url_hash": "856ff3053730f4688ba5c985c261053d",
+    "phone": "0878323979",
+    "source": "Bazar.bg",
+    "location": "гр. София",
+    "alerted_at": "2026-11-26 07:24:14"
   }
 }

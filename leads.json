@@ -299,5 +299,18 @@
     "phone": "0884 998 700",
     "found_at": "2026-11-25 15:12",
     "value_tier": "LARGE_TURNKEY_B2B"
+  },
+  "bazar_23456949": {
+    "id": "bazar_23456949",
+    "title": "Газов техник София- ремонт на газови печки, котлони, скари, фритюрници и професионални уреди.",
+    "url": "https://bazar.bg/obiava-23456949/gazov-tehnik-sofiia-remont-na-gazovi-pechki-kotloni-skari-frityurnitsi-i-profesionalni-uredi",
+    "source": "Bazar.bg",
+    "keyword": "?????????? ???? ????????????????????",
+    "category": "renovation",
+    "category_label": "🏠 Ремонт и преустройство на сграда/жилище (پروژه بازسازی و نوسازی)",
+    "location": "гр. София",
+    "phone": "0878 323 979",
+    "found_at": "2026-11-26 07:20",
+    "value_tier": "SMALL_FAST_REPAIR"
   }
 }
