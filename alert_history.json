@@ -1347,7 +1347,8 @@
     "phone": "029392512",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-27 07:40:12"
+    "alerted_at": "2026-11-27 09:09:23",
+    "digest_sent": true
   },
   "zap_581458": {
     "id": "zap_581458",
@@ -1357,6 +1358,7 @@
     "phone": "029557312",
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
-    "alerted_at": "2026-11-27 08:19:26"
+    "alerted_at": "2026-11-27 09:09:23",
+    "digest_sent": true
   }
 }
