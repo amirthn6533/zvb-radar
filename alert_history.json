@@ -1348,5 +1348,15 @@
     "source": "Zaplata.bg / KSB",
     "location": "гр. София",
     "alerted_at": "2026-11-27 07:40:12"
+  },
+  "zap_581458": {
+    "id": "zap_581458",
+    "title": "[Строителна Компания София] Активен обект: Електромонтьор гр.София, 10:11  часа на  27.11",
+    "url": "https://www.zaplata.bg/remont-serviz-poddrazhka/sofia/581458/elektromontior/",
+    "url_hash": "bfb98807a9c4e3d4b2d03a05a00b7972",
+    "phone": "029557312",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-27 08:19:26"
   }
 }
