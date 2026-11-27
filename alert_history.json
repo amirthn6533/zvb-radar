@@ -1360,5 +1360,15 @@
     "location": "гр. София",
     "alerted_at": "2026-11-27 09:09:23",
     "digest_sent": true
+  },
+  "zap_705189": {
+    "id": "zap_705189",
+    "title": "[Строителна Компания София] Активен обект: Асистент за специализирано обслужване на пътници гр.София, 11:32",
+    "url": "https://www.zaplata.bg/aviatsiia-i-letishta/sofia/705189/asistent-za-spetsializirano-obsluzhvane-na-patnitsi/",
+    "url_hash": "d807562d5eec93e223974c7c74fe22fc",
+    "phone": "0877000354",
+    "source": "Zaplata.bg / KSB",
+    "location": "гр. София",
+    "alerted_at": "2026-11-27 09:38:22"
   }
 }
